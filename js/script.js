@@ -1,3 +1,22 @@
+
+$(document).ready(function() {
+    $('.dropdown-submenu a.dropdown-toggle').on("click", function(e) {
+        // Cerrar otros submenús abiertos
+        $('.dropdown-submenu .dropdown-menu').not($(this).next()).hide();
+
+        // Alternar el submenú actual
+        $(this).next('div.dropdown-menu').toggle();
+
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    $('.dropdown').on("hide.bs.dropdown", function() {
+        $(this).find('.dropdown-menu').hide();
+    });
+});
+
+
 window.onscroll = function() {
     scroll = document.documentElement.scrollTop;
     header = document.getElementById("header");

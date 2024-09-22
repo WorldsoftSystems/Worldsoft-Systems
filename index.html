@@ -14,9 +14,16 @@
     <!--Estilos-->
     <link rel="stylesheet" href="estilos/style.css">
     <script src="https://kit.fontawesome.com/41bcea2ae3.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
 
     <!--animacion-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
 </head>
 
 <body>
@@ -26,17 +33,38 @@
             <div class="logo">
                 <img src="./img/logoWss.png" alt="Logo de Empresa">
                 <h1>Worldsoft Systems</h1>
-                
+
             </div>
             <div class="container__nav">
                 <nav id="nav">
                     <ul>
                         <li><a href="#Inicio">Inicio</a></li>
+                        <li>
+                        <a class="nav-link dropdown-toggle" href="#" id="serviciosDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Sistemas
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="serviciosDropdown">
+                            <div class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">QR Facil</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="./qrWEB/qrWss/index.php">QR Wss</a>
+                                    <a class="dropdown-item" href="./qrWEB/rosario/index.php">QR Facil</a>
+                                </div>
+                            </div>
+                            <div class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Gestión Prestacional</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="./gestionPrestacional/PEÑI/index.php">CENTRO DE SALUD MENTAL DEL COMAHUE PEÑI S.A. </a>
+                                    <a class="dropdown-item" href="./gestionPrestacional/COMTAN/index.php">CLINICA PRIVADA PSICOPATOLOGICA COMUNIDAD TANDIL - COMTAN </a>
+                                </div>
+                            </div>
+                        </div>
+                        </li>
                         <li><a href="#Nosotros">Conoce más sobre Nosotros</a></li>
                         <li><a href="#Servicios">Servicios</a></li>
                         <li><a href="#footer">Contactanos</a></li>
-                        <li><a href="https://worldsoftsystems.com.ar/qrWEB/index.php" class="select">
-                            <i class="fas fa-qrcode"></i> QRFACIL</a></li>
+
                     </ul>
                 </nav>
                 <div class="btn__menu" id="btn_menu"><i class="fas fa-bars"></i></div>
@@ -50,11 +78,12 @@
                 <div class="container__info">
                     <h1 class="animate__animated animate__backInLeft">DESARROLLA TU</h1>
                     <h2 class="animate__animated animate__backInLeft">SOFTWARE</h2>
-                    <p class="animate__animated animate__backInLeft">Transforma tus ideas en soluciones de software potentes y eficientes. Nos especializamos en crear
+                    <p class="animate__animated animate__backInLeft">Transforma tus ideas en soluciones de software
+                        potentes y eficientes. Nos especializamos en crear
                         aplicaciones innovadoras adaptadas para satisfacer tus necesidades únicas. Nuestro equipo está
                         dedicado a ofrecer excelencia en cada línea de código, asegurando tu éxito en el mundo digital.
                         <br>
-                        Soluciones Integrales relacionado al INSSJP especilizados en prestadores de 
+                        Soluciones Integrales relacionado al INSSJP especilizados en prestadores de
                         Salud Mental.
                     </p>
                     <a href="https://wa.me/1161536595?text=Hola%20quiero%20mas%20info%20sobre%20el%20desarrollo%20de%20software!"
@@ -160,7 +189,8 @@
 
             <div class="box__footer">
                 <h2>Redes Sociales</h2>
-                <a href="https://www.instagram.com/worldsoftsystems?igsh=eTNub21xZHl2ODZj"><i class="fab fa-instagram-square"></i> Instagram</a>
+                <a href="https://www.instagram.com/worldsoftsystems?igsh=eTNub21xZHl2ODZj"><i
+                        class="fab fa-instagram-square"></i> Instagram</a>
                 <a href="mailto:infowss@gmail.com"><i class="fa fa-envelope"></i>Mail <br> infowss@gmail.com</a>
             </div>
         </div>

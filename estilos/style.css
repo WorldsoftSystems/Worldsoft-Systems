@@ -9,7 +9,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    text-decoration: none;
+    text-decoration: none !important;
     list-style: none;
     --transition-time: 0.5s;
     font-family: 'Poppins', sans-serif;
@@ -19,6 +19,7 @@
     background-image: linear-gradient(rgba(0, 5, 27, 0.815), rgba(1, 0, 37, 0.5)), url("../img/home.jpg");
     background-repeat: no-repeat;
     background-size:cover;
+    padding-bottom: 2.9rem;
 }
 
 
@@ -102,14 +103,74 @@ nav ul li a {
     color: white;
 }
 
-
-
-/* Adjustments for smaller screens */
-@media screen and (max-width: 760px) {
-    .nav_fixed {
-        position: fixed;
-    }
+/* Eliminar subrayado y aplicar estilos al enlace del dropdown */
+.custom-dropdown-link {
+    text-decoration: none; /* Quitar subrayado */
+    color: #ffffff; /* Color del texto */
+    background-color: transparent; /* Fondo transparente */
+    padding: 10px 15px; /* Espaciado alrededor del texto */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Animación al pasar el mouse */
 }
+
+/* Cambiar el color de fondo al hacer hover sobre el enlace del dropdown */
+.custom-dropdown-link:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Fondo transparente con leve color al pasar el mouse */
+    color: #f1f1f1; /* Cambiar el color del texto al hacer hover */
+    text-decoration: none; /* Asegurar que no haya subrayado */
+}
+
+/* Estilos del menú desplegable */
+.custom-dropdown-menu {
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente */
+    border: none; /* Eliminar el borde predeterminado */
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 0; /* Eliminar el padding del ul */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3); /* Sombra para dar efecto flotante */
+    display: none; /* Ocultar inicialmente */
+}
+
+/* Mostrar el menú al desplegarlo */
+.dropdown:hover .custom-dropdown-menu {
+    display: block; /* Mostrar el menú al pasar el ratón */
+    position: absolute; /* Hacer que el menú se superponga al contenido */
+    min-width: 160px; /* Ancho mínimo del menú */
+}
+
+/* Estilos de los enlaces dentro del menú desplegable */
+.custom-dropdown-menu li a {
+    color: #ffffff; /* Color del texto */
+    padding: 10px 20px; /* Espaciado interno */
+    display: block; /* Asegurar que el enlace ocupe toda la línea */
+    text-decoration: none; /* Eliminar subrayado */
+    background-color: transparent; /* Fondo transparente por defecto */
+    transition: background-color 0.3s ease; /* Animación al pasar el mouse */
+}
+
+/* Cambiar color de fondo al hacer hover sobre los enlaces del menú */
+.custom-dropdown-menu li a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Fondo transparente con leve color */
+    color: #f1f1f1; /* Cambiar el color del texto al hacer hover */
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    display: none; /* Oculta el submenú por defecto */
+    position: absolute; /* Cambia a absolute para que se despliegue correctamente */
+    left: 0; /* Alinea el submenú a la izquierda del elemento padre */
+    top: 100% !important; /* Despliega el submenú hacia abajo */
+    background-color: rgb(213, 211, 211);
+}
+
+.dropdown-submenu.show > .dropdown-menu {
+    display: block; /* Muestra el submenú cuando su contenedor tiene la clase "show" */
+}
+
+
+
 
 
 .select {
@@ -340,7 +401,7 @@ a {
 
 .card {
     font-size: 'O';
-    --bg-filter-opacity: 0.5;
+    --bg-filter-opacity: 0.7;
     background-image: linear-gradient(rgba(0, 0, 0, var(--bg-filter-opacity)), rgba(0, 0, 0, var(--bg-filter-opacity))), var(--bg-img);
     height: 20em;
     width: 15em;
@@ -369,6 +430,7 @@ a {
     margin: 0;
     font-size: 1.5em;
     line-height: 1.2em;
+    color: white !important;
 }
 
 .card p {
@@ -376,6 +438,7 @@ a {
     font-family: 'Open Sans';
     margin-top: 0.5em;
     line-height: 2em;
+    color: white !important;
 }
 
 .card:before,
@@ -524,6 +587,13 @@ footer {
 
 
 /* MEDIA QUERIES */
+/* Adjustments for smaller screens */
+@media screen and (max-width: 760px) {
+    .nav_fixed {
+        position: fixed;
+    }
+}
+
 @media screen and (max-width: 1285px) {
     .cards-wrapper {
         grid-template-columns: 1fr 1fr;
