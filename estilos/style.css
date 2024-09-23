@@ -13,6 +13,7 @@
     list-style: none;
     --transition-time: 0.5s;
     font-family: 'Poppins', sans-serif;
+    
 }
 
 #Inicio {
@@ -103,71 +104,63 @@ nav ul li a {
     color: white;
 }
 
-/* Eliminar subrayado y aplicar estilos al enlace del dropdown */
-.custom-dropdown-link {
-    text-decoration: none; /* Quitar subrayado */
-    color: #ffffff; /* Color del texto */
-    background-color: transparent; /* Fondo transparente */
-    padding: 10px 15px; /* Espaciado alrededor del texto */
-    border-radius: 5px; /* Bordes redondeados */
-    transition: background-color 0.3s ease; /* Animación al pasar el mouse */
+
+
+
+/* Estilo para los botones */
+.button-container {
+    display: flex;
+    justify-content: center; /* Centramos los botones en pantallas grandes */
+    flex-wrap: nowrap; /* No permitir que los botones se ajusten en una nueva línea */
+    gap: 15px; /* Espacio entre los botones */
+    margin-top: -0.4rem;
+    padding: 0 1rem; /* Añadir un poco de padding horizontal */
+    overflow-x: auto; /* Habilitar desplazamiento horizontal en pantallas pequeñas */
+    width: 100%;
+    box-sizing: border-box; /* Asegurar que el padding esté dentro del ancho del contenedor */
+    
 }
 
-/* Cambiar el color de fondo al hacer hover sobre el enlace del dropdown */
-.custom-dropdown-link:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Fondo transparente con leve color al pasar el mouse */
-    color: #f1f1f1; /* Cambiar el color del texto al hacer hover */
-    text-decoration: none; /* Asegurar que no haya subrayado */
+.button-container .btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff; /* Color de fondo de los botones */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex-shrink: 0; /* Prevenir que los botones se reduzcan */
+    min-width: 120px; /* Asegurar que los botones tengan un tamaño mínimo adecuado */
 }
 
-/* Estilos del menú desplegable */
-.custom-dropdown-menu {
-    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente */
-    border: none; /* Eliminar el borde predeterminado */
-    border-radius: 5px; /* Bordes redondeados */
-    padding: 0; /* Eliminar el padding del ul */
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3); /* Sombra para dar efecto flotante */
-    display: none; /* Ocultar inicialmente */
+.button-container .btn:hover {
+    background-color: #0056b3; /* Cambia el color al pasar el cursor */
 }
 
-/* Mostrar el menú al desplegarlo */
-.dropdown:hover .custom-dropdown-menu {
-    display: block; /* Mostrar el menú al pasar el ratón */
-    position: absolute; /* Hacer que el menú se superponga al contenido */
-    min-width: 160px; /* Ancho mínimo del menú */
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 768px) {
+    .button-container {
+        justify-content: flex-start; /* Alinear los botones a la izquierda en pantallas pequeñas */
+        padding: 0; /* Eliminar padding adicional en pantallas pequeñas */
+        overflow-x: auto; /* Permitir desplazamiento horizontal en pantallas pequeñas */
+        scrollbar-width: thin; /* Ancho fino para el scrollbar en Firefox */
+    }
+
+    .button-container::-webkit-scrollbar {
+        height: 8px; /* Altura del scrollbar en navegadores Webkit (Chrome, Safari) */
+    }
+
+    .button-container::-webkit-scrollbar-thumb {
+        background-color: #007bff; /* Color del scrollbar */
+        border-radius: 10px;
+    }
+
+    .button-container .btn {
+        flex-shrink: 0; /* Evitar que los botones se encojan */
+        min-width: 120px; /* Mínimo ancho para los botones */
+    }
 }
 
-/* Estilos de los enlaces dentro del menú desplegable */
-.custom-dropdown-menu li a {
-    color: #ffffff; /* Color del texto */
-    padding: 10px 20px; /* Espaciado interno */
-    display: block; /* Asegurar que el enlace ocupe toda la línea */
-    text-decoration: none; /* Eliminar subrayado */
-    background-color: transparent; /* Fondo transparente por defecto */
-    transition: background-color 0.3s ease; /* Animación al pasar el mouse */
-}
-
-/* Cambiar color de fondo al hacer hover sobre los enlaces del menú */
-.custom-dropdown-menu li a:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Fondo transparente con leve color */
-    color: #f1f1f1; /* Cambiar el color del texto al hacer hover */
-}
-
-.dropdown-submenu {
-    position: relative;
-}
-
-.dropdown-submenu > .dropdown-menu {
-    display: none; /* Oculta el submenú por defecto */
-    position: absolute; /* Cambia a absolute para que se despliegue correctamente */
-    left: 0; /* Alinea el submenú a la izquierda del elemento padre */
-    top: 100% !important; /* Despliega el submenú hacia abajo */
-    background-color: rgb(213, 211, 211);
-}
-
-.dropdown-submenu.show > .dropdown-menu {
-    display: block; /* Muestra el submenú cuando su contenedor tiene la clase "show" */
-}
 
 
 
