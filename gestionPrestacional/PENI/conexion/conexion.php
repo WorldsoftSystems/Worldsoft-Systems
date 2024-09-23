@@ -9,7 +9,7 @@ PEÑI
 $servername = "localhost";
 $username = "worldsof_OME";
 $password = "Wss1593.";
-$dbname = "worldsof_OME"; 
+$dbname = "worldsof_gestion_prestacional_peni"; 
 
 */
 
