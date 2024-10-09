@@ -18,13 +18,6 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $nombre = $row['nombre'];
 }
-
-
-// Verificar si el usuario está autenticado
-if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php");
-    exit; // Asegura que el script se detenga después de redirigir
-}
 ?>
 
 <!DOCTYPE html>
