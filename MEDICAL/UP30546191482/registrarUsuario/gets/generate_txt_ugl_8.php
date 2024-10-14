@@ -56,7 +56,7 @@ if ($result->num_rows > 0) {
 
     // Primera línea dinámica
     $linea1 = "CABECERA\n";
-    $linea2 = "$cuit;;$fechaActual;$periodo;$inst;2;$u_efect;69630\n";
+    $linea2 = "$cuit;;$fechaActual;$periodo;$inst;2;UP3054619148200;kqsof\n";
     // Tercera línea con el texto 'PROFESIONAL'
     $linea3 = "PROFESIONAL\n";
     // Contenido inicial del archivo
