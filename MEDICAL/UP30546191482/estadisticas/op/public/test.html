@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de displayResults</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .result-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .table-container {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .table-container table {
+            margin: 0;
+        }
+
+        .table-container table th,
+        .table-container table td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div id="results"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Simular la función displayResults
+        function getRenovarFecha(fechaCambio, cantidad) {
+            // Lógica ficticia para la demostración
+            return new Date(new Date(fechaCambio).getTime() + cantidad * 24 * 60 * 60 * 1000).toLocaleDateString();
+        }
+
+        function displayResults(result) {
+            tableCount = window.tableCount || 0; // Obtener el contador global
+            tableCount++; // Incrementar contador de tablas
+            window.tableCount = tableCount; // Guardar el contador globalmente
+
+            if (!result) {
+                $('#results').append('<div class="alert alert-warning">No se encontraron resultados.</div>');
+                return;
+            }
+
+            let html = `<div class="result-section" id="result-section-${tableCount}">`;
+            html += `<h4>Detalles</h4>`;
+            html += '<div class="table-container">';
+            html += '<table class="table table-striped">';
+            html += '<thead><tr><th>Nombre y Apellido</th><th>Nro Beneficio</th><th>GP</th></tr></thead>';
+            html += '<tbody>';
+            html += `<tr>
+                    <td>${result.details.nombreApellido}</td>
+                    <td>${result.details.nroBeneficio}</td>
+                    <td>${result.details.gp}</td>
+                    </tr>`;
+            html += '</tbody></table>';
+            html += '</div>'; // .table-container
+
+            html += `<h4>OP</h4>`;
+            html += '<div class="table-container">';
+            html += '<table class="table table-striped">';
+            html += '<thead><tr><th>Nro OP</th><th>Estado</th><th>Fecha Activacion</th><th>Código</th><th>Cantidad</th><th>Acción</th><th>Estado</th><th>Renovar el Día</th></tr></thead>';
+            html += '<tbody>';
+
+            // Agregar la última OP
+            html += `<tr>
+                <td>${result.lastRow.nroOp}</td>
+                <td>${result.lastRow.estado}</td>
+                <td>${result.lastRow.fechaCambio}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                </tr>`;
+
+            // Agregar las prácticas
+            result.practices.forEach(practice => {
+                let renovarFecha = getRenovarFecha(result.lastRow.fechaCambio, parseInt(practice.cantidad, 10));
+                html += `<tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>${practice.codigo}</td>
+                <td>${practice.cantidad}</td>
+                <td>${practice.accion}</td>
+                <td>${practice.estado}</td>
+                <td>${renovarFecha ? renovarFecha : 'Cantidad no válida'}</td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            html += '</div>'; // .table-container
+            html += '</div>'; // .result-section
+
+            html += '<hr>'; // Agregar una línea de separación
+            $('#results').append(html);
+        }
+
+        // Datos de prueba
+        const testData1 = {
+            details: {
+                nombreApellido: "Juan Pérez",
+                nroBeneficio: "123456",
+                gp: "GP1"
+            },
+            lastRow: {
+                nroOp: "OP001",
+                estado: "Activo",
+                fechaCambio: "2024-08-01"
+            },
+            practices: [
+                { codigo: "C001", cantidad: "10", accion: "Acción 1", estado: "Estado 1" },
+                { codigo: "C002", cantidad: "5", accion: "Acción 2", estado: "Estado 2" }
+            ]
+        };
+
+        const testData2 = {
+            details: {
+                nombreApellido: "Ana Gómez",
+                nroBeneficio: "654321",
+                gp: "GP2"
+            },
+            lastRow: {
+                nroOp: "OP002",
+                estado: "Inactivo",
+                fechaCambio: "2024-07-15"
+            },
+            practices: [
+                { codigo: "C003", cantidad: "7", accion: "Acción 3", estado: "Estado 3" },
+                { codigo: "C004", cantidad: "12", accion: "Acción 4", estado: "Estado 4" }
+            ]
+        };
+
+        // Llamar a la función con datos de prueba
+        displayResults(testData1);
+        displayResults(testData2);
+    </script>
+</body>
+</html>

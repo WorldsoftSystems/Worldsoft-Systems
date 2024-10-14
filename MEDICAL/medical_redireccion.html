@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirección con Bootstrap</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .card-container {
+            background-color: white; /* Fondo de la tarjeta */
+            border-radius: 15px; /* Bordes redondeados */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra */
+            padding: 40px; /* Espaciado interno */
+            max-width: 400px; /* Ancho máximo de la tarjeta */
+            width: 100%; /* Ancho del 100% en pantallas pequeñas */
+        }
+        h1 {
+            font-size: 2rem;
+            color: #343a40;
+        }
+        .logo {
+            max-width: 200px; /* Ajusta el tamaño según sea necesario */
+            margin: 20px 0;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        #error {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        function redirectToPage() {
+            const input = document.getElementById("userInput").value;
+            const url = `./${input}/index.php`;
+            fetch(url)
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = url;
+                    } else {
+                        document.getElementById("error").innerText = 'UP incorrecto';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById("error").innerText = 'UP incorrecto';
+                });
+        }
+    </script>
+</head>
+<body class="d-flex flex-column justify-content-center align-items-center vh-100">
+    <div class="card-container text-center">
+        <img src="../img/logoWorld.png" alt="Logo" class="logo img-fluid">
+        <h1 class="mb-4">Completar con 'UP' principal de la clínica</h1>
+        
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="userInput" placeholder="Escribe algo..." aria-label="Escribe algo...">
+            <div class="input-group-append">
+                <button class="btn btn-primary" onclick="redirectToPage()">Entrar</button>
+            </div>
+        </div>
+        <p class="mt-3 text-danger" id="error"></p>
+    </div>
+</body>
+</html>

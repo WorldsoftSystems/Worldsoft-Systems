@@ -41,6 +41,17 @@ if (!isset($_SESSION['usuario'])) {
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="icon" href="../img/logo.png" type="image/x-icon">
     <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- jQuery y Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+        integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
     <!-- Agregar el archivo CSS de Tailwind CSS -->
     <script src="assets/plugins/qrCode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -202,12 +213,6 @@ if (!isset($_SESSION['usuario'])) {
                     ?>
                 </select>
             </div>
-            <div class="mb-4">
-                <label for="fecha" class="block text-sm font-medium text-gray-700">Fecha y Hora:</label>
-                <input type="datetime-local" id="fecha" name="fecha" required readonly
-                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-            </div>
-
 
             <button type="submit" name="agregar" id="btnAgregar"
                 class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
@@ -238,35 +243,77 @@ if (!isset($_SESSION['usuario'])) {
         </button>
 
         <div id="contenedorPacientes"></div>
+        <div id="paginacion"></div>
+
+        <!-- EDITAR MODAL-->
+        <!-- Modal -->
+        <div class="modal fade" id="modalEditarPaciente" tabindex="-1" role="dialog"
+            aria-labelledby="modalEditarPacienteLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarPacienteLabel">Editar Paciente</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formEditarPaciente">
+                            <input type="hidden" name="id" id="idPaciente">
+
+                            <div class="mb-4">
+                                <label for="nombreYapellidoModal" class="block text-sm font-medium text-gray-700">Nombre
+                                    y Apellido:</label>
+                                <input type="text" id="nombreYapellidoModal" name="nombreYapellido" required
+                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="benefModal"
+                                    class="block text-sm font-medium text-gray-700">Beneficio:</label>
+                                <input type="text" id="benefModal" name="benef" required
+                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="tokenModal" class="block text-sm font-medium text-gray-700">Token:</label>
+                                <input type="text" id="tokenModal" name="token" required
+                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="cod_practicaModal" class="block text-sm font-medium text-gray-700">Código de
+                                    Práctica:</label>
+                                <select id="cod_practicaModal" name="cod_practica" required
+                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
+                                    <option value="">Seleccionar Código de Práctica</option>
+                                    <!-- Aquí se llenarán las opciones con JavaScript -->
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="cod_diagModal"
+                                    class="block text-sm font-medium text-gray-700">Diagnóstico:</label>
+                                <select id="cod_diagModal" name="cod_diag" required
+                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
+                                    <option value="">Seleccionar Diagnóstico</option>
+                                    <!-- Aquí se llenarán las opciones con JavaScript -->
+                                </select>
+                            </div>
+
+                            <button type="submit"
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Actualizar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Aquí va el script de JavaScript -->
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/cheerio"></script>
         <script>
-
-            fetch('https://worldtimeapi.org/api/timezone/America/Argentina/Buenos_Aires')
-                .then(response => response.json())
-                .then(data => {
-                    // Crear un objeto Date a partir del datetime recibido
-                    const fecha = new Date(data.datetime);
-
-                    // Obtener los componentes individuales de la fecha y hora
-                    const year = fecha.getFullYear();
-                    const month = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
-                    const day = String(fecha.getDate()).padStart(2, '0');
-                    const hours = String(fecha.getHours()).padStart(2, '0');
-                    const minutes = String(fecha.getMinutes()).padStart(2, '0');
-
-                    // Formatear la fecha y hora en el formato requerido por el input datetime-local
-                    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
-
-                    // Asignar el valor formateado al input
-                    document.getElementById('fecha').value = formattedDate;
-                })
-                .catch(error => console.error('Error:', error));
-
-
-
             document.getElementById('btnBuscar').addEventListener('click', function () {
                 // Obtener los valores de los campos de "Beneficio" y "Parentesco"
                 var beneficio = $('#benef').val();
@@ -297,22 +344,6 @@ if (!isset($_SESSION['usuario'])) {
                     });
             });
 
-
-            // Obtener el campo de fecha y hora por su ID
-            var fechaInput = document.getElementById('fecha');
-
-            // Obtener la fecha y hora actual en formato local (hora de Argentina)
-            var fechaActual = new Date();
-            var offset = -3; // UTC -3 horas para Argentina
-            fechaActual.setHours(fechaActual.getHours() + offset);
-
-            // Formatear la fecha y hora en el formato deseado (YYYY-MM-DDTHH:MM)
-            var fechaFormateada = fechaActual.toISOString().slice(0, 16);
-
-            // Establecer el valor del campo de fecha y hora al valor actual
-            fechaInput.value = fechaFormateada;
-
-
             document.getElementById('btnGenerarPDF').addEventListener('click', function () {
                 // Llamar a la función para generar el PDF
                 generarPDF();
@@ -333,113 +364,192 @@ if (!isset($_SESSION['usuario'])) {
                 window.location.href = url;
             }
 
+            function cargarPacientesPorProfesional(cod_prof, pagina = 1) {
+                const limite = 50; // Número de pacientes por página
+                const offset = (pagina - 1) * limite; // Calcular el desplazamiento
 
-            // Dentro de tu función cargarPacientesPorProfesional en tu archivo HTML
-            function cargarPacientesPorProfesional(cod_prof) {
-                console.log("Cargando pacientes para el profesional con el código: " + cod_prof);
-
-                fetch('../controlador/control_paciente.php?obtenerPacientesPorProfesional=true&cod_prof=' + cod_prof)
+                fetch(`../controlador/control_paciente.php?obtenerPacientesPorProfesional=true&cod_prof=${cod_prof}&limite=${limite}&offset=${offset}`)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Hubo un problema al cargar los pacientes. Estado de la respuesta: ' + response.status);
+                            throw new Error('Error en la respuesta: ' + response.status);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log("Datos de pacientes cargados con éxito:", data);
-                        mostrarPacientes(data); // Llamar a la función para mostrar los pacientes
+
+                        if (data.pacientes && data.pacientes.length > 0) {
+                            mostrarPacientes(data, pagina, cod_prof); // Llamar a la función para mostrar los pacientes y pasar cod_prof
+                        } else {
+                            document.getElementById('contenedorPacientes').innerHTML = "No se encontraron pacientes.";
+                        }
                     })
                     .catch(error => {
                         console.error('Error al cargar pacientes:', error);
-                        // Aquí puedes mostrar un mensaje de error al usuario si lo deseas
                     });
             }
 
+            // Función para formatear la fecha en formato argentino (DD/MM/YYYY)
+            function formatearFecha(fecha) {
+                if (!fecha) return 'N/A'; // Si no hay fecha, retornar 'N/A'
 
+                // Extraer solo la parte de la fecha
+                const fechaSolo = fecha.split(' ')[0]; // '2024-08-13'
+                const [year, month, day] = fechaSolo.split('-'); // Separar en componentes
 
-            // Función para editar un paciente
-            function editarPaciente(cod_paci) {
-                // Aquí puedes implementar la lógica para editar el paciente con el ID cod_paci
-                // Por ejemplo, puedes redirigir a una página de edición con el ID del paciente en la URL
-                window.location.href = 'editarPaciente.php?editar=' + cod_paci;
+                return `${day}/${month}/${year}`; // Retornar en formato DD/MM/YYYY
             }
 
-            function mostrarPacientes(pacientes) {
+            function mostrarPacientes(data, pagina, cod_prof) { // Acepta cod_prof como tercer parámetro
                 var contenedorPacientes = document.getElementById('contenedorPacientes');
                 contenedorPacientes.innerHTML = ''; // Limpiar cualquier contenido anterior de pacientes
-
-                // Ordenar pacientes por fecha de forma descendente
-                pacientes.sort(function (a, b) {
-                    return new Date(b.fecha) - new Date(a.fecha);
-                });
 
                 // Crear la tabla y sus encabezados
                 var table = document.createElement('table');
                 table.classList.add('table'); // Agregar la clase 'table'
                 var thead = document.createElement('thead');
                 var headerRow = document.createElement('tr');
-                headerRow.innerHTML = '<th>Nombre y Apellido</th><th>Beneficio</th><th>Profesional</th><th>Práctica</th><th>Diagnóstico</th><th>Fecha</th>'; //<th>Acciones</th>
+                headerRow.innerHTML = '<th>Nombre y Apellido</th><th>Beneficio</th><th>Profesional</th><th>Práctica</th><th>Diagnóstico</th><th>Fecha</th><th>Token</th><th>Acciones</th>';
                 thead.appendChild(headerRow);
                 table.appendChild(thead);
 
                 // Crear el cuerpo de la tabla
                 var tbody = document.createElement('tbody');
-                pacientes.forEach(function (paciente) {
+                data.pacientes.forEach(function (paciente) {
                     var row = document.createElement('tr');
-                    // Llamar a la función para obtener el nombre del profesional por AJAX
-                    fetch('../controlador/control_paciente.php?obtenerNombreProfesional&cod_prof=' + paciente.cod_prof)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Formatear la fecha
-                                var fecha = new Date(paciente.fecha);
-                                var dia = fecha.getDate();
-                                var mes = fecha.getMonth() + 1;
-                                var año = fecha.getFullYear();
-                                var hora = fecha.getHours();
-                                var minutos = fecha.getMinutes();
-                                var segundos = fecha.getSeconds();
-
-                                // Asegurar que los números de día, mes, hora, minutos y segundos estén en el formato de dos dígitos
-                                dia = (dia < 10 ? '0' : '') + dia;
-                                mes = (mes < 10 ? '0' : '') + mes;
-                                hora = (hora < 10 ? '0' : '') + hora;
-                                minutos = (minutos < 10 ? '0' : '') + minutos;
-                                segundos = (segundos < 10 ? '0' : '') + segundos;
-
-                                var fechaFormateada = dia + '/' + mes + '/' + año + ' ' + hora + ':' + minutos + ':' + segundos;
-
-                                // Agregar los datos del paciente a la fila de la tabla
-                                row.innerHTML = '<td>' + paciente.nombreYapellido + '</td><td>' + paciente.benef + '</td><td>' + data.nombreProfesional + '</td><td>' + paciente.cod_practica + '</td><td>' + paciente.cod_diag + '</td><td>' + fechaFormateada; // + '</td><td><button onclick="editarPaciente(' + paciente.cod_paci + ')">Editar</button></td>'
-                            } else {
-                                console.error('Error al obtener el nombre del profesional:', data.message);
-                                // Si hay un error, mostrar solo los detalles del paciente sin el nombre del profesional
-                                row.innerHTML = '<td>' + paciente.nombreYapellido + '</td><td>' + paciente.benef + '</td><td></td><td>' + paciente.cod_practica + '</td><td>' + paciente.cod_diag + '</td><td>' + paciente.fecha + '</td><td><button onclick="editarPaciente(' + paciente.cod_paci + ')">Editar</button></td>'; // Agregado: Fecha y botón de Editar
-                            }
-                            // Agregar la fila a la tabla
-                            tbody.appendChild(row);
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            // Si hay un error, mostrar solo los detalles del paciente sin el nombre del profesional
-                            row.innerHTML = '<td>' + paciente.nombreYapellido + '</td><td>' + paciente.benef + '</td><td></td><td>' + paciente.cod_practica + '</td><td>' + paciente.cod_diag + '</td><td>' + paciente.fecha + '</td><td><button onclick="editarPaciente(' + paciente.cod_paci + ')">Editar</button></td>'; // Agregado: Fecha y botón de Editar
-                            // Agregar la fila a la tabla
-                            tbody.appendChild(row);
-                        });
+                    row.innerHTML = `
+                        <td>${paciente.nombreYapellido}</td>
+                        <td>${paciente.benef}</td>
+                        <td>${paciente.nom_prof}</td>
+                        <td>${paciente.cod_practica}</td>
+                        <td>${paciente.cod_diag || 'N/A'}</td>
+                        <td>${formatearFecha(paciente.fecha) || 'N/A'}</td>
+                        <td>${paciente.token}</td>
+                        <td><button onclick="abrirModalEditar(${paciente.cod_paci}, '${paciente.nombreYapellido}', '${paciente.benef}', '${paciente.token}', '${paciente.cod_practica}', '${paciente.cod_diag || ''}')">Editar</button></td>
+                    `;
+                    tbody.appendChild(row);
                 });
-                // Agregar el cuerpo de la tabla al elemento contenedor
                 table.appendChild(tbody);
                 contenedorPacientes.appendChild(table);
+
+                // Crear los botones de paginación
+                var paginacion = document.getElementById('paginacion');
+                paginacion.innerHTML = ''; // Limpiar la paginación anterior
+                for (let i = 1; i <= Math.ceil(data.total / 50); i++) { // Calcular el total de páginas
+                    var button = document.createElement('button');
+                    button.textContent = i;
+                    button.onclick = function () {
+
+                        cargarPacientesPorProfesional(cod_prof, i); // Llamar a cargar con la página seleccionada
+                    };
+                    if (i === pagina) { // Desactivar el botón de la página actual
+                        button.disabled = true;
+                    }
+                    paginacion.appendChild(button);
+                }
             }
 
+            // Definir la variable cod_prof en un ámbito más amplio
+            let cod_prof;
 
-
-
-            // Agrega un event listener para detectar cambios en el elemento select con id cod_prof
+            // Agregar un event listener para detectar cambios en el elemento select con id cod_prof
             document.getElementById('cod_prof').addEventListener('change', function () {
-                var cod_prof = this.value; // Obtener el valor seleccionado del profesional
+                cod_prof = this.value; // Obtener el valor seleccionado del profesional
                 cargarPacientesPorProfesional(cod_prof); // Llamar a la función para cargar pacientes por profesional
             });
+
+            // Ejemplo de cómo manejar el clic en las páginas
+            document.querySelectorAll('.pagina').forEach(pagina => {
+                pagina.addEventListener('click', function () {
+                    const numeroPagina = parseInt(this.textContent);
+                    if (cod_prof) { // Verificar si cod_prof está definido
+                        cargarPacientesPorProfesional(cod_prof, numeroPagina); // Llama a la función con el número de página
+                    } else {
+                        console.warn("Código del profesional no definido."); // Mensaje de advertencia si cod_prof es undefined
+                    }
+                });
+            });
+
+            //MODAL EDITAR
+            function abrirModalEditar(codPaci, nombreYapellido, benef, token, codPractica, codDiag) {
+                // Asignar los valores a los campos del modal
+                document.getElementById('idPaciente').value = codPaci;
+                document.getElementById('nombreYapellidoModal').value = nombreYapellido;
+                document.getElementById('benefModal').value = benef;
+                document.getElementById('cod_practicaModal').value = codPractica;
+                document.getElementById('tokenModal').value = token;
+
+                // Abrir el modal
+                $('#modalEditarPaciente').modal('show');
+
+                // Aquí puedes agregar lógica para llenar las opciones de diagnóstico y práctica
+                llenarOpcionesDiagnostico(codDiag); // Llenar opciones de diagnóstico
+                llenarOpcionesPractica(codPractica); // Llenar opciones de práctica
+            }
+
+            function llenarOpcionesDiagnostico(codDiagSeleccionado) {
+                fetch('../controlador/control_paciente.php?obtenerDiagnosticos')
+                    .then(response => response.json())
+                    .then(diagnosticos => {
+                        var selectDiagnostico = document.getElementById('cod_diagModal');
+                        selectDiagnostico.innerHTML = '<option value="">Seleccionar Diagnóstico</option>'; // Limpiar opciones
+
+                        diagnosticos.forEach(diagnostico => {
+                            var selected = (diagnostico.cod_diag === codDiagSeleccionado) ? 'selected' : '';
+                            selectDiagnostico.innerHTML += `<option value="${diagnostico.cod_diag}" ${selected}>${diagnostico.cod_diag} - ${diagnostico.descript}</option>`;
+                        });
+                    })
+                    .catch(error => console.error('Error al obtener diagnósticos:', error));
+            }
+
+            function llenarOpcionesPractica(codPracticaSeleccionada) {
+                fetch('../controlador/control_paciente.php?obtenerCodigosPractica')
+                    .then(response => response.json())
+                    .then(codigosPractica => {
+                        var selectPractica = document.getElementById('cod_practicaModal');
+                        selectPractica.innerHTML = '<option value="">Seleccionar Código de Práctica</option>'; // Limpiar opciones
+
+                        codigosPractica.forEach(codigo => {
+                            var selected = (codigo === codPracticaSeleccionada) ? 'selected' : '';
+                            selectPractica.innerHTML += `<option value="${codigo}" ${selected}>${codigo}</option>`;
+                        });
+                    })
+                    .catch(error => console.error('Error al obtener códigos de práctica:', error));
+            }
+
+            document.getElementById('formEditarPaciente').addEventListener('submit', function (e) {
+                e.preventDefault(); // Evitar la recarga de página
+
+                var formData = new FormData(this); // Obtener datos del formulario
+
+                // Aquí eliminamos la fecha del FormData si existe
+                formData.delete('fecha'); // Asegúrate de que 'fecha' sea el nombre del campo en el formulario
+
+                fetch('../controlador/control_paciente.php', {
+                    method: 'POST',
+                    body: formData,
+                })
+                    .then(response => {
+                        return response.text(); // Cambiar a text() para ver el contenido real
+                    })
+                    .then(text => {
+                        console.log(text); // Mostrar el contenido de la respuesta en la consola
+                        try {
+                            const data = JSON.parse(text); // Intentar convertir a JSON
+                            if (data.success) {
+                                alert('Paciente actualizado correctamente');
+                                $('#modalEditarPaciente').modal('hide'); // Cerrar el modal
+                                cargarPacientesPorProfesional(cod_prof); // Volver a cargar los pacientes
+                            } else {
+                                alert('Error al actualizar el paciente: ' + data.message);
+                            }
+                        } catch (e) {
+                            console.error('Error al parsear JSON:', e);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+
+            });
+
 
 
 

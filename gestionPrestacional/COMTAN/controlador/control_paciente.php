@@ -13,7 +13,7 @@ if (isset($_POST['agregar'])) {
         header("Location: ../pacientePanel/pacientePanel.php");
         exit(); // Asegura que el script se detenga después de la redirección
     }
-    
+
     $nombreYapellido = $_POST['nombreYapellido'];
     $beneficio = $_POST['benef'];
     $parentesco = $_POST['parent'];
@@ -21,7 +21,7 @@ if (isset($_POST['agregar'])) {
     $cod_practica = $_POST['cod_practica'];
     $fecha = $_POST['fecha'];
     $cod_diag = $_POST['cod_diag'];// Obtener el código de diagnóstico del formulario 
-    $token = $_POST['token']; 
+    $token = $_POST['token'];
     // Concatenamos $beneficio y $parentesco en una sola cadena
     $beneficio_concatenado = $beneficio . $parentesco;
 
@@ -47,8 +47,56 @@ if (isset($_POST['agregar'])) {
     exit(); // Asegura que el script se detenga después de la redirección
 }
 
+// Función para actualizar paciente
+function actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token, $codDiag)
+{
+    global $conn; // Usar la conexión a la base de datos
 
-function obtenerPacientesConFiltro($fecha_desde, $fecha_hasta, $profesional) {
+    // Preparar la consulta
+    $sql = "UPDATE paciente SET nombreYapellido = ?, benef = ?, cod_practica = ?, token = ?, cod_diag = ? WHERE cod_paci = ?";
+    $stmt = $conn->prepare($sql); // Cambia $conexion por $conn
+    if ($stmt === false) {
+        return false; // Devolver falso si la preparación de la consulta falla
+    }
+
+    $stmt->bind_param('ssssss', $nombreYapellido, $benef, $codPractica, $token, $codDiag, $id);
+
+    // Ejecutar la consulta y devolver el resultado
+    if ($stmt->execute()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
+// Manejar la solicitud
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Verificar que se reciban todos los parámetros necesarios
+    if (isset($_POST['id'], $_POST['nombreYapellido'], $_POST['benef'], $_POST['cod_practica'], $_POST['token'], $_POST['cod_diag'])) {
+        $id = $_POST['id'];
+        $nombreYapellido = $_POST['nombreYapellido'];
+        $benef = $_POST['benef'];
+        $codPractica = $_POST['cod_practica'];
+        $token = $_POST['token'];
+        $codDiag = $_POST['cod_diag'];
+
+        // Llamar a la función para actualizar el paciente
+        if (actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token, $codDiag)) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error al actualizar el paciente']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Faltan parámetros']);
+    }
+    exit;
+}
+
+
+function obtenerPacientesConFiltro($fecha_desde, $fecha_hasta, $profesional)
+{
     global $conn;
 
     // Preparar la consulta SQL base para obtener pacientes
@@ -93,7 +141,8 @@ function obtenerPacientesConFiltro($fecha_desde, $fecha_hasta, $profesional) {
     }
 }
 
-function obtenerPacientesConFiltroEstadisticas($fecha_desde, $fecha_hasta, $profesional, $numRegistros) {
+function obtenerPacientesConFiltroEstadisticas($fecha_desde, $fecha_hasta, $profesional, $numRegistros)
+{
     global $conn;
 
     // Preparar la consulta SQL base para obtener pacientes
@@ -143,7 +192,8 @@ function obtenerPacientesConFiltroEstadisticas($fecha_desde, $fecha_hasta, $prof
     }
 }
 
-function obtenerPacientesConFiltroParaPDF($fecha_desde, $fecha_hasta, $profesional) {
+function obtenerPacientesConFiltroParaPDF($fecha_desde, $fecha_hasta, $profesional)
+{
     global $conn;
 
     // Preparar la consulta SQL base para obtener pacientes
@@ -189,7 +239,8 @@ function obtenerPacientesConFiltroParaPDF($fecha_desde, $fecha_hasta, $profesion
 }
 
 
-function obtenerTotalPacientesParaProfesional($profesional, $fecha_desde, $fecha_hasta) {
+function obtenerTotalPacientesParaProfesional($profesional, $fecha_desde, $fecha_hasta)
+{
     global $conn;
 
     // Preparar la consulta SQL para obtener el total de pacientes para un profesional específico dentro del rango de fechas
@@ -413,18 +464,24 @@ function actualizarEstadoCargado($cod_paci, $nuevo_estado)
 
 
 // Función para obtener los pacientes de un profesional específico
-function obtenerPacientesPorProfesional($cod_prof) {
+function obtenerPacientesPorProfesional($cod_prof, $limite, $offset)
+{
     global $conn;
 
-    // Preparar la consulta SQL para obtener los pacientes del profesional
-    $sql = "SELECT * FROM paciente WHERE cod_prof = ?";
+    // Preparar la consulta SQL para obtener los pacientes del profesional con LIMIT y OFFSET
+    $sql = "SELECT p.*, pr.apellido AS nom_prof 
+        FROM paciente p 
+        LEFT JOIN prof pr ON pr.cod_prof = p.cod_prof  
+        WHERE p.cod_prof = ? 
+        ORDER BY p.fecha DESC 
+        LIMIT ? OFFSET ?";
 
 
     // Preparar la sentencia
     $stmt = $conn->prepare($sql);
 
-    // Vincular el parámetro
-    $stmt->bind_param("i", $cod_prof);
+    // Vincular los parámetros: cod_prof (int), limite (int), offset (int)
+    $stmt->bind_param("iii", $cod_prof, $limite, $offset);
 
     // Ejecutar la consulta
     $stmt->execute();
@@ -450,12 +507,54 @@ function obtenerPacientesPorProfesional($cod_prof) {
     }
 }
 
+function contarPacientesPorProfesional($cod_prof)
+{
+    global $conn;
+
+    // Preparar la consulta SQL para contar los pacientes del profesional
+    $sql = "SELECT COUNT(*) as total FROM paciente WHERE cod_prof = ?";
+
+    // Preparar la sentencia
+    $stmt = $conn->prepare($sql);
+
+    // Vincular el parámetro
+    $stmt->bind_param("i", $cod_prof);
+
+    // Ejecutar la consulta
+    $stmt->execute();
+
+    // Obtener el resultado
+    $result = $stmt->get_result();
+
+    // Verificar si se encontró un resultado
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return (int) $row['total']; // Devolver el total de pacientes
+    } else {
+        return 0; // Si no hay pacientes, devolver 0
+    }
+}
+
 
 
 if (isset($_GET['obtenerPacientesPorProfesional']) && isset($_GET['cod_prof'])) {
     $cod_prof = $_GET['cod_prof'];
-    $pacientes = obtenerPacientesPorProfesional($cod_prof);
-    echo json_encode($pacientes);
+
+    // Obtener el límite y el offset, proporcionando valores predeterminados
+    $limite = isset($_GET['limite']) ? (int) $_GET['limite'] : 50; // Por defecto, 50 pacientes por página
+    $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0; // Por defecto, inicio desde la primera página
+
+    // Obtener los pacientes para el profesional con paginación
+    $pacientes = obtenerPacientesPorProfesional($cod_prof, $limite, $offset);
+
+    // Contar el total de pacientes para la paginación
+    $totalPacientes = contarPacientesPorProfesional($cod_prof);
+
+    // Devolver la lista de pacientes y el total en un solo objeto JSON
+    echo json_encode([
+        'pacientes' => $pacientes,
+        'total' => $totalPacientes
+    ]);
     exit();
 }
 
@@ -497,7 +596,7 @@ function obtenerEspecialidadProfesional($cod_prof)
     }
 }
 
-function obtenerDescripcionPractica($cod_practica )
+function obtenerDescripcionPractica($cod_practica)
 {
     global $conn;
     $sql = "SELECT descript FROM tipo_prac WHERE cod_practica  = ?";
@@ -505,7 +604,7 @@ function obtenerDescripcionPractica($cod_practica )
     // Preparar la sentencia
     $stmt = $conn->prepare($sql);
     // Vincular parámetro
-    $stmt->bind_param("i", $cod_practica );
+    $stmt->bind_param("i", $cod_practica);
     // Ejecutar consulta
     $stmt->execute();
     // Obtener resultado
@@ -611,7 +710,7 @@ if (isset($_GET['buscarPorNombreApellido']) && isset($_GET['nombreYapellido'])) 
     $nombreYapellido = $_GET['nombreYapellido'];
     $datos = obtenerBeneficioPorNombreYApellido($nombreYapellido);
     if ($datos) {
-        echo json_encode(array('success' => true, 'benef' => $datos['benef'],'dni' => $datos['dni'] ));
+        echo json_encode(array('success' => true, 'benef' => $datos['benef'], 'dni' => $datos['dni']));
     } else {
         echo json_encode(array('success' => false, 'message' => 'Beneficio no encontrado'));
     }
@@ -649,6 +748,77 @@ function obtenerBeneficioPorNombreYApellido($nombreYapellido)
         // Devolver false si no se encontró el beneficio
         return false;
     }
+}
+
+// Función para obtener los códigos de práctica
+function obtenerCodigosPracticaEditar()
+{
+    global $conn;
+
+    // Preparar la consulta SQL
+    $sql = "SELECT cod_practica FROM tipo_prac";
+
+    // Ejecutar la consulta
+    $result = $conn->query($sql);
+
+    // Verificar si se encontraron códigos de práctica
+    if ($result->num_rows > 0) {
+        // Inicializar un array para almacenar los códigos de práctica
+        $codigos_practica = array();
+
+        // Iterar sobre los resultados y almacenar los códigos de práctica en el array
+        while ($row = $result->fetch_assoc()) {
+            $codigos_practica[] = $row['cod_practica'];
+        }
+
+        // Devolver el array de códigos de práctica
+        echo json_encode($codigos_practica);
+        exit;
+    } else {
+        // Devolver un array vacío si no se encontraron códigos de práctica
+        echo json_encode(array());
+        exit;
+    }
+}
+
+// Función para obtener diagnósticos con descripción
+function obtenerDiagnosticosConDescripcionEditar()
+{
+    global $conn;
+
+    // Preparar la consulta SQL
+    $sql = "SELECT cod_diag, descript FROM diagnostico";
+
+    // Ejecutar la consulta
+    $result = $conn->query($sql);
+
+    // Verificar si se encontraron diagnósticos
+    if ($result->num_rows > 0) {
+        // Inicializar un array para almacenar los diagnósticos con descripciones
+        $diagnosticos = array();
+
+        // Iterar sobre los resultados y almacenar cada diagnóstico con su descripción en el array
+        while ($row = $result->fetch_assoc()) {
+            $diagnosticos[] = $row;
+        }
+
+        // Devolver el array de diagnósticos con descripciones
+        echo json_encode($diagnosticos);
+        exit;
+    } else {
+        // Devolver un array vacío si no se encontraron diagnósticos
+        echo json_encode(array());
+        exit;
+    }
+}
+
+// Manejar la solicitud AJAX para obtener diagnósticos y códigos de práctica
+if (isset($_GET['obtenerDiagnosticos'])) {
+    obtenerDiagnosticosConDescripcionEditar();
+}
+
+if (isset($_GET['obtenerCodigosPractica'])) {
+    obtenerCodigosPracticaEditar();
 }
 
 ?>

@@ -402,20 +402,16 @@ if (!isset($_SESSION['usuario'])) {
                                 var fechaFormateada = dia + '/' + mes + '/' + año + ' ' + hora + ':' + minutos + ':' + segundos;
 
                                 // Agregar los datos del paciente a la fila de la tabla
-                                row.innerHTML = '<td>' + paciente.nombreYapellido + '</td><td>' + paciente.benef + '</td><td>' + data.nombreProfesional + '</td><td>' + paciente.cod_practica + '</td><td>' + paciente.cod_diag + '</td><td>' + fechaFormateada ; // + '</td><td><button onclick="editarPaciente(' + paciente.cod_paci + ')">Editar</button></td>'
-                            } else {
+                                row.innerHTML = '<td>' + paciente.nombreYapellido + '</td><td>' + paciente.benef + '</td><td>' + data.nombreProfesional + '</td><td>' + paciente.cod_practica + '</td><td>' + paciente.cod_diag + '</td><td>' + fechaFormateada ;
+                            } 
+                            else {
                                 console.error('Error al obtener el nombre del profesional:', data.message);
-                                // Si hay un error, mostrar solo los detalles del paciente sin el nombre del profesional
-                                row.innerHTML = '<td>' + paciente.nombreYapellido + '</td><td>' + paciente.benef + '</td><td></td><td>' + paciente.cod_practica + '</td><td>' + paciente.cod_diag + '</td><td>' + paciente.fecha + '</td><td><button onclick="editarPaciente(' + paciente.cod_paci + ')">Editar</button></td>'; // Agregado: Fecha y botón de Editar
                             }
                             // Agregar la fila a la tabla
                             tbody.appendChild(row);
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            // Si hay un error, mostrar solo los detalles del paciente sin el nombre del profesional
-                            row.innerHTML = '<td>' + paciente.nombreYapellido + '</td><td>' + paciente.benef + '</td><td></td><td>' + paciente.cod_practica + '</td><td>' + paciente.cod_diag + '</td><td>' + paciente.fecha + '</td><td><button onclick="editarPaciente(' + paciente.cod_paci + ')">Editar</button></td>'; // Agregado: Fecha y botón de Editar
-                            // Agregar la fila a la tabla
                             tbody.appendChild(row);
                         });
                 });
