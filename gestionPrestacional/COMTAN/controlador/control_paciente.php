@@ -35,7 +35,7 @@ if (isset($_POST['agregar'])) {
         $_SESSION['alert_message'] = "El paciente ya se encuentra cargado con la fecha especificada y el beneficio.";
     } else {
         // Llama a la función agregarPaciente con los argumentos necesarios, incluido y $cod_diag
-        if (agregarPaciente($nombreYapellido, $beneficio, $parentesco, $cod_prof, $cod_practica, $cod_diag, $token)) {
+        if (agregarPaciente($nombreYapellido, $beneficio, $parentesco,$fecha, $cod_prof, $cod_practica, $cod_diag, $token)) {
             $_SESSION['alert_message'] = "Paciente agregado correctamente";
         } else {
             $_SESSION['alert_message'] = "Error al agregar el paciente";
@@ -48,18 +48,18 @@ if (isset($_POST['agregar'])) {
 }
 
 // Función para actualizar paciente
-function actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token, $codDiag)
+function actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token,$fecha, $codDiag)
 {
     global $conn; // Usar la conexión a la base de datos
 
     // Preparar la consulta
-    $sql = "UPDATE paciente SET nombreYapellido = ?, benef = ?, cod_practica = ?, token = ?, cod_diag = ? WHERE cod_paci = ?";
+    $sql = "UPDATE paciente SET nombreYapellido = ?, benef = ?, cod_practica = ?, fecha = ?, token = ?, cod_diag = ? WHERE cod_paci = ?";
     $stmt = $conn->prepare($sql); // Cambia $conexion por $conn
     if ($stmt === false) {
         return false; // Devolver falso si la preparación de la consulta falla
     }
 
-    $stmt->bind_param('ssssss', $nombreYapellido, $benef, $codPractica, $token, $codDiag, $id);
+    $stmt->bind_param('sssssss', $nombreYapellido, $benef, $codPractica,$fecha, $token, $codDiag, $id);
 
     // Ejecutar la consulta y devolver el resultado
     if ($stmt->execute()) {
@@ -81,9 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $codPractica = $_POST['cod_practica'];
         $token = $_POST['token'];
         $codDiag = $_POST['cod_diag'];
+        $fecha_edit = $_POST['fecha_edit'];
 
         // Llamar a la función para actualizar el paciente
-        if (actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token, $codDiag)) {
+        if (actualizarPaciente($id, $nombreYapellido, $benef, $codPractica,$token,$fecha_edit, $codDiag)) {
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Error al actualizar el paciente']);

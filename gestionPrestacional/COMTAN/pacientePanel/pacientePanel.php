@@ -180,6 +180,11 @@ if (!isset($_SESSION['usuario'])) {
                     class="mt-1 p-2 block w-1/2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
             </div>
 
+            <div class="mb-2 flex items-center">
+                <label for="fecha" class="form-label">Fecha:</label>
+                <input type="date" class="form-control" id="fecha" name="fecha">
+            </div>
+
 
             <div class="mb-4">
                 <label for="cod_practica" class="block text-sm font-medium text-gray-700">Código de Práctica:</label>
@@ -279,6 +284,11 @@ if (!isset($_SESSION['usuario'])) {
                                 <label for="tokenModal" class="block text-sm font-medium text-gray-700">Token:</label>
                                 <input type="text" id="tokenModal" name="token" required
                                     class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="fecha_edit" class="form-label">Fecha</label>
+                                <input type="date" class="form-control" id="fecha_edit" name="fecha_edit">
                             </div>
 
                             <div class="mb-4">
@@ -424,7 +434,7 @@ if (!isset($_SESSION['usuario'])) {
                         <td>${paciente.cod_diag || 'N/A'}</td>
                         <td>${formatearFecha(paciente.fecha) || 'N/A'}</td>
                         <td>${paciente.token}</td>
-                        <td><button onclick="abrirModalEditar(${paciente.cod_paci}, '${paciente.nombreYapellido}', '${paciente.benef}', '${paciente.token}', '${paciente.cod_practica}', '${paciente.cod_diag || ''}')">Editar</button></td>
+                        <td><button onclick="abrirModalEditar(${paciente.cod_paci}, '${paciente.nombreYapellido}', '${paciente.benef}', '${paciente.token}','${paciente.fecha}', '${paciente.cod_practica}', '${paciente.cod_diag || ''}')">Editar</button></td>
                     `;
                     tbody.appendChild(row);
                 });
@@ -470,13 +480,14 @@ if (!isset($_SESSION['usuario'])) {
             });
 
             //MODAL EDITAR
-            function abrirModalEditar(codPaci, nombreYapellido, benef, token, codPractica, codDiag) {
+            function abrirModalEditar(codPaci, nombreYapellido, benef, token,fecha, codPractica, codDiag) {
                 // Asignar los valores a los campos del modal
                 document.getElementById('idPaciente').value = codPaci;
                 document.getElementById('nombreYapellidoModal').value = nombreYapellido;
                 document.getElementById('benefModal').value = benef;
                 document.getElementById('cod_practicaModal').value = codPractica;
                 document.getElementById('tokenModal').value = token;
+                document.getElementById('fecha_edit').value = fecha;
 
                 // Abrir el modal
                 $('#modalEditarPaciente').modal('show');
@@ -521,8 +532,6 @@ if (!isset($_SESSION['usuario'])) {
 
                 var formData = new FormData(this); // Obtener datos del formulario
 
-                // Aquí eliminamos la fecha del FormData si existe
-                formData.delete('fecha'); // Asegúrate de que 'fecha' sea el nombre del campo en el formulario
 
                 fetch('../controlador/control_paciente.php', {
                     method: 'POST',
