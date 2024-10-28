@@ -1,17 +1,17 @@
 <?php
-
+/*
+QR FACIL
 $hostname = "localhost";
 $username = "root";
 $password = "";
 $database = "qr";
+*/
 
-/*
-QR FACIL
 $hostname = "localhost";
 $username = "worldsof_OME";
 $password = "Wss1593.";
 $database = "worldsof_qr_facil";
-*/
+
 
 $conexion = mysqli_connect($hostname, $username, $password, $database);
 

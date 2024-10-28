@@ -1,17 +1,19 @@
 <?php
+/*
+PEÑI
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "worldsof_gestion_prestacional_peni";
+*/
 
-/*
-PEÑI
+
 $servername = "localhost";
 $username = "worldsof_OME";
 $password = "Wss1593.";
 $dbname = "worldsof_gestion_prestacional_peni"; 
 
-*/
+
 
 // Crear conexión
 $conn = new mysqli($servername, $username, $password, $dbname);

@@ -194,6 +194,7 @@ if (!isset($_SESSION['usuario'])) {
                         <th class="px-4 py-2">Especialidad</th>
                         <th class="px-4 py-2">Diagnostico</th>
                         <th class="px-4 py-2">Fecha</th>
+                        <th class="px-4 py-2">Token</th>
                         <th class="px-4 py-2">Cargado</th>
                     </tr>
                 </thead>
@@ -209,6 +210,7 @@ if (!isset($_SESSION['usuario'])) {
                         echo "<td class='border px-4 py-2'>" . obtenerEspecialidadProfesional($paciente["cod_prof"]) . "</td>";
                         echo "<td class='border px-4 py-2'>" . $paciente["cod_diag"] . "</td>";
                         echo "<td class='border px-4 py-2'>" . date('d/m/Y H:i:s', strtotime($paciente["fecha"])) . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $paciente["token"] . "</td>";
                         echo "<td class='border px-4 py-2'>";
 
                         // Formulario para cambiar el estado 'cargado'

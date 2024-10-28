@@ -1,8 +1,14 @@
 <?php
+
 $hostname = "localhost";
+$username = "worldsof_OME";
+$password = "Wss1593.";
+$database = "worldsof_medical_pq0328";
+
+/*$hostname = "localhost";
 $username = "root";
 $password = "";
-$database = "medical_pq000";
+$database = "medical_pq000"; */
 
 // Crear conexión
 $conn = new mysqli($hostname, $username, $password, $database);

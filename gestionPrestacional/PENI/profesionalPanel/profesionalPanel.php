@@ -1,5 +1,5 @@
 <?php
-
+require_once '../controlador/control_paciente.php';
 
 require_once '../conexion/conexion.php';
 
@@ -21,6 +21,11 @@ if ($result->num_rows > 0) {
 }
 
 
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['usuario'])) {
+    header("Location: ../index.php");
+    exit; // Asegura que el script se detenga después de redirigir
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
