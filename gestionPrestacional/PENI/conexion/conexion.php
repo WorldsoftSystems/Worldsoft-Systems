@@ -1,4 +1,5 @@
 <?php
+
 /*
 PEÑI
 $servername = "localhost";
@@ -8,10 +9,12 @@ $dbname = "worldsof_gestion_prestacional_peni";
 */
 
 
+
 $servername = "localhost";
 $username = "worldsof_OME";
 $password = "Wss1593.";
 $dbname = "worldsof_gestion_prestacional_peni"; 
+
 
 
 

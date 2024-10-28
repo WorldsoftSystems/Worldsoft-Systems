@@ -12,7 +12,7 @@ if (empty($fecha_desde) || empty($fecha_hasta)) {
     die(json_encode(['error' => 'Parámetros de fecha inválidos']));
 }
 
-// Consulta SQL
+// Consulta SQL sin referencias
 $sql = "SELECT DISTINCT
     CONCAT(p.nombre,' - ', o.siglas) AS nombre,
     p.benef,
@@ -23,57 +23,13 @@ $sql = "SELECT DISTINCT
             FROM paci_modalidad pm
             JOIN modalidad m ON m.id = pm.modalidad
             WHERE pm.id_paciente = p.id
-            AND pm.fecha <= t.fecha
-            AND m.codigo IN (1, 2, 3, 4) -- Filtrar modalidades específicas
-            ORDER BY pm.fecha DESC
-            LIMIT 1
-        ),
-        (
-            SELECT  CONCAT(m.codigo , ' - ', m.descripcion)
-            FROM paci_modalidad pm
-            JOIN modalidad m ON m.id = pm.modalidad
-            WHERE pm.id_paciente = p.id
-            AND pm.fecha > (
-                SELECT COALESCE(MAX(e.fecha_egreso), '9999-12-31')
-                FROM egresos e
-                WHERE e.id_paciente = p.id
-            )
-            AND pm.fecha <= t.fecha
-            AND m.codigo IN (1, 2, 3, 4) -- Filtrar modalidades específicas
-            ORDER BY pm.fecha ASC
-            LIMIT 1
-        )
-    ) AS modalidad_full,
-    CONCAT(act2.codigo, ' - ', act2.descripcion) AS turno_pract,
-    MAX(t.fecha) AS fecha_turno,
-    NULL AS cantidad
-FROM paciente p
-LEFT JOIN paci_modalidad pM ON pM.id_paciente = p.id
-LEFT JOIN turnos t ON t.paciente = p.id
-LEFT JOIN actividades act2 ON act2.id = t.motivo
-LEFT JOIN obra_social o   ON o.id = p.obra_social
-WHERE (t.fecha BETWEEN ? AND ?) AND p.obra_social = ?
-GROUP BY p.benef
-
-UNION
-
-SELECT DISTINCT
-    CONCAT(p.nombre, ' - ', o.siglas) AS nombre,
-    p.benef,
-    p.parentesco,
-    COALESCE(
-        (
-            SELECT  CONCAT(m.codigo , ' - ', m.descripcion)
-            FROM paci_modalidad pm
-            JOIN modalidad m ON m.id = pm.modalidad
-            WHERE pm.id_paciente = p.id
             AND pm.fecha <= pract.fecha
             AND m.codigo IN (1, 2, 3, 4) -- Filtrar modalidades específicas
             ORDER BY pm.fecha DESC
             LIMIT 1
         ),
         (
-            SELECT  CONCAT(m.codigo , ' - ', m.descripcion)
+            SELECT CONCAT(m.codigo , ' - ', m.descripcion)
             FROM paci_modalidad pm
             JOIN modalidad m ON m.id = pm.modalidad
             WHERE pm.id_paciente = p.id
@@ -89,7 +45,7 @@ SELECT DISTINCT
         )
     ) AS modalidad_full,
     CONCAT(act.codigo, ' - ', act.descripcion) AS pract_full,
-     MAX(pract.fecha) AS fecha_pract,
+    MAX(pract.fecha) AS fecha_pract,
     pract.cant AS cantidad
 FROM paciente p
 LEFT JOIN obra_social o ON o.id = p.obra_social
@@ -98,7 +54,6 @@ LEFT JOIN actividades act ON act.id = pract.actividad
 WHERE (pract.fecha BETWEEN ? AND ?)
 AND p.obra_social = ?
 GROUP BY p.benef
-
 ";
 
 // Preparar la consulta
@@ -108,7 +63,7 @@ if ($stmt === false) {
 }
 
 // Enlazar los parámetros
-$stmt->bind_param("ssissi", $fecha_desde, $fecha_hasta,$obra_social, $fecha_desde, $fecha_hasta,$obra_social);
+$stmt->bind_param("ssi", $fecha_desde, $fecha_hasta, $obra_social);
 
 // Ejecutar la consulta
 if (!$stmt->execute()) {

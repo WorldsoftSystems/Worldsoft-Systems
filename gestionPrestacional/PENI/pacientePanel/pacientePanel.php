@@ -174,11 +174,6 @@ if (!isset($_SESSION['usuario'])) {
                 <input type="text" id="nombreYapellido" name="nombreYapellido" readonly
                     class="mt-1 p-2 block w-1/2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 mr-2">
             </div>
-            <div class="mb-4 flex items-center">
-                <label for="token" class="block text-sm font-medium text-gray-700 mr-2">Token:</label>
-                <input type="text" id="token" name="token"
-                    class="mt-1 p-2 block w-1/2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-            </div>
 
             <div class="mb-2 flex items-center">
                 <label for="fecha" class="form-label">Fecha:</label>

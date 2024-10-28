@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost:3306
--- Tiempo de generación: 24-10-2024 a las 21:41:59
--- Versión del servidor: 10.6.19-MariaDB-cll-lve-log
--- Versión de PHP: 8.3.12
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 28-10-2024 a las 18:58:22
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `worldsof_medical_prueba`
+-- Base de datos: `medical_prueba`
 --
 
 -- --------------------------------------------------------
@@ -383,6 +383,13 @@ CREATE TABLE `comprobantes` (
   `descripcion` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `comprobantes`
+--
+
+INSERT INTO `comprobantes` (`id`, `descripcion`) VALUES
+(7, 'FACTURA');
+
 -- --------------------------------------------------------
 
 --
@@ -395,6 +402,13 @@ CREATE TABLE `cuentas` (
   `c_cuenta` int(255) NOT NULL,
   `desc_cuenta` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `cuentas`
+--
+
+INSERT INTO `cuentas` (`id`, `desc_rubro`, `c_cuenta`, `desc_cuenta`) VALUES
+(7, 4, 0, 'EDESUR');
 
 -- --------------------------------------------------------
 
@@ -1064,7 +1078,8 @@ INSERT INTO `egresos` (`id_paciente`, `fecha_egreso`, `hora_egreso`, `diag`, `mo
 (1557, '2024-09-12', '13:30:00', 3, 11, 8, 68),
 (1487, '2024-01-15', '14:15:00', 3, 11, 8, 69),
 (1387, '2024-06-07', '12:00:00', 3, 11, 8, 70),
-(1520, '2024-05-23', '16:00:00', 3, 11, 6, 71);
+(1520, '2024-05-23', '16:00:00', 3, 11, 6, 71),
+(25600, '2024-11-01', '10:58:00', 3, 4, 8, 73);
 
 -- --------------------------------------------------------
 
@@ -1289,6 +1304,13 @@ CREATE TABLE `hc_admision_ambulatorio` (
   `hc_desc_medi` varchar(255) NOT NULL,
   `hc_fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `hc_admision_ambulatorio`
+--
+
+INSERT INTO `hc_admision_ambulatorio` (`id`, `id_paciente`, `id_prof`, `antecedentes`, `asc_psiquico`, `act_psiquica`, `act`, `orientacion`, `conciencia`, `memoria`, `atencion`, `pensamiento`, `cont_pensamiento`, `sensopercepcion`, `afectividad`, `inteligencia`, `juicio`, `esfinteres`, `tratamiento`, `evolucion`, `hc_cada_medi`, `hc_desc_medi`, `hc_fecha`) VALUES
+(27, 25600, 1, 'no', 'Normal', 'Pasiva', 'Abulia', 'Desorientación en el Tiempo', 'Sin Conciencia de Situación', 'Fallas Globales', 'hiperprosexia', 'Normal', 'coherente', 'Sin alteraciones', 'Hipertimia displacentera', 'Superior', 'Insuficiencia', 'Incontinencia Vesical/Rectal/Vésico-rectal', 'Psicofarmacológico reflejos', 'Buena', '2 semanas', 'nada', '2024-10-25');
 
 -- --------------------------------------------------------
 
@@ -36801,15 +36823,23 @@ CREATE TABLE `medicacion_paci` (
   `medicamento` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
-  `dosis` double(10,1) NOT NULL
+  `dosis` double(10,1) NOT NULL,
+  `cantidad` int(11) DEFAULT NULL,
+  `valor` double(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `medicacion_paci`
 --
 
-INSERT INTO `medicacion_paci` (`id`, `id_paciente`, `medicamento`, `fecha`, `hora`, `dosis`) VALUES
-(28, 25600, 15223, '2024-10-24', '15:57:00', 1.5);
+INSERT INTO `medicacion_paci` (`id`, `id_paciente`, `medicamento`, `fecha`, `hora`, `dosis`, `cantidad`, `valor`) VALUES
+(28, 25600, 34317, '2024-10-24', '15:57:00', 1.5, NULL, NULL),
+(30, 25600, 24852, '2024-10-25', '21:39:00', 1.5, NULL, NULL),
+(31, 25600, 15225, '2024-10-25', '02:48:01', 1.0, NULL, NULL),
+(32, 25092, 24852, '2024-10-26', '12:00:00', 1.0, NULL, NULL),
+(33, 25092, 20399, '2024-10-26', '20:00:00', 1.5, NULL, NULL),
+(34, 24659, 25782, '2024-10-28', '12:00:00', 1.5, 1, 15000.00),
+(35, 24659, 15225, '2024-10-30', '15:00:00', 2.0, 1, 10000.00);
 
 -- --------------------------------------------------------
 
@@ -36858,6 +36888,13 @@ CREATE TABLE `movimientos` (
   `ingreso` decimal(10,0) DEFAULT NULL,
   `egreso` decimal(10,0) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `movimientos`
+--
+
+INSERT INTO `movimientos` (`id`, `fecha`, `detalle`, `ingreso`, `egreso`) VALUES
+(12, '2024-10-26', 7, 0, 50000);
 
 -- --------------------------------------------------------
 
@@ -38864,7 +38901,7 @@ INSERT INTO `paciente` (`id`, `nombre`, `obra_social`, `fecha_nac`, `sexo`, `dom
 (25596, 'KOROPECHI SONIA ALEJANDRA', 4, '1974-09-27', 'F', NULL, NULL, NULL, NULL, NULL, 'DNI', 11938609, '2024-09-12', '00:00:00', 173, 150953029101, 32, '00', NULL, NULL, 1, 3, NULL, NULL),
 (25597, 'CORBALAN GUILLERMO ESTEBAN', 4, '1967-10-12', 'M', NULL, NULL, NULL, NULL, NULL, 'DNI', 18363773, '2024-09-26', '00:00:00', 115, 140133327706, 32, '00', NULL, NULL, 2, 4, NULL, NULL),
 (25598, 'AVALOS DORA', 4, '1934-05-01', 'F', NULL, NULL, NULL, NULL, NULL, 'DNI', 3226096, '2024-09-17', '00:00:00', 115, 45023303808, 32, '00', NULL, NULL, 2, 4, NULL, NULL),
-(25600, 'PONCE MARIA ANTONIA', 4, '1945-06-25', 'F', 'calle 7 4006', 'Berazategui', 'Berazategui', 1884, '1131463499', 'DNI', 4413155, '2024-10-24', '15:00:00', 1, 155415872401, 37, '00', 5, 'ama de casa', 1, 1, 0, 1);
+(25600, 'PONCE MARIA ANTONIA', 4, '1945-06-25', 'F', 'calle 7 4006', 'Berazategui', 'Berazategui', 1884, '1161536595', 'DNI', 4413155, '2024-10-22', '15:00:00', 1, 155415872401, 37, '00', 5, 'ama de casa', 1, 1, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -40793,7 +40830,7 @@ INSERT INTO `paci_diag` (`id_paciente`, `fecha`, `codigo`, `id`) VALUES
 (24663, '2023-07-01', 3, 1795),
 (24716, '2023-07-10', 3, 1796),
 (24637, '2023-07-01', 3, 1797),
-(25600, '2024-10-24', 469, 1799);
+(25600, '2024-10-25', 8, 1800);
 
 -- --------------------------------------------------------
 
@@ -42742,7 +42779,8 @@ INSERT INTO `paci_modalidad` (`id_paciente`, `modalidad`, `fecha`, `id`) VALUES
 (24663, 7, '2023-07-01', 1795),
 (24716, 7, '2023-07-10', 1796),
 (24637, 7, '2023-07-01', 1797),
-(25600, 4, '2024-10-24', 1799);
+(25600, 1, '2024-10-22', 1802),
+(25600, 1, '2024-11-02', 1804);
 
 -- --------------------------------------------------------
 
@@ -62985,7 +63023,12 @@ INSERT INTO `practicas` (`id_paciente`, `fecha`, `hora`, `profesional`, `activid
 (23426, '2024-09-03', '15:00:00', 139, 601, 1, 12959),
 (18767, '2024-09-19', '15:00:00', 31, 605, 1, 12960),
 (23666, '2024-09-04', '15:00:00', 8, 601, 1, 12961),
-(24661, '2024-09-16', '15:00:00', 3, 629, 1, 12962);
+(24661, '2024-09-16', '15:00:00', 3, 629, 1, 12962),
+(25600, '2024-10-30', '12:00:00', 1, 501, 1, 12964),
+(25600, '2024-10-30', '12:30:00', 1, 503, 1, 12965),
+(25275, '2024-10-27', '10:00:00', 1, 547, 1, 12966),
+(25600, '2024-10-30', '12:30:00', 1, 505, 1, 12967),
+(25600, '2024-10-26', '09:00:00', 1, 601, 1, 12968);
 
 -- --------------------------------------------------------
 
@@ -63205,7 +63248,7 @@ CREATE TABLE `responsable` (
   `tel` int(255) NOT NULL,
   `tipo_familiar` int(255) NOT NULL,
   `dni` int(255) NOT NULL,
-  `dom` int(255) NOT NULL,
+  `dom` varchar(255) NOT NULL,
   `localidad` varchar(255) NOT NULL,
   `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -63215,7 +63258,7 @@ CREATE TABLE `responsable` (
 --
 
 INSERT INTO `responsable` (`id_paciente`, `nombreYapellido`, `tel`, `tipo_familiar`, `dni`, `dom`, `localidad`, `id`) VALUES
-(25600, 'CEJAS MONICA ', 1161536595, 3, 22355582, 0, 'BERZATEGUI', 5);
+(25600, 'CEJAS MONICA ', 1161536595, 3, 22355582, 'calle 143', 'BERZATEGUI', 5);
 
 -- --------------------------------------------------------
 
@@ -63227,6 +63270,13 @@ CREATE TABLE `rubros` (
   `id` int(11) NOT NULL,
   `descripcion` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `rubros`
+--
+
+INSERT INTO `rubros` (`id`, `descripcion`) VALUES
+(4, 'LUZ');
 
 -- --------------------------------------------------------
 
@@ -63382,9 +63432,14 @@ INSERT INTO `turnos` (`id`, `fecha`, `hora`, `paciente`, `id_prof`, `motivo`, `l
 (107, '2024-10-28', '08:00:00', 25172, 1, 578, 'SI', 'SI', ''),
 (108, '2024-10-28', '08:00:00', 24148, 1, 578, 'NO', 'NO', ''),
 (109, '2024-10-28', '09:30:00', 25287, 1, 579, 'SI', 'SI', ''),
-(110, '2024-10-26', '09:15:00', 24809, 1, 579, 'SI', 'SI', ''),
+(110, '2024-10-26', '09:15:00', 24809, 1, 579, 'SI', 'NO', ''),
 (111, '2024-10-26', '09:45:00', 24891, 1, 578, 'SI', 'SI', ''),
-(112, '2024-10-26', '09:30:00', 24659, 1, 633, 'SI', 'SI', '');
+(112, '2024-10-26', '09:30:00', 24659, 1, 633, 'SI', 'SI', ''),
+(113, '2024-10-28', '09:00:00', 25205, 1, 580, 'SI', 'NO', ''),
+(114, '2024-10-30', '12:30:00', 25600, 1, 505, 'SI', 'SI', ''),
+(115, '2024-09-26', '09:30:00', 25600, 1, 504, 'SI', 'SI', ''),
+(116, '2024-10-30', '13:00:00', 25275, 1, 503, 'SI', 'SI', ''),
+(117, '2024-10-30', '13:30:00', 25275, 1, 503, 'SI', 'SI', '');
 
 -- --------------------------------------------------------
 
@@ -63834,9 +63889,9 @@ ALTER TABLE `traslados`
 --
 ALTER TABLE `turnos`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_profesional` (`id_prof`),
   ADD KEY `fk_turno_paciente` (`paciente`),
-  ADD KEY `fk_motivo_actividad` (`motivo`);
+  ADD KEY `fk_turno_actividad` (`motivo`),
+  ADD KEY `fk_turno_profesional` (`id_prof`);
 
 --
 -- Indices de la tabla `t_juicio`
@@ -63929,13 +63984,13 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `comprobantes`
 --
 ALTER TABLE `comprobantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `cuentas`
 --
 ALTER TABLE `cuentas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `curaduria`
@@ -63959,7 +64014,7 @@ ALTER TABLE `disponibilidad`
 -- AUTO_INCREMENT de la tabla `egresos`
 --
 ALTER TABLE `egresos`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT de la tabla `evoluciones_amb`
@@ -63995,7 +64050,7 @@ ALTER TABLE `habitaciones`
 -- AUTO_INCREMENT de la tabla `hc_admision_ambulatorio`
 --
 ALTER TABLE `hc_admision_ambulatorio`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `judiciales`
@@ -64019,7 +64074,7 @@ ALTER TABLE `medicacion`
 -- AUTO_INCREMENT de la tabla `medicacion_paci`
 --
 ALTER TABLE `medicacion_paci`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `modalidad`
@@ -64031,7 +64086,7 @@ ALTER TABLE `modalidad`
 -- AUTO_INCREMENT de la tabla `movimientos`
 --
 ALTER TABLE `movimientos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `nutricion`
@@ -64061,7 +64116,7 @@ ALTER TABLE `paciente`
 -- AUTO_INCREMENT de la tabla `paci_diag`
 --
 ALTER TABLE `paci_diag`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1800;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1801;
 
 --
 -- AUTO_INCREMENT de la tabla `paci_habitacion`
@@ -64073,13 +64128,13 @@ ALTER TABLE `paci_habitacion`
 -- AUTO_INCREMENT de la tabla `paci_modalidad`
 --
 ALTER TABLE `paci_modalidad`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1800;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1805;
 
 --
 -- AUTO_INCREMENT de la tabla `paci_op`
 --
 ALTER TABLE `paci_op`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `parametro_sistema`
@@ -64097,7 +64152,7 @@ ALTER TABLE `periodo`
 -- AUTO_INCREMENT de la tabla `practicas`
 --
 ALTER TABLE `practicas`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12963;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12970;
 
 --
 -- AUTO_INCREMENT de la tabla `profesional`
@@ -64115,7 +64170,7 @@ ALTER TABLE `responsable`
 -- AUTO_INCREMENT de la tabla `rubros`
 --
 ALTER TABLE `rubros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `salidas`
@@ -64163,7 +64218,7 @@ ALTER TABLE `traslados`
 -- AUTO_INCREMENT de la tabla `turnos`
 --
 ALTER TABLE `turnos`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
 
 --
 -- AUTO_INCREMENT de la tabla `t_juicio`
@@ -64356,6 +64411,14 @@ ALTER TABLE `paci_op`
 --
 ALTER TABLE `profesional`
   ADD CONSTRAINT `fk_profesional_especialidad` FOREIGN KEY (`id_especialidad`) REFERENCES `especialidad` (`id_especialidad`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `turnos`
+--
+ALTER TABLE `turnos`
+  ADD CONSTRAINT `fk_turno_actividad` FOREIGN KEY (`motivo`) REFERENCES `actividades` (`id`),
+  ADD CONSTRAINT `fk_turno_paciente` FOREIGN KEY (`paciente`) REFERENCES `paciente` (`id`),
+  ADD CONSTRAINT `fk_turno_profesional` FOREIGN KEY (`id_prof`) REFERENCES `profesional` (`id_prof`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
