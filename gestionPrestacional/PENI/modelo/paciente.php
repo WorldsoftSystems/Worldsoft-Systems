@@ -1,7 +1,7 @@
 <?php
 require_once '../conexion/conexion.php';
 
-function agregarPaciente($nombreYapellido, $benef, $parent,$fecha, $cod_prof, $cod_practica, $cod_diag) {
+function agregarPaciente($nombreYapellido, $benef, $parent, $cod_prof, $cod_practica, $cod_diag) {
     global $conn;
 
     // Normalizar el nombre (reemplazar caracteres especiales)
@@ -16,8 +16,8 @@ function agregarPaciente($nombreYapellido, $benef, $parent,$fecha, $cod_prof, $c
     $nombreYapellido = preg_replace('/[^a-zA-Z0-9\s]/', '', $nombreYapellido);
 
     // Realizar la inserción del paciente en la tabla paciente, incluyendo el Token
-    $sql_insert_paciente = "INSERT INTO paciente (nombreYapellido, benef, cod_prof, cod_practica,fecha, cod_diag) 
-                            VALUES ('$nombreYapellido', CONCAT('$benef', '$parent'), '$cod_prof', '$cod_practica','$fecha', '$cod_diag')";
+    $sql_insert_paciente = "INSERT INTO paciente (nombreYapellido, benef, cod_prof, cod_practica, cod_diag) 
+                            VALUES ('$nombreYapellido', CONCAT('$benef', '$parent'), '$cod_prof', '$cod_practica', '$cod_diag')";
 
     return $conn->query($sql_insert_paciente);
 }

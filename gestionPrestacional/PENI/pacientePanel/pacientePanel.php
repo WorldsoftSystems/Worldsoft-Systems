@@ -175,11 +175,6 @@ if (!isset($_SESSION['usuario'])) {
                     class="mt-1 p-2 block w-1/2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 mr-2">
             </div>
 
-            <div class="mb-2 flex items-center">
-                <label for="fecha" class="form-label">Fecha:</label>
-                <input type="date" class="form-control" id="fecha" name="fecha">
-            </div>
-
 
             <div class="mb-4">
                 <label for="cod_practica" class="block text-sm font-medium text-gray-700">Código de Práctica:</label>

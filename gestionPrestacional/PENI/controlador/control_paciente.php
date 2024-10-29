@@ -19,7 +19,6 @@ if (isset($_POST['agregar'])) {
     $parentesco = $_POST['parent'];
     $cod_prof = $_POST['cod_prof'];
     $cod_practica = $_POST['cod_practica'];
-    $fecha = $_POST['fecha'];
     $cod_diag = $_POST['cod_diag'];// Obtener el código de diagnóstico del formulario 
     // Concatenamos $beneficio y $parentesco en una sola cadena
     $beneficio_concatenado = $beneficio . $parentesco;
@@ -34,7 +33,7 @@ if (isset($_POST['agregar'])) {
         $_SESSION['alert_message'] = "El paciente ya se encuentra cargado con la fecha especificada y el beneficio.";
     } else {
         // Llama a la función agregarPaciente con los argumentos necesarios, incluido y $cod_diag
-        if (agregarPaciente($nombreYapellido, $beneficio, $parentesco,$fecha, $cod_prof, $cod_practica, $cod_diag)) {
+        if (agregarPaciente($nombreYapellido, $beneficio, $parentesco, $cod_prof, $cod_practica, $cod_diag)) {
             $_SESSION['alert_message'] = "Paciente agregado correctamente";
         } else {
             $_SESSION['alert_message'] = "Error al agregar el paciente";
