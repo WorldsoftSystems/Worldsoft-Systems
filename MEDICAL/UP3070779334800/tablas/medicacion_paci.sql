@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-10-2024 a las 17:23:37
+-- Tiempo de generación: 28-10-2024 a las 18:58:42
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `medical_pq000`
+-- Base de datos: `medical_prueba`
 --
 
 -- --------------------------------------------------------
@@ -33,16 +33,14 @@ CREATE TABLE `medicacion_paci` (
   `medicamento` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
-  `dosis` double(10,1) NOT NULL
+  `dosis` double(10,1) NOT NULL,
+  `cantidad` int(11) DEFAULT NULL,
+  `valor` double(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `medicacion_paci`
 --
-
-INSERT INTO `medicacion_paci` (`id`, `id_paciente`, `medicamento`, `fecha`, `hora`, `dosis`) VALUES
-(27, 25579, 17454, '2024-10-22', '12:30:00', 1.5);
-
 --
 -- Índices para tablas volcadas
 --
@@ -63,7 +61,7 @@ ALTER TABLE `medicacion_paci`
 -- AUTO_INCREMENT de la tabla `medicacion_paci`
 --
 ALTER TABLE `medicacion_paci`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- Restricciones para tablas volcadas

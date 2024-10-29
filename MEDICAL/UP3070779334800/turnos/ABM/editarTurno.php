@@ -22,6 +22,14 @@ $observaciones = $_POST['observaciones'];
 $date = DateTime::createFromFormat('d/m/Y', $fecha);
 $fechaFormateada = $date ? $date->format('Y-m-d') : null;
 
+// Obtener el código de la actividad usando el motivo
+$motivo_stmt = $conn->prepare("SELECT codigo FROM actividades WHERE id = ?");
+$motivo_stmt->bind_param("i", $motivo);
+$motivo_stmt->execute();
+$motivo_stmt->bind_result($codigo_motivo);
+$motivo_stmt->fetch();
+$motivo_stmt->close();
+
 // Actualizar el turno en la base de datos
 $stmt = $conn->prepare("UPDATE turnos SET fecha = ?, hora = ?, paciente = ?, id_prof = ?, motivo = ?, llego = ?, atendido = ?, observaciones = ? WHERE id = ?");
 $stmt->bind_param("ssiiisssi", $fechaFormateada, $hora, $paciente, $id_prof, $motivo, $llego, $atendido, $observaciones, $id);
@@ -30,7 +38,7 @@ if ($stmt->execute()) {
     echo "Turno actualizado exitosamente";
 
     // Insertar en la tabla practicas si llego y atendido son ambos "SI"
-    if ($llego === 'SI' && $atendido === 'SI') {
+    if ($llego === 'SI' && $atendido === 'SI' && $codigo_motivo !== '521001' && $codigo_motivo !== '520101') {
         $cant_t = 1;
 
         // Verificar si ya existe una práctica con la misma fecha, hora y motivo

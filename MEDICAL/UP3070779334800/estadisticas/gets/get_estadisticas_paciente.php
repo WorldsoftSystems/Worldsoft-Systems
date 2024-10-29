@@ -22,66 +22,42 @@ $sql = "WITH ValidRecords AS (
         p.parentesco,
         orden.op,
         COALESCE(
-        (
-            SELECT pm.fecha
-            FROM paci_modalidad pm
-            JOIN modalidad m ON m.id = pm.modalidad
-            WHERE pm.id_paciente = p.id
-            AND pm.fecha <= t.fecha 
-            ORDER BY pm.fecha DESC
-            LIMIT 1
-        ),
-        (
-            SELECT pm.fecha
-            FROM paci_modalidad pm
-            JOIN modalidad m ON m.id = pm.modalidad
-            WHERE pm.id_paciente = p.id
-            AND pm.fecha <= pract.fecha 
-            ORDER BY pm.fecha DESC
-            LIMIT 1
-        ),
-        (
-            SELECT pm.fecha
-            FROM paci_modalidad pm
-            JOIN modalidad m ON m.id = pm.modalidad
-            WHERE pm.id_paciente = p.id
-            AND pm.fecha > (
-                SELECT COALESCE(MAX(e.fecha_egreso), '9999-12-31')
-                FROM egresos e
-                WHERE e.id_paciente = p.id
+            (
+                SELECT pm.fecha
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            ),
+            (
+                SELECT pm.fecha
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha > (
+                    SELECT COALESCE(MAX(e.fecha_egreso), '9999-12-31')
+                    FROM egresos e
+                    WHERE e.id_paciente = p.id
+                )
+                AND pm.fecha <= pract.fecha
+                ORDER BY pm.fecha ASC
+                LIMIT 1
             )
-            AND pm.fecha <= pract.fecha
-            ORDER BY pm.fecha ASC
-            LIMIT 1
-        )
         ) AS ingreso_modalidad,
         p.sexo,
         COALESCE(
-        (
-            SELECT CONCAT(m.codigo , ' - ', m.descripcion)
-            FROM paci_modalidad pm
-            JOIN modalidad m ON m.id = pm.modalidad
-            WHERE pm.id_paciente = p.id
-            AND pm.fecha > (
-                SELECT COALESCE(MAX(e.fecha_egreso), '9999-12-31')
-                FROM egresos e
-                WHERE e.id_paciente = p.id
+            (
+                SELECT CONCAT(m.codigo , ' - ', m.descripcion)
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha
+                ORDER BY pm.fecha DESC
+                LIMIT 1
             )
-            AND pm.fecha <= pract.fecha
-            ORDER BY pm.fecha ASC
-            LIMIT 1
-        ),
-        (
-            SELECT CONCAT(m.codigo , ' - ', m.descripcion)
-            FROM paci_modalidad pm
-            JOIN modalidad m ON m.id = pm.modalidad
-            WHERE pm.id_paciente = p.id
-            AND pm.fecha <= pract.fecha OR pm.fecha <= t.fecha
-            ORDER BY pm.fecha DESC
-            LIMIT 1
-        )
         ) AS modalidad_full,
-        t.fecha AS fecha_turno,
         pract.fecha AS fecha_pract,
         (
             SELECT e.fecha_egreso
@@ -101,15 +77,11 @@ $sql = "WITH ValidRecords AS (
         d_id.codigo AS diag,
         COALESCE(pract.cant, 0) AS cantidad,
         CASE
-            WHEN t.fecha IS NOT NULL AND act_t.codigo NOT IN ('520101', '521001') THEN t.fecha
             WHEN pract.fecha IS NOT NULL AND act_pract.codigo NOT IN ('520101', '521001') THEN pract.fecha
             ELSE NULL
         END AS valid_date
     FROM paciente p
-    
-    LEFT JOIN turnos t ON t.paciente = p.id
     LEFT JOIN practicas pract ON pract.id_paciente = p.id
-    LEFT JOIN actividades act_t ON t.motivo = act_t.id
     LEFT JOIN actividades act_pract ON pract.actividad = act_pract.id
     LEFT JOIN obra_social o ON o.id = p.obra_social
     LEFT JOIN egresos e ON e.id_paciente = p.id
@@ -117,7 +89,7 @@ $sql = "WITH ValidRecords AS (
     LEFT JOIN paci_diag d ON d.id_paciente = p.id
     LEFT JOIN diag d_id ON d_id.id = d.codigo
     LEFT JOIN paci_op orden ON orden.id_paciente = p.id
-    WHERE (t.fecha BETWEEN ? AND ? OR pract.fecha BETWEEN ? AND ?)
+    WHERE pract.fecha BETWEEN ? AND ?
       AND p.obra_social = ?
 )
 
@@ -130,14 +102,12 @@ SELECT
     sexo,
     modalidad_full,
     MAX(valid_date) AS ult_atencion,
-    MAX(fecha_turno) AS fecha_turno,
     egreso,
     diag,
     SUM(cantidad) AS cantidad
 FROM ValidRecords
 GROUP BY nombre, benef, parentesco, ingreso_modalidad, sexo, modalidad_full, egreso, diag
 ORDER BY nombre ASC;
-
 ";
 
 // Preparar la consulta
@@ -147,7 +117,7 @@ if ($stmt === false) {
 }
 
 // Enlazar los parámetros
-$stmt->bind_param("ssssi", $fecha_desde, $fecha_hasta,$fecha_desde, $fecha_hasta,$obra_social);
+$stmt->bind_param("ssi", $fecha_desde, $fecha_hasta, $obra_social);
 
 // Ejecutar la consulta
 if (!$stmt->execute()) {

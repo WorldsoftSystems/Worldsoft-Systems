@@ -1,4 +1,6 @@
 <?php
+
+use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 // Conexión a la base de datos (modifica los datos de conexión según tu configuración)
 include('../../conexion.php');
 
@@ -41,10 +43,8 @@ if ($result->num_rows > 0) {
 
 
     // Definir el rango de fechas del mes anterior
-    //$fechaInicio = date('Y-m-d', strtotime("first day of -1 month"));
-    //$fechaFin = date('Y-m-d', strtotime("last day of -1 month"));
-    $fechaInicio = date('Y-m-d', strtotime('first day of october'));
-    $fechaFin = date('Y-m-d', strtotime('last day of october'));
+    $fechaInicio = date('Y-m-d', strtotime("first day of -1 month"));
+    $fechaFin = date('Y-m-d', strtotime("last day of -1 month"));
 
 
     // Crear la primera línea dinámica del archivo
@@ -164,8 +164,7 @@ if ($result->num_rows > 0) {
     $sqlBenefs = "SELECT DISTINCT p.*
                  FROM paciente p
                  LEFT JOIN practicas practs ON p.id = practs.id_paciente
-                 LEFT JOIN turnos t ON t.paciente = p.id
-                 WHERE  (practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin') OR (t.fecha BETWEEN '$fechaInicio' AND '$fechaFin')
+                 WHERE  (practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin')
                  ";
     $resultBenef = $conn->query($sqlBenefs);
 
@@ -202,8 +201,7 @@ if ($result->num_rows > 0) {
     $sqlPacis = "SELECT DISTINCT p.*
                  FROM paciente p
                  LEFT JOIN practicas practs ON p.id = practs.id_paciente
-                 LEFT JOIN turnos t ON t.paciente = p.id
-                 WHERE  practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin' OR (t.fecha BETWEEN '$fechaInicio' AND '$fechaFin' )
+                 WHERE  practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
                  ";
     $resultPaci = $conn->query($sqlPacis);
 
@@ -242,50 +240,135 @@ if ($result->num_rows > 0) {
     $contenido .= "PRESTACIONES\n";
 
     //AMBULATORIO
-    $sqlAmbulatorioPsi = "SELECT DISTINCT p.parentesco ,
-                                      p.benef,
-                                      p.id,
-                                      boca.num_boca AS boca_atencion, 
-                                      prof.matricula_n AS matricula_prof, 
-                                      mP.fecha AS fecha_modalidad, 
-                                      tA.codigo AS tipo_afiliado, 
-                                      mP.modalidad AS modalidad, 
-                                      e.fecha_egreso AS fecha_egreso, 
-                                      tE.codigo AS tipo_egreso, 
-                                      practs.fecha, 
-                                      practs.hora, 
-                                      practs.cant, 
-                                      act.codigo,
-                                      o.op,
-                                      (SELECT d.codigo 
-                                       FROM paci_diag pd 
-                                       LEFT JOIN diag d ON d.id = pd.codigo
-                                       WHERE pd.id_paciente = p.id 
-                                       ORDER BY pd.fecha DESC 
-                                       LIMIT 1) AS diagnostico_reciente
-               FROM paciente p
-               LEFT JOIN practicas practs ON p.id = practs.id_paciente
-               LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
-               LEFT JOIN actividades act ON act.id = practs.actividad
-               LEFT JOIN profesional prof ON prof.id_prof = p.id_prof
-               LEFT JOIN paci_modalidad mP ON mP.id_paciente = p.id AND practs.fecha BETWEEN mP.fecha AND COALESCE(
-                                                (SELECT MIN(pm2.fecha)
-                                                FROM paci_modalidad pm2
-                                                WHERE pm2.id_paciente = p.id
-                                                AND pm2.fecha > mP.fecha),
-                                                '9999-12-31')
-                LEFT JOIN modalidad m ON m.id = mP.modalidad
-                LEFT JOIN egresos e ON e.id_paciente = p.id AND e.modalidad = m.id
-                LEFT JOIN tipo_afiliado tA ON tA.id = p.tipo_afiliado
-                LEFT JOIN tipo_egreso tE ON tE.id = e.motivo
-                LEFT JOIN paci_op o ON o.id_paciente = p.id AND (o.modalidad_op = m.id OR o.modalidad_op = COALESCE((SELECT pm2.modalidad
-                                                FROM paci_modalidad pm2
-                                                WHERE pm2.id_paciente = p.id
-                                                AND pm2.fecha > mP.fecha),
-                                                '9999-12-31')) 
-                WHERE practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin' 
-                AND mP.fecha <= '$fechaFin'
-                AND m.codigo NOT IN (11, 12) AND act.codigo NOT IN (521001,520101)";
+    $sqlAmbulatorioPsi = "WITH ValidRecords AS (
+    SELECT
+        p.id AS paciente_id,
+        p.nombre,
+        o.siglas,
+        p.benef,
+        p.parentesco,
+        orden.op,
+        orden.modalidad_op,
+        p.boca_atencion,
+        p.id_prof,
+        p.tipo_afiliado,
+        COALESCE(
+            (
+                SELECT pm.fecha
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            ),
+            (
+                SELECT pm.fecha
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha > (
+                    SELECT COALESCE(MAX(e.fecha_egreso), '9999-12-31')
+                    FROM egresos e
+                    WHERE e.id_paciente = p.id
+                )
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha ASC
+                LIMIT 1
+            )
+        ) AS ingreso_modalidad,
+        p.sexo,
+        COALESCE(
+            (
+                SELECT m.codigo
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+        ) AS modalidad_full,
+        pract.fecha AS fecha_pract,
+        pract.hora AS hora_pract,
+        act_pract.codigo,
+        (
+            SELECT e.fecha_egreso
+            FROM egresos e
+            WHERE e.id_paciente = p.id
+            AND e.modalidad = (
+                SELECT pm.modalidad
+                FROM paci_modalidad pm
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+            ORDER BY e.fecha_egreso DESC
+            LIMIT 1
+        ) AS fecha_egreso,
+        (
+            SELECT e.motivo
+            FROM egresos e
+            WHERE e.id_paciente = p.id
+            AND e.modalidad = (
+                SELECT pm.modalidad
+                FROM paci_modalidad pm
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+            ORDER BY e.fecha_egreso DESC
+            LIMIT 1
+        ) AS motivo_egreso,
+        d_id.codigo AS diag,
+        COALESCE(pract.cant, 0) AS cantidad,
+        CASE
+            WHEN pract.fecha IS NOT NULL AND act_pract.codigo NOT IN ('520101', '521001') THEN pract.fecha
+            ELSE NULL
+        END AS valid_date
+    FROM paciente p
+    LEFT JOIN practicas pract ON pract.id_paciente = p.id
+    LEFT JOIN actividades act_pract ON pract.actividad = act_pract.id
+    LEFT JOIN obra_social o ON o.id = p.obra_social
+    LEFT JOIN egresos e ON e.id_paciente = p.id
+    LEFT JOIN modalidad m ON m.id = e.modalidad 
+    LEFT JOIN paci_diag d ON d.id_paciente = p.id
+    LEFT JOIN diag d_id ON d_id.id = d.codigo
+    LEFT JOIN paci_op orden ON orden.id_paciente = p.id
+    WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
+      AND p.obra_social = 4  
+)
+
+SELECT
+    nombre,
+    benef,
+    paciente_id,
+    tipo_afiliado,
+    id_prof,
+    boca_atencion,
+    codigo,
+    fecha_pract,
+    fecha_egreso,
+    motivo_egreso,
+    hora_pract,
+    parentesco,
+    ingreso_modalidad,
+    CASE
+        WHEN modalidad_op = modalidad_full THEN op
+        ELSE ''  -- O puedes usar '' para devolver vacío
+    END AS op,
+    sexo,
+    modalidad_full,
+    MAX(valid_date) AS ult_atencion,
+    diag,
+    SUM(cantidad) AS cantidad
+FROM ValidRecords
+WHERE modalidad_full != '11' AND modalidad_full != '12'
+GROUP BY nombre, benef, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
+ORDER BY nombre ASC;
+";
 
     $resultPaciAmbulatorioPsi = $conn->query($sqlAmbulatorioPsi);
 
@@ -297,18 +380,18 @@ if ($result->num_rows > 0) {
 
         // Itera sobre cada paciente
         while ($row = $resultPaciAmbulatorioPsi->fetch_assoc()) {
-            $id_paciente = $row['id'];
-            $matricula_prof = $row['matricula_prof'];
-            $fecha_modalidad = $row['fecha_modalidad'];
+            $id_paciente = $row['paciente_id'];
+            $matricula_prof = $row['id_prof'];
+            $fecha_modalidad = $row['ingreso_modalidad'];
             $tipo_afiliado = $row['tipo_afiliado'];
-            $modalidad = $row['modalidad'];
+            $modalidad = $row['modalidad_full'];
             $fecha_egreso = $row['fecha_egreso'];
-            $tipo_egreso = $row['tipo_egreso'];
-            $diagnostico_reciente = $row['diagnostico_reciente'];
+            $tipo_egreso = $row['motivo_egreso'];
+            $diagnostico_reciente = $row['diag'];
             $codigo = $row['codigo'];
-            $fecha = $row['fecha'];
-            $hora = $row['hora'];
-            $cant = $row['cant'];
+            $fecha = $row['fecha_pract'];
+            $hora = $row['hora_pract'];
+            $cant = $row['cantidad'];
             $benef = $row['benef'];
             $parentesco = $row['parentesco'];
             $boca_atencion = $row['boca_atencion'];
@@ -341,7 +424,7 @@ if ($result->num_rows > 0) {
             $hora_practica = date('H:i', strtotime($hora));
 
             // Si es un nuevo paciente, imprime los datos anteriores y comienza un nuevo bloque
-            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad']) {
+            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full']) {
                 // Si ya tenemos datos de un paciente anterior, imprimimos el bloque "FIN AMBULATORIOPSI"
                 if ($current_paciente_id !== null) {
                     // Añade el bloque de prácticas acumulado
@@ -404,57 +487,153 @@ if ($result->num_rows > 0) {
 
     //INTERNACION
     // Consulta SQL para obtener los datos necesarios
-    $sqlInternacionPsi = "SELECT DISTINCT p.parentesco,
-                                            p.benef,
-                                            p.id,
-                                            p.admision,
-                                            p.nro_hist_int,
-                                            p.hora_admision,
-                                            boca.num_boca AS boca_atencion, 
-                                            prof.matricula_n AS matricula_prof,
-                                            prof_pract.matricula_n AS matricula_practica, 
-                                            mP.fecha AS fecha_modalidad, 
-                                            tA.codigo AS tipo_afiliado, 
-                                            m.codigo AS modalidad, 
-                                            e.fecha_egreso AS fecha_egreso,
-                                            e.hora_egreso, 
-                                            tE.codigo AS tipo_egreso, 
-                                            practs.fecha, 
-                                            practs.hora, 
-                                            practs.cant, 
-                                            act.codigo,
-                                            o.op,
-                                            (SELECT d.codigo 
-                                            FROM paci_diag pd 
-                                            LEFT JOIN diag d ON d.id = pd.codigo
-                                            WHERE pd.id_paciente = p.id 
-                                            ORDER BY pd.fecha DESC 
-                                            LIMIT 1) AS diagnostico_reciente
-                                            FROM paciente p
-                                            LEFT JOIN practicas practs ON p.id = practs.id_paciente
-                                            LEFT JOIN profesional prof_pract ON prof_pract.id_prof = practs.profesional
-                                            LEFT JOIN actividades act ON act.id = practs.actividad
-                                            LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
-                                            LEFT JOIN profesional prof ON prof.id_prof = p.id_prof
-                                            LEFT JOIN paci_modalidad mP ON mP.id_paciente = p.id AND practs.fecha BETWEEN mP.fecha AND COALESCE(
-                                                (SELECT MIN(pm2.fecha)
-                                                FROM paci_modalidad pm2
-                                                WHERE pm2.id_paciente = p.id
-                                                AND pm2.fecha > mP.fecha),
-                                                '9999-12-31')
-                                            LEFT JOIN modalidad m ON m.id = mP.modalidad
-                                            LEFT JOIN egresos e ON e.id_paciente = p.id AND e.modalidad = m.id
-                                            LEFT JOIN tipo_afiliado tA ON tA.id = p.tipo_afiliado
-                                            LEFT JOIN tipo_egreso tE ON tE.id = e.motivo
-                                            LEFT JOIN paci_op o ON o.id_paciente = p.id AND (o.modalidad_op = m.id OR o.modalidad_op = COALESCE((SELECT pm2.modalidad
-                                                FROM paci_modalidad pm2
-                                                WHERE pm2.id_paciente = p.id
-                                                AND pm2.fecha > mP.fecha),
-                                                '9999-12-31')) 
-                                            WHERE practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin' 
-                                            AND mP.fecha <= '$fechaFin'
-                                            AND m.codigo IN (11, 12) AND act.codigo NOT IN (521001,520101)
-                                            ";
+    $sqlInternacionPsi = "WITH ValidRecords AS (
+    SELECT
+        p.id AS paciente_id,
+        p.nombre,
+        o.siglas,
+        p.benef,
+        p.hora_admision,
+        p.parentesco,
+        orden.op,
+        p.boca_atencion,
+        p.nro_hist_int,
+        p.id_prof,
+        p.tipo_afiliado,
+        COALESCE(
+            (
+                SELECT pm.fecha
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha  
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            ),
+            (
+                SELECT pm.fecha
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha > (
+                    SELECT COALESCE(MAX(e.fecha_egreso), '9999-12-31')
+                    FROM egresos e
+                    WHERE e.id_paciente = p.id
+                )
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha ASC
+                LIMIT 1
+            )
+        ) AS ingreso_modalidad,
+        p.sexo,
+        COALESCE(
+            (
+                SELECT m.codigo
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+        ) AS modalidad_full,
+        pract.fecha AS fecha_pract,
+        pract.hora AS hora_pract,
+        pract.profesional AS matricula_practica,
+        act_pract.codigo,
+        (
+            SELECT e.hora_egreso
+            FROM egresos e
+            WHERE e.id_paciente = p.id
+            AND e.modalidad = (
+                SELECT pm.modalidad
+                FROM paci_modalidad pm
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+            ORDER BY e.fecha_egreso DESC
+            LIMIT 1
+        ) AS hora_egreso,
+        (
+            SELECT e.fecha_egreso
+            FROM egresos e
+            WHERE e.id_paciente = p.id
+            AND e.modalidad = (
+                SELECT pm.modalidad
+                FROM paci_modalidad pm
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+            ORDER BY e.fecha_egreso DESC
+            LIMIT 1
+        ) AS fecha_egreso,
+        (
+            SELECT e.motivo
+            FROM egresos e
+            WHERE e.id_paciente = p.id
+            AND e.modalidad = (
+                SELECT pm.modalidad
+                FROM paci_modalidad pm
+                WHERE pm.id_paciente = p.id
+                AND pm.fecha <= pract.fecha
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            ) 
+            ORDER BY e.fecha_egreso DESC
+            LIMIT 1
+        ) AS motivo_egreso,
+        d_id.codigo AS diag,
+        COALESCE(pract.cant, 0) AS cantidad,
+        CASE
+            WHEN pract.fecha IS NOT NULL AND act_pract.codigo NOT IN ('520101', '521001') THEN pract.fecha
+            ELSE NULL
+        END AS valid_date
+    FROM paciente p
+    LEFT JOIN practicas pract ON pract.id_paciente = p.id
+    LEFT JOIN actividades act_pract ON pract.actividad = act_pract.id
+    LEFT JOIN obra_social o ON o.id = p.obra_social
+    LEFT JOIN egresos e ON e.id_paciente = p.id
+    LEFT JOIN modalidad m ON m.id = e.modalidad
+    LEFT JOIN paci_diag d ON d.id_paciente = p.id
+    LEFT JOIN diag d_id ON d_id.id = d.codigo
+    LEFT JOIN paci_op orden ON orden.id_paciente = p.id
+    WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
+      AND p.obra_social = 4 
+)
+
+SELECT
+    nombre,
+    benef,
+    paciente_id,
+    tipo_afiliado,
+    hora_egreso,
+    hora_admision,
+    id_prof,
+    boca_atencion,
+    codigo,
+    nro_hist_int,
+    fecha_pract,
+    matricula_practica,
+    fecha_egreso,
+    motivo_egreso,
+    hora_pract,
+    parentesco,
+    ingreso_modalidad,
+    op,
+    sexo,
+    modalidad_full,
+    MAX(valid_date) AS ult_atencion,
+    diag,
+    SUM(cantidad) AS cantidad
+FROM ValidRecords
+WHERE modalidad_full = '11' OR modalidad_full = '12'
+GROUP BY nombre, benef, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
+ORDER BY nombre ASC;
+";
 
     $resultPaciInternacionPsi = $conn->query($sqlInternacionPsi);
 
@@ -467,24 +646,24 @@ if ($result->num_rows > 0) {
 
         // Itera sobre cada paciente
         while ($row = $resultPaciInternacionPsi->fetch_assoc()) {
-            $id_paciente = $row['id'];
-            $matricula_prof = $row['matricula_prof'];
+            $id_paciente = $row['paciente_id'];
+            $matricula_prof = $row['id_prof'];
             $matricula_practica = $row['matricula_practica'];
-            $fecha_modalidad = $row['fecha_modalidad'];
+            $fecha_modalidad = $row['ingreso_modalidad'];
             $tipo_afiliado = $row['tipo_afiliado'];
-            $modalidad = $row['modalidad'];
+            $modalidad = $row['modalidad_full'];
             $fecha_egreso = $row['fecha_egreso'];
-            $tipo_egreso = $row['tipo_egreso'];
-            $diagnostico_reciente = $row['diagnostico_reciente'];
+            $tipo_egreso = $row['motivo_egreso'];
+            $diagnostico_reciente = $row['diag'];
             $codigo = $row['codigo'];
-            $fecha = $row['fecha'];
-            $hora = $row['hora'];
-            $cant = $row['cant'];
+            $fecha = $row['fecha_pract'];
+            $hora = $row['hora_pract'];
+            $cant = $row['cantidad'];
             $benef = $row['benef'];
             $parentesco = $row['parentesco'];
             $boca_atencion = $row['boca_atencion'];
             $op = $row['op'];
-            $admision = $row['admision'];
+            $admision = $row['ingreso_modalidad'];
             $hora_admision = $row['hora_admision'];
             $nro_hist_int = $row['nro_hist_int'];
             $hora_egreso = $row['hora_egreso'];
@@ -521,7 +700,7 @@ if ($result->num_rows > 0) {
             $hora_practica = date('H:i', strtotime($hora));
             $hora_admision = date('H:i', strtotime($hora_admision));
             // Si es un nuevo paciente, imprime los datos anteriores y comienza un nuevo bloque
-            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad']) {
+            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full']) {
                 // Si ya tenemos datos de un paciente anterior, imprimimos el bloque "FIN INTERNACIONPSI"
                 if ($current_paciente_id !== null) {
                     // Añade el bloque de prácticas acumulado

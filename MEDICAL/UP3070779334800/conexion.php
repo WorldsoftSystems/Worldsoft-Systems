@@ -10,10 +10,10 @@ $username = "root";
 $password = "";
 $database = "medical_pq000"; */
 
-// Crear conexión
+// Crear conexi贸n
 $conn = new mysqli($hostname, $username, $password, $database);
 
-// Verificar conexión
+// Verificar conexi贸n
 if ($conn->connect_error) {
     die("Error al conectar con la base de datos: " . $conn->connect_error);
 }
