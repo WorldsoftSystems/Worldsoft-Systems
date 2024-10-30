@@ -1,9 +1,15 @@
 <?php
-// Información de conexión
+/*
 $hostname = "localhost";
 $username = "root";
 $password = "";
 $database = "chat_zoe"; 
+*/
+// Información de conexión
+$hostname = "localhost";
+$username = "worldsof_OME";
+$password = "Wss1593.";
+$database = "worldsof_chat_zoe";
 
 // Crear conexión
 $conn = new mysqli($hostname, $username, $password, $database);
