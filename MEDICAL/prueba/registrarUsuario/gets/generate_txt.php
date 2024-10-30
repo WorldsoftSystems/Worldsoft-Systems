@@ -250,7 +250,7 @@ if ($result->num_rows > 0) {
         orden.op,
         orden.modalidad_op,
         p.boca_atencion,
-        p.id_prof,
+        prof.matricula_n,
         p.tipo_afiliado,
         COALESCE(
             (
@@ -323,7 +323,7 @@ if ($result->num_rows > 0) {
             LIMIT 1
         ) AS motivo_egreso,
         d_id.codigo AS diag,
-        COALESCE(pract.cant, 0) AS cantidad,
+        pract.cant AS cantidad,
         CASE
             WHEN pract.fecha IS NOT NULL AND act_pract.codigo NOT IN ('520101', '521001') THEN pract.fecha
             ELSE NULL
@@ -333,7 +333,8 @@ if ($result->num_rows > 0) {
     LEFT JOIN actividades act_pract ON pract.actividad = act_pract.id
     LEFT JOIN obra_social o ON o.id = p.obra_social
     LEFT JOIN egresos e ON e.id_paciente = p.id
-    LEFT JOIN modalidad m ON m.id = e.modalidad 
+    LEFT JOIN modalidad m ON m.id = e.modalidad
+    LEFT JOIN profesional prof ON prof.id_prof = p.id_prof 
     LEFT JOIN paci_diag d ON d.id_paciente = p.id
     LEFT JOIN diag d_id ON d_id.id = d.codigo
     LEFT JOIN paci_op orden ON orden.id_paciente = p.id
@@ -341,12 +342,12 @@ if ($result->num_rows > 0) {
       AND p.obra_social = 4  
 )
 
-SELECT
+SELECT DISTINCT
     nombre,
     benef,
     paciente_id,
     tipo_afiliado,
-    id_prof,
+    matricula_n,
     boca_atencion,
     codigo,
     fecha_pract,
@@ -363,10 +364,10 @@ SELECT
     modalidad_full,
     MAX(valid_date) AS ult_atencion,
     diag,
-    SUM(cantidad) AS cantidad
+    cantidad
 FROM ValidRecords
 WHERE modalidad_full != '11' AND modalidad_full != '12'
-GROUP BY nombre, benef, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
+GROUP BY nombre, benef, paciente_id, tipo_afiliado, matricula_n, boca_atencion, codigo, fecha_pract, fecha_egreso, motivo_egreso, hora_pract, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
 ORDER BY nombre ASC;
 ";
 
@@ -381,7 +382,7 @@ ORDER BY nombre ASC;
         // Itera sobre cada paciente
         while ($row = $resultPaciAmbulatorioPsi->fetch_assoc()) {
             $id_paciente = $row['paciente_id'];
-            $matricula_prof = $row['id_prof'];
+            $matricula_prof = $row['matricula_n'];
             $fecha_modalidad = $row['ingreso_modalidad'];
             $tipo_afiliado = $row['tipo_afiliado'];
             $modalidad = $row['modalidad_full'];
@@ -498,7 +499,7 @@ ORDER BY nombre ASC;
         orden.op,
         p.boca_atencion,
         p.nro_hist_int,
-        p.id_prof,
+        prof.matricula_n,
         p.tipo_afiliado,
         COALESCE(
             (
@@ -587,7 +588,7 @@ ORDER BY nombre ASC;
             LIMIT 1
         ) AS motivo_egreso,
         d_id.codigo AS diag,
-        COALESCE(pract.cant, 0) AS cantidad,
+        pract.cant AS cantidad,
         CASE
             WHEN pract.fecha IS NOT NULL AND act_pract.codigo NOT IN ('520101', '521001') THEN pract.fecha
             ELSE NULL
@@ -598,6 +599,7 @@ ORDER BY nombre ASC;
     LEFT JOIN obra_social o ON o.id = p.obra_social
     LEFT JOIN egresos e ON e.id_paciente = p.id
     LEFT JOIN modalidad m ON m.id = e.modalidad
+    LEFT JOIN profesional prof ON prof.id_prof = p.id_prof
     LEFT JOIN paci_diag d ON d.id_paciente = p.id
     LEFT JOIN diag d_id ON d_id.id = d.codigo
     LEFT JOIN paci_op orden ON orden.id_paciente = p.id
@@ -605,14 +607,14 @@ ORDER BY nombre ASC;
       AND p.obra_social = 4 
 )
 
-SELECT
+SELECT DISTINCT
     nombre,
     benef,
     paciente_id,
     tipo_afiliado,
     hora_egreso,
     hora_admision,
-    id_prof,
+    matricula_n,
     boca_atencion,
     codigo,
     nro_hist_int,
@@ -628,10 +630,10 @@ SELECT
     modalidad_full,
     MAX(valid_date) AS ult_atencion,
     diag,
-    SUM(cantidad) AS cantidad
+    cantidad
 FROM ValidRecords
 WHERE modalidad_full = '11' OR modalidad_full = '12'
-GROUP BY nombre, benef, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
+GROUP BY nombre, benef, paciente_id, tipo_afiliado, matricula_n, boca_atencion, codigo, fecha_pract, fecha_egreso, motivo_egreso, hora_pract, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
 ORDER BY nombre ASC;
 ";
 
@@ -647,8 +649,8 @@ ORDER BY nombre ASC;
         // Itera sobre cada paciente
         while ($row = $resultPaciInternacionPsi->fetch_assoc()) {
             $id_paciente = $row['paciente_id'];
-            $matricula_prof = $row['id_prof'];
-            $matricula_practica = $row['matricula_practica'];
+            $matricula_prof = $row['matricula_n'];
+            $matricula_practica = $row['matricula_n'];
             $fecha_modalidad = $row['ingreso_modalidad'];
             $tipo_afiliado = $row['tipo_afiliado'];
             $modalidad = $row['modalidad_full'];

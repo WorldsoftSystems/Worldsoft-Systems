@@ -273,16 +273,14 @@
                             <label for="hora">Hora</label>
                             <input type="text" class="form-control" id="hora" name="hora" required>
                         </div>
+
                         <div class="form-group d-flex align-items-center mt-3">
                             <label for="paciente_edit" class="mr-2">Paciente</label>
                             <input type="text" class="form-control mr-2" id="paciente_edit" name="paciente_edit"
-                                required readonly>
+                                required>
                             <input type="hidden" id="paciente_id_edit" name="paciente_id_edit">
-                            <!-- Campo oculto para el ID -->
-                            <button type="button" class="btn btn-custom" data-bs-toggle="modal"
-                                data-bs-target="#buscarPacientesModal">
-                                <i class="bi bi-search"></i>
-                            </button>
+                            <div id="pacientes_list_edit" class="list-group" style="position: absolute; z-index: 1000;">
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -358,14 +356,12 @@
                         <div class="form-group d-flex align-items-center mt-3">
                             <label for="paciente_input" class="mr-2">Paciente</label>
                             <input type="text" class="form-control mr-2" id="paciente_input" name="paciente_input"
-                                required readonly>
+                                required>
                             <input type="hidden" id="paciente_id" name="paciente_id">
-                            <!-- Campo oculto para el ID -->
-                            <button type="button" class="btn btn-custom" data-bs-toggle="modal"
-                                data-bs-target="#buscarPacientesModal">
-                                <i class="bi bi-search"></i>
-                            </button>
+                            <div id="pacientes_list" class="list-group" style="position: absolute; z-index: 1000;">
+                            </div>
                         </div>
+
                         <div class="form-group">
                             <label for="motivo" class="form-label">Motivo</label>
                             <select class="form-control" name="motivo" id="motivo_input">
@@ -374,7 +370,7 @@
                         </div>
                         <div class="form-group">
                             <label for="llego">¿Llegó?</label>
-                            <select class="form-control" id="llego" name="llego" required>
+                            <select class="form-control" id="llego_input" name="llego" required>
                                 <option value="" disabled selected>Seleccione</option>
                                 <option value="SI">Si</option>
                                 <option value="NO">No</option>
@@ -382,7 +378,7 @@
                         </div>
                         <div class="form-group">
                             <label for="atendido">¿Atendido?</label>
-                            <select class="form-control" id="atendido" name="atendido" required>
+                            <select class="form-control" id="atendido_input" name="atendido" required>
                                 <option value="" disabled selected>Seleccione</option>
                                 <option value="SI">Si</option>
                                 <option value="NO">No</option>

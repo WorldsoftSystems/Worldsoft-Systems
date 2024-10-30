@@ -55,7 +55,7 @@ if ($stmt->execute()) {
             $insert_stmt->bind_param("issiii", $paciente, $fechaFormateada, $hora, $id_prof, $motivo, $cant_t);
 
             if ($insert_stmt->execute()) {
-                echo "Registro insertado en la tabla practicas.";
+                echo " - Registro insertado en la tabla practicas.";
             } else {
                 echo "Error al insertar en practicas: " . $insert_stmt->error;
             }
@@ -63,7 +63,7 @@ if ($stmt->execute()) {
             // Cerrar la declaración de inserción
             $insert_stmt->close();
         } else {
-            echo "La práctica ya existe en la tabla practicas.";
+            echo " - La práctica ya existe en la tabla practicas.";
         }
     }
 } else {

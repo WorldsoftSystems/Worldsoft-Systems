@@ -2463,12 +2463,12 @@ $conn->close();
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="fechaDesde" class="form-label">Fecha Desde</label>
-                        <input type="date" class="form-control" id="fechaDesde">
+                        <label for="fechaDesde_paci_turno" class="form-label">Fecha Desde</label>
+                        <input type="date" class="form-control" id="fechaDesde_paci_turno">
                     </div>
                     <div class="mb-3">
-                        <label for="fechaHasta" class="form-label">Fecha Hasta</label>
-                        <input type="date" class="form-control" id="fechaHasta">
+                        <label for="fechaHasta_paci_turno" class="form-label">Fecha Hasta</label>
+                        <input type="date" class="form-control" id="fechaHasta_paci_turno">
                     </div>
                 </div>
                 <div class="modal-footer">

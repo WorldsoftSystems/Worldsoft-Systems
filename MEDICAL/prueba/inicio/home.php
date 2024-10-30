@@ -234,7 +234,7 @@ if (isset($_GET['cerrar_sesion'])) {
               <img src="../img/home/estadisticas.png" class="img-fluid" alt="">
             </div>
             <div class="third-content">
-              <h3 class="mt-3">Estaditicas</h3>
+              <h3 class="mt-3">Estadisticas</h3>
             </div>
           </div>
         </a>

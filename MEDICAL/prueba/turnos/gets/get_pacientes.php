@@ -8,12 +8,11 @@ if ($conn->connect_error) {
 
 // Obtener el término de búsqueda de la consulta GET
 $searchQuery = isset($_GET['q']) ? $_GET['q'] : '';
-
-// Escapar el término de búsqueda para prevenir inyecciones SQL
 $searchQuery = $conn->real_escape_string($searchQuery);
 
-// Ejecutar la consulta para obtener todos los pacientes que coinciden con el término de búsqueda
-$sql = "SELECT * FROM paciente
+// Consulta para obtener id y nombre del paciente filtrado por término de búsqueda
+$sql = "SELECT id, CONCAT(nombre, ' - ', benef, ' / ', parentesco) AS nombre  
+        FROM paciente
         WHERE nombre LIKE '%$searchQuery%' 
         OR benef LIKE '%$searchQuery%' 
         OR parentesco LIKE '%$searchQuery%'
@@ -21,15 +20,10 @@ $sql = "SELECT * FROM paciente
 
 $result = $conn->query($sql);
 
-// Manejo de errores para la consulta
-if (!$result) {
-    die("Query failed: " . $conn->error);
-}
-
 // Procesar los resultados de la consulta
 $pacientes = [];
 if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {
         $pacientes[] = $row;
     }
 }
@@ -40,4 +34,5 @@ $conn->close();
 // Devolver los resultados como JSON
 header('Content-Type: application/json');
 echo json_encode($pacientes);
+
 ?>

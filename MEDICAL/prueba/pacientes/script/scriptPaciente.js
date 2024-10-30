@@ -708,8 +708,8 @@ function generatePdf() {
     const doc = new jsPDF('l', 'mm', 'a4');
 
     const pacienteId = selectedPacienteId;
-    const fechaDesde = document.getElementById('fechaDesde').value;
-    const fechaHasta = document.getElementById('fechaHasta').value;
+    const fechaDesde = document.getElementById('fechaDesde_paci_turno').value;
+    const fechaHasta = document.getElementById('fechaHasta_paci_turno').value;
 
     function fetchDataPaci(pacienteId, fechaDesde, fechaHasta) {
         return new Promise((resolve, reject) => {

@@ -13,7 +13,7 @@ if ($conn->connect_error) {
 
 // Preparar la consulta para obtener los datos de los turnos
 $sql = "SELECT t.*, 
-               CONCAT(paci.nombre, ' - Afiliado:', paci.benef, '/', paci.parentesco, ' - ',os.siglas,' - Tel:',paci.telefono) AS nombre_paciente,
+               CONCAT(paci.nombre, '- Afiliado:', paci.benef, '/', paci.parentesco, ' - ', os.siglas, ' - Tel:', IFNULL(paci.telefono, 'No disponible')) AS nombre_paciente,
                CONCAT(a.codigo, ' - ', a.descripcion) AS motivo_full,
                p.nombreYapellido AS nom_prof
         FROM turnos t

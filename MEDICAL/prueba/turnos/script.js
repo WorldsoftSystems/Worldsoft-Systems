@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             for (var i = 0; i < 6; i++) {
                                 row.cells[i].style.backgroundColor = '#ff8d30'; // Color inline si llegó y fue atendido
                             }
-                        } 
+                        }
 
 
                     }
@@ -452,8 +452,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('paciente_id_edit').value = '';
         document.getElementById('paciente_id').value = '';
         document.getElementById('motivo').value = '';
-        document.getElementById('llego').value = '';
-        document.getElementById('atendido').value = '';
+        document.getElementById('llego_input').value = 'NO';
+        document.getElementById('atendido_input').value = 'NO';
         document.getElementById('observaciones').value = '';
         document.getElementById('id_paciente_turno_edit').value = '';
         document.getElementById('id_paciente_turno').value = '';
@@ -505,210 +505,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-// CARGA DE LISTA DE PACIENTES
-$(document).ready(function () {
-    // Variables para almacenar los modales y la acción a realizar
-    var actionToPerform = '';
-    var buscarPacientesModal = new bootstrap.Modal(document.getElementById('buscarPacientesModal'));
-    var createTurnoModal = new bootstrap.Modal(document.getElementById('createTurnoModal'));
-    var editTurnoModal = new bootstrap.Modal(document.getElementById('editTurnoModal'));
-    var agregarPacienteModal = new bootstrap.Modal(document.getElementById('agregarPacienteModal'));
-
-    // Función para cargar pacientes con un término de búsqueda
-    function cargarPacientes(busqueda) {
-        $.ajax({
-            url: './gets/get_pacientes.php',
-            type: 'GET',
-            data: { q: busqueda }, // Enviar el término de búsqueda al servidor
-            dataType: 'json',
-            success: function (pacientes) {
-                var html = '<table class="table table-striped table-bordered" style="margin-left: 1rem;">';
-                html += '<thead class="table-custom">';
-                html += '<tr>';
-                html += '<th>Nombre</th>';
-                html += '<th>Beneficio</th>';
-                html += '<th>Parentesco</th>';
-                html += '</tr>';
-                html += '</thead>';
-                html += '<tbody>';
-
-                pacientes.forEach(function (paciente) {
-                    html += '<tr data-id="' + paciente.id + '" data-name="' + paciente.nombre + '">'; // Agregar data-id y data-name
-                    html += '<td>' + paciente.nombre + '</td>';
-                    html += '<td>' + paciente.benef + '</td>';
-                    html += '<td>' + paciente.parentesco + '</td>';
-                    html += '</tr>';
-                });
-
-                html += '</tbody>';
-                html += '</table>';
-
-                $('#patientList').html(html);
-            },
-            error: function (error) {
-                console.error("Error fetching patients: ", error);
-            }
-        });
-    }
-
-
-    // Manejar el clic en el botón "Agregar Paciente"
-    document.getElementById('addPatient').addEventListener('click', function () {
-        // Mostrar el modal de agregar paciente
-        agregarPacienteModal.show();
-    });
-
-    // Cargar pacientes cuando se abre el modal
-    $('#buscarPacientesModal').on('show.bs.modal', function () {
-        cargarPacientes('');
-    });
-
-    // Buscar pacientes cuando se escribe en la barra de búsqueda
-    $('#searchInput').on('keyup', function () {
-        var query = $(this).val();
-        cargarPacientes(query);
-    });
-
-    // Manejar clic en una fila de la tabla
-    $('#patientList').on('click', 'tr', function () {
-        var pacienteId = $(this).data('id');
-        var pacienteNombre = $(this).data('name'); // Obtener el nombre del paciente
-
-        // Rellenar el campo del formulario principal con el nombre del paciente y guardar el ID
-        $('#paciente_input').val(pacienteNombre);
-        $('#paciente_edit').val(pacienteNombre);
-        $('#paciente_id_edit').val(pacienteId);
-        $('#paciente_id').val(pacienteId);
-        obtenerUltimoTurno(pacienteId)
-
-        // Cerrar el modal de búsqueda
-        buscarPacientesModal.hide();
-
-        // Determinar qué modal abrir en función del modo actual
-        actionToPerform = $('body').data('modal-mode');
-
-        // Manejar el cierre y apertura de modales
-        $('#buscarPacientesModal').one('hidden.bs.modal', function () {
-            if (actionToPerform === 'edit') {
-                editTurnoModal.show();
-            } else if (actionToPerform === 'create') {
-                createTurnoModal.show();
-            }
-        });
-    });
-
-    // Configurar el botón de cerrar y abrir otro modal
-    document.getElementById('closeAndOpenModal').addEventListener('click', function () {
-        // Cerrar el modal de búsqueda
-        buscarPacientesModal.hide();
-
-        // Esperar a que el modal de búsqueda se cierre completamente antes de mostrar el modal apropiado
-        $('#buscarPacientesModal').one('hidden.bs.modal', function () {
-            actionToPerform = $('body').data('modal-mode');
-            if (actionToPerform === 'edit') {
-                editTurnoModal.show();
-            } else if (actionToPerform === 'create') {
-                createTurnoModal.show();
-            }
-        });
-    });
-
-    // Acción luego de agregar paciente nuevo
-    document.getElementById('formPaciente').addEventListener('submit', function (event) {
-        event.preventDefault(); // Evita que el formulario se envíe de manera tradicional
-
-        const formData = new FormData(this);
-
-        fetch('./ABM/agregarPaciente.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const pacienteId = data.id; // Asegúrate de que tu PHP devuelva el ID del nuevo paciente
-
-                    // Mostrar notificación
-                    if (confirm('Paciente agregado exitosamente. ¿Desea continuar?')) {
-                        // Llenar los campos del modal de edición con el nuevo paciente
-                        $('#paciente_edit').val(formData.get('nombre'));
-                        $('#paciente_input').val(formData.get('nombre'));
-                        $('#paciente_id').val(pacienteId);
-                        $('#paciente_id_edit').val(pacienteId);
-
-                        // Cerrar modales y mostrar el nuevo modal en el orden correcto
-                        agregarPacienteModal.hide();
-                        buscarPacientesModal.hide();
-
-                        // Usar un pequeño retraso para asegurar que los modales se cierren antes de mostrar el siguiente
-                        setTimeout(function () {
-                            actionToPerform = $('body').data('modal-mode');
-                            if (actionToPerform === 'edit') {
-                                editTurnoModal.show();
-                            } else if (actionToPerform === 'create') {
-                                createTurnoModal.show();
-                            }
-                        }, 300); // Ajusta el tiempo si es necesario
-                    }
-                } else {
-                    console.error('Error al agregar paciente:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-            });
-    });
-});
-
-
 //completar selects de modal agregar paciente
 $(document).ready(function () {
-
-    $.ajax({
-        url: '../pacientes/dato/get_obras_sociales.php',
-        type: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            data.forEach(function (item) {
-                var optionText = item.siglas + ' - ' + item.razon_social;
-                $('#obra_social').append(new Option(optionText, item.id));
-            });
-        },
-        error: function (error) {
-            console.error("Error fetching data: ", error);
-        }
-    });
-
-    $.ajax({
-        url: '../pacientes/dato/get_tipo_afiliado.php',
-        type: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            data.forEach(function (item) {
-                var optionText = item.codigo + ' - ' + item.descripcion;
-                $('#tipo_afiliado').append(new Option(optionText, item.id));
-            });
-        },
-        error: function (error) {
-            console.error("Error fetching data: ", error);
-        }
-    });
-
-
-    $.ajax({
-        url: '../pacientes/dato/get_modalidad.php',
-        type: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            data.forEach(function (item) {
-                var optionText = item.codigo + ' - ' + item.descripcion;
-                $('#modalidad').append(new Option(optionText, item.id));
-            });
-        },
-        error: function (error) {
-            console.error("Error fetching data: ", error);
-        }
-    });
 
     $.ajax({
         url: '../pacientes/dato/get_profesional.php',
@@ -724,46 +522,6 @@ $(document).ready(function () {
         }
     });
 
-});
-
-//boton buscar afiliado 
-document.addEventListener('DOMContentLoaded', function () {
-    // Obtener el botón por su ID
-    var btnBuscar = document.getElementById('btnBuscar');
-
-    if (btnBuscar) {
-        btnBuscar.addEventListener('click', function () {
-            // Obtener los valores de los campos de "Beneficio" y "Parentesco"
-            var beneficio = $('#benef').val();
-            var parentesco = $('#parentesco').val();
-
-            // Realizar la solicitud al backend
-            fetch(`https://worldsoftsystems.com.ar/buscar?beneficio=${beneficio}&parentesco=${parentesco}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Verificar si se encontró el nombre y apellido
-                    if (data.resultado) {
-                        // Actualizar el campo de nombre y apellido con el resultado
-                        $('#nombre').val(data.resultado);
-                    } else {
-                        // Mostrar una alerta si no se encuentra el resultado
-                        alert("No se encontró ningún beneficiario con los datos proporcionados.");
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    // Muestra un mensaje de error si ocurre un error durante la solicitud
-                    alert("Error al buscar el nombre y apellido.");
-                });
-        });
-    } else {
-        console.error("No se encontró el elemento con ID 'btnBuscar'.");
-    }
 });
 
 //IMPRIMIR TURNO DE PACIENTE
@@ -916,9 +674,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('l', 'mm', 'a4');
 
-        const profesionalId = document.getElementById('profesionalSelect').value;
+        let profesionalId = document.getElementById('profesionalSelect').value;
         const fechaDesde = document.getElementById('fechaDesde').value;
         const fechaHasta = document.getElementById('fechaHasta').value;
+
+        // Si es "all", no filtrar por profesional
+        profesionalId = profesionalId === "all" ? "" : profesionalId;
 
         function fetchDataProf(profesionalId, fechaDesde, fechaHasta) {
             return new Promise((resolve, reject) => {
@@ -940,16 +701,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         Promise.all([fetchDataProf(profesionalId, fechaDesde, fechaHasta), fetchParametros()])
             .then(([dataTurnos, dataParametros]) => {
-                const rows = dataTurnos.map(turnos => [
-                    turnos.hora,
-                    turnos.nombre_paciente,
-                    turnos.motivo_full,
-                    turnos.llego,
-                    turnos.atendido,
-                    turnos.observaciones
-                ]);
+                // Agrupar turnos por profesional
+                const turnosPorProfesional = dataTurnos.reduce((acc, turno) => {
+                    const nombreProfesional = turno.nom_prof || 'Desconocido';
+                    if (!acc[nombreProfesional]) {
+                        acc[nombreProfesional] = [];
+                    }
+                    acc[nombreProfesional].push([
+                        turno.hora,
+                        turno.nombre_paciente,
+                        turno.motivo_full,
+                        turno.llego,
+                        turno.atendido,
+                        turno.observaciones
+                    ]);
+                    return acc;
+                }, {});
 
-                const nombreProfesional = dataTurnos.length > 0 ? dataTurnos[0].nom_prof : 'Desconocido';
                 const formattedFechaDesde = formatDate(fechaDesde);
                 const formattedFechaHasta = formatDate(fechaHasta);
 
@@ -958,7 +726,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const param2 = parametros.localidad || 'No disponible';
                 const param3 = parametros.tel || 'No disponible';
 
-                // Título centrado
+                // Configuración de la página
                 const title = 'Turnos Asignados';
                 const pageWidth = doc.internal.pageSize.getWidth();
                 const titleWidth = doc.getTextWidth(title);
@@ -966,82 +734,78 @@ document.addEventListener('DOMContentLoaded', function () {
                 doc.setFontSize(16);
                 doc.text(title, xTitle, 10);
 
-                // Fechas centradas
                 const dateRange = `Desde: ${formattedFechaDesde} Hasta: ${formattedFechaHasta}`;
                 const dateRangeWidth = doc.getTextWidth(dateRange);
                 const xDateRange = (pageWidth - dateRangeWidth) / 2;
                 doc.setFontSize(14);
                 doc.text(dateRange, xDateRange, 20);
 
-                // Parámetros centrados
                 doc.setFontSize(12);
                 const startY = 30;
-
                 const param1Text = `Institución: ${param1}`;
                 const param2Text = `Localidad: ${param2}`;
                 const param3Text = `Telefono: ${param3}`;
+                doc.text(param1Text, xTitle, startY);
+                doc.text(param2Text, xTitle, startY + 10);
+                doc.text(param3Text, xTitle, startY + 20);
 
-                const param1Width = doc.getTextWidth(param1Text);
-                const param1X = (pageWidth - param1Width) / 2;
-                const param2Width = doc.getTextWidth(param2Text);
-                const param2X = (pageWidth - param2Width) / 2;
-                const param3Width = doc.getTextWidth(param3Text);
-                const param3X = (pageWidth - param3Width) / 2;
+                let currentY = startY + 35;
 
-                doc.text(param1Text, param1X, startY);
-                doc.text(param2Text, param2X, startY + 10);
-                doc.text(param3Text, param3X, startY + 20);
-
-                // Subtítulo centrado
-                const subtitle = `Profesional: ${nombreProfesional}`;
-                const subtitleWidth = doc.getTextWidth(subtitle);
-                const xSubtitle = (pageWidth - subtitleWidth) / 2;
-                doc.setFontSize(12);
-                doc.text(subtitle, xSubtitle, startY + 35);
-
-                // Estimación del ancho total de la tabla
-                const tableWidth = 200;
-                let marginLeft = (pageWidth - tableWidth) / 2;
-                marginLeft -= 15;
-
-                doc.autoTable({
-                    head: [['Hora', 'Paciente', 'Motivo', 'Llegó', 'Atendido', 'Observaciones']],
-                    body: rows,
-                    startY: startY + 50,
-                    margin: { left: marginLeft, top: startY + 50 },
-                    theme: 'striped',
-                    styles: {
-                        fontSize: 10, // Fuente más pequeña
-                        cellPadding: 2,
-                        overflow: 'linebreak'
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 30 },
-                        1: { cellWidth: 70 },
-                        2: { cellWidth: 40 },
-                        3: { cellWidth: 20 },
-                        4: { cellWidth: 20 },
-                        5: { cellWidth: 50 }
+                // Renderizar la tabla de turnos para cada profesional
+                Object.keys(turnosPorProfesional).forEach((profesional, index) => {
+                    if (index > 0) {
+                        doc.addPage();
+                        currentY = 30;
                     }
+
+                    // Título de profesional
+                    const subtitle = `Profesional: ${profesional}`;
+                    const subtitleWidth = doc.getTextWidth(subtitle);
+                    const xSubtitle = (pageWidth - subtitleWidth) / 2;
+                    doc.setFontSize(12);
+                    doc.text(subtitle, xSubtitle, currentY);
+                    currentY += 10;
+
+                    // Configuración de la tabla para los turnos del profesional actual
+                    doc.autoTable({
+                        head: [['Hora', 'Paciente', 'Motivo', 'Llegó', 'Atendido', 'Observaciones']],
+                        body: turnosPorProfesional[profesional],
+                        startY: currentY + 10,
+                        margin: { left: 15, right: 15 },
+                        theme: 'striped',
+                        styles: {
+                            fontSize: 10,
+                            cellPadding: 2,
+                            overflow: 'linebreak'
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 30 },
+                            1: { cellWidth: 70 },
+                            2: { cellWidth: 40 },
+                            3: { cellWidth: 20 },
+                            4: { cellWidth: 20 },
+                            5: { cellWidth: 50 }
+                        }
+                    });
                 });
 
+                // Agregar el logo al final de la última página
                 const imgUrl = '../img/logo.png';
-                var img = new Image();
+                const img = new Image();
                 img.onload = function () {
                     const imgWidth = 29;
                     const imgHeight = 25;
                     const xImg = (pageWidth - imgWidth) / 2;
                     const yImg = doc.internal.pageSize.height - imgHeight - 10;
-
                     doc.addImage(img, 'PNG', xImg, yImg, imgWidth, imgHeight);
-
-                    window.open(doc.output('bloburl'))
+                    window.open(doc.output('bloburl'));
                 };
                 img.src = imgUrl;
             }).catch(error => {
                 console.error('Error:', error);
             });
     });
+
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -1062,6 +826,57 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+//AGREGAR PACIENTE
+$(document).ready(function () {
+    $(document).ready(function () {
+        function buscarPacientes(inputSelector, listSelector, hiddenIdSelector) {
+            $(inputSelector).on('keyup', function () {
+                let searchQuery = $(this).val();
+
+                if (searchQuery.length > 2) { // Ejecutar la búsqueda solo si el término tiene más de 2 caracteres
+                    $.ajax({
+                        url: './gets/get_pacientes.php',
+                        method: 'GET',
+                        data: { q: searchQuery },
+                        success: function (data) {
+                            let pacientesList = $(listSelector);
+                            pacientesList.empty(); // Limpiar la lista anterior
+
+                            data.forEach(function (paciente) {
+                                let pacienteOption = `<a href="#" class="list-group-item list-group-item-action" data-id="${paciente.id}" data-nombre="${paciente.nombre}">${paciente.nombre}</a>`;
+                                pacientesList.append(pacienteOption);
+                            });
+                        }
+                    });
+                } else {
+                    $(listSelector).empty(); // Limpiar la lista si no hay suficientes caracteres
+                }
+            });
+
+            // Manejar el clic en el paciente seleccionado
+            $(listSelector).on('click', 'a', function (e) {
+                e.preventDefault();
+                let nombre = $(this).data('nombre');
+                let id = $(this).data('id');
+
+                $(inputSelector).val(nombre);
+                $(hiddenIdSelector).val(id);
+                $(listSelector).empty(); // Limpiar la lista de resultados
+            });
+
+            // Ocultar lista de resultados si se hace clic fuera del input
+            $(document).click(function (e) {
+                if (!$(e.target).closest(inputSelector).length && !$(e.target).closest(listSelector).length) {
+                    $(listSelector).empty();
+                }
+            });
+        }
+
+        // Inicializar la función para ambos inputs
+        buscarPacientes('#paciente_input', '#pacientes_list', '#paciente_id');
+        buscarPacientes('#paciente_edit', '#pacientes_list_edit', '#paciente_id_edit');
+    });
+});
 
 
 
