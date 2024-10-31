@@ -9,15 +9,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtener los días seleccionados como un array
     $dias_seleccionados = array("lunes", "martes", "miercoles", "jueves", "viernes", "sabado");
 
+    $respuesta = []; // Inicializar un array para la respuesta
+
     // Iterar sobre los días seleccionados
     foreach ($dias_seleccionados as $dia) {
         // Verificar si se han proporcionado valores de hora de inicio y fin para este día
-        // Verificar si los campos están establecidos y no están vacíos
         if (
             isset($_POST['horario_inicio_' . $dia]) && $_POST['horario_inicio_' . $dia] !== "" &&
             isset($_POST['horario_fin_' . $dia]) && $_POST['horario_fin_' . $dia] !== ""
         ) {
-
             // Obtener los valores de hora de inicio y fin para este día
             $hora_inicio = $_POST['horario_inicio_' . $dia];
             $hora_fin = $_POST['horario_fin_' . $dia];
@@ -33,7 +33,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("sssis", $hora_inicio, $hora_fin, $intervalo, $id, $dia);
             } else {
-                // Si no hay id, insertar un nuevo registro
+                // Verificar si ya existe un registro para el profesional y el día
+                $check_sql = "SELECT id FROM disponibilidad WHERE id_prof = ? AND dia_semana = ?";
+                $check_stmt = $conn->prepare($check_sql);
+                $check_stmt->bind_param("is", $id_prof, $dia);
+                $check_stmt->execute();
+                $check_stmt->store_result();
+
+                if ($check_stmt->num_rows > 0) {
+                    // Si ya existe, retornar un error
+                    $respuesta[] = ['error' => "Ya existe disponibilidad para $dia. Por favor, edítala."];
+                    continue; // Saltar al siguiente día
+                }
+
+                // Si no existe, insertar un nuevo registro
                 $sql = "INSERT INTO disponibilidad (id_prof, dia_semana, hora_inicio, hora_fin, intervalo) VALUES (?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("issss", $id_prof, $dia, $hora_inicio, $hora_fin, $intervalo);
@@ -41,16 +54,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($stmt->execute()) {
                 // Éxito al agregar o actualizar disponibilidad para este día
+                $respuesta[] = ['success' => "Disponibilidad para $dia guardada correctamente."];
             } else {
-                echo "Error al procesar la disponibilidad para el día $dia: " . $stmt->error;
+                $respuesta[] = ['error' => "Error al procesar la disponibilidad para $dia: " . $stmt->error];
             }
 
             $stmt->close();
         }
     }
 
-    // Redireccionar después de procesar todos los horarios
-    header("Location: ./disponibilidad.php?success=true");
+    // Retornar la respuesta como JSON
+    echo json_encode($respuesta);
     exit();
 }
 

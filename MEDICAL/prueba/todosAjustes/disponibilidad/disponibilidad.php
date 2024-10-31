@@ -327,15 +327,46 @@ $resultProfesionales = $conn->query($sqlProfesionales);
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // Verificar si hay un mensaje de éxito
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('success') && urlParams.get('success') === 'true') {
                 alert("La disponibilidad se ha editado correctamente.");
                 urlParams.delete('success');
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
-        });
 
-        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('formDisponibilidad').addEventListener('submit', function (e) {
+                e.preventDefault(); // Evitar el envío del formulario por defecto
+
+                const formData = new FormData(this);
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", this.action, true);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        let hayError = false;
+
+                        response.forEach(res => {
+                            if (res.error) {
+                                alert(res.error); // Mostrar la alerta si hay un error
+                                hayError = true;
+                            } else if (res.success) {
+                                alert(res.success); // Mostrar el mensaje de éxito
+                            }
+                        });
+
+                        // Si no hubo errores, recargar la página
+                        if (!hayError) {
+                            window.location.href = './disponibilidad.php?success=true'; // Redirigir a la página con éxito
+                        }
+                    } else {
+                        alert("Error al procesar la solicitud.");
+                    }
+                };
+                xhr.send(formData);
+            });
+
+            // Funciones de edición y limpieza de formulario
             var dia;
 
             function editarDisponibilidad(disponibilidad) {
@@ -389,6 +420,8 @@ $resultProfesionales = $conn->query($sqlProfesionales);
             var btnAgregarDisponibilidadModal = document.querySelector('button[data-bs-target="#agregarDisponibilidadModal"]');
             btnAgregarDisponibilidadModal.addEventListener('click', limpiarFormulario);
         });
+
+
 
 
 
