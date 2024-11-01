@@ -253,8 +253,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function loadSchedule(day, month, year) {
         const selectedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
         const selectedProf = profesionalSelect.value;
+
         fetch(`./gets/get-schedule.php?date=${selectedDate}&prof=${selectedProf}`)
             .then(response => response.json())
             .then(data => {
@@ -280,77 +280,91 @@ document.addEventListener('DOMContentLoaded', function () {
                         row.insertCell(i).innerText = '';
                     }
 
-                    // Truncar los segundos de turno.hora para que coincida con el formato de intervalo
                     const turno = data.turnos.find(turno => turno.hora.startsWith(intervalo));
 
                     if (turno) {
                         row.cells[1].innerText = turno.nombre_paciente;
-                        row.cells[1].classList.add('editable-cell'); // Agregar clase para identificar celdas editables
-
-                        row.cells[1].addEventListener('click', function () {
-                            // Abrir modal o pop-up aquí
-                            openEditModal(turno); // Llamar función para abrir el modal de edición con datos del turno
-                        });
-
+                        row.cells[1].classList.add('editable-cell');
+                        row.cells[1].addEventListener('click', () => openEditModal(turno));
                         row.cells[2].innerText = turno.motivo_full;
-
-                        row.cells[2].addEventListener('click', function () {
-                            // Abrir modal o pop-up aquí
-                            openEditModal(turno); // Llamar función para abrir el modal de edición con datos del turno
-                        });
-
+                        row.cells[2].addEventListener('click', () => openEditModal(turno));
                         row.cells[3].innerText = turno.llego;
-                        row.cells[3].addEventListener('click', function () {
-                            // Abrir modal o pop-up aquí
-                            openEditModal(turno); // Llamar función para abrir el modal de edición con datos del turno
-                        });
-
+                        row.cells[3].addEventListener('click', () => openEditModal(turno));
                         row.cells[4].innerText = turno.atendido;
-
-                        row.cells[4].addEventListener('click', function () {
-                            // Abrir modal o pop-up aquí
-                            openEditModal(turno); // Llamar función para abrir el modal de edición con datos del turno
-                        });
-
+                        row.cells[4].addEventListener('click', () => openEditModal(turno));
                         row.cells[5].innerText = turno.observaciones;
-                        row.cells[5].title = turno.observaciones; // Muestra el texto completo en un tooltip
+                        row.cells[5].title = turno.observaciones;
+                        row.cells[5].addEventListener('click', () => openEditModal(turno));
 
-
-
-                        row.cells[5].addEventListener('click', function () {
-                            // Abrir modal o pop-up aquí
-                            openEditModal(turno); // Llamar función para abrir el modal de edición con datos del turno
-                        });
-
-                        //row.cells[3].style.backgroundColor = '#d1e7dd';
                         if (turno.llego === 'SI' && turno.atendido === 'SI') {
-                            console.log('si llego y atendido');
-                            for (var i = 0; i < 6; i++) {
-                                row.cells[i].style.backgroundColor = '#7abaf5'; // Color inline si llegó y fue atendido
-                            } // Color inline si llegó y fue atendido
+                            for (let i = 0; i < 6; i++) {
+                                row.cells[i].style.backgroundColor = '#7abaf5';
+                            }
                         } else if (turno.llego === 'SI') {
-                            console.log('si llego');
-                            for (var i = 0; i < 6; i++) {
-                                row.cells[i].style.backgroundColor = '#ff8d30'; // Color inline si llegó y fue atendido
+                            for (let i = 0; i < 6; i++) {
+                                row.cells[i].style.backgroundColor = '#ff8d30';
                             }
                         }
-
-
+                    } else {
+                        for (let i = 1; i < 6; i++) {
+                            row.cells[i].classList.add('empty-cell');
+                            row.cells[i].addEventListener('click', () => openCreateModal(intervalo, selectedDate));
+                        }
                     }
-                    else {
-                        // Si no hay turno asignado, agregar evento de doble click para abrir el modal
-                        row.cells[1].classList.add('empty-cell'); // Clase para identificar celdas vacías
-                        row.cells[1].addEventListener('click', function () {
-                            openCreateModal(intervalo, selectedDate); // Llamar función para abrir el modal de creación de nuevo turno
-                        });
-                    }
-
                 });
+
+                // Añadir Sobreturno al Final
+                const sobreturnos = data.turnos.filter(turno => !intervalos.some(intervalo => turno.hora.startsWith(intervalo)));
+                sobreturnos.forEach(sobreturno => {
+                    const sobreturnoRow = scheduleBody.insertRow();
+                    sobreturnoRow.classList.add('sobreturno-cell'); // Estilo especial para sobreturno
+                    sobreturnoRow.insertCell(0).innerText = `Sobreturno: ${sobreturno.hora}`;
+
+                    for (let i = 1; i < 6; i++) {
+                        sobreturnoRow.insertCell(i).innerText = '';
+                    }
+
+                    sobreturnoRow.cells[1].innerText = sobreturno.nombre_paciente;
+                    sobreturnoRow.cells[1].addEventListener('click', () => openEditModal(sobreturno));
+                    sobreturnoRow.cells[2].innerText = sobreturno.motivo_full;
+                    sobreturnoRow.cells[2].addEventListener('click', () => openEditModal(sobreturno));
+                    sobreturnoRow.cells[3].innerText = sobreturno.llego;
+                    sobreturnoRow.cells[3].addEventListener('click', () => openEditModal(sobreturno));
+                    sobreturnoRow.cells[4].innerText = sobreturno.atendido;
+                    sobreturnoRow.cells[4].addEventListener('click', () => openEditModal(sobreturno));
+                    sobreturnoRow.cells[5].innerText = sobreturno.observaciones;
+                    sobreturnoRow.cells[5].title = sobreturno.observaciones;
+                    sobreturnoRow.cells[5].addEventListener('click', () => openEditModal(sobreturno));
+
+                    // Lógica de colores para los sobreturnos
+                    if (sobreturno.llego === 'SI' && sobreturno.atendido === 'SI') {
+                        for (let i = 0; i < 6; i++) {
+                            sobreturnoRow.cells[i].style.backgroundColor = '#7abaf5'; // Color si llegó y fue atendido
+                        }
+                    } else if (sobreturno.llego === 'SI') {
+                        for (let i = 0; i < 6; i++) {
+                            sobreturnoRow.cells[i].style.backgroundColor = '#ff8d30'; // Color si llegó pero no fue atendido
+                        }
+                    }
+                });
+
+                // Crear la fila con el botón para añadir sobreturno
+                const addSobreturnoRow = scheduleBody.insertRow();
+                const addSobreturnoCell = addSobreturnoRow.insertCell(0);
+                addSobreturnoCell.colSpan = 6;
+                addSobreturnoCell.style.textAlign = 'center';
+
+                const addSobreturnoButton = document.createElement('button');
+                addSobreturnoButton.innerText = 'Agregar Sobreturno';
+
+                addSobreturnoButton.classList.add('btn', 'btn-custom'); // Agregar clases de estilo
+                addSobreturnoButton.addEventListener('click', () => openCreateModal(null, selectedDate));
+
+                addSobreturnoCell.appendChild(addSobreturnoButton);
             })
-            .catch(error => {
-                console.error('Error al cargar el horario:', error);
-            });
+            .catch(error => console.error('Error al cargar el horario:', error));
     }
+
 
     profesionalSelect.addEventListener('change', () => {
         updateCalendar();
