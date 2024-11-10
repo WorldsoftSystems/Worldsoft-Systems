@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Limpiar campos del formulario según sea necesario
         document.getElementById('id_prof_input').value = profesionalSelect.value;
-        document.getElementById('fecha_input').value = formatDate(selectedDate);
+        document.getElementById('fechas_input').value = formatDate(selectedDate);
         document.getElementById('hora_input').value = intervalo;
         document.getElementById('paciente_input').value = '';
         document.getElementById('paciente_edit').value = '';
@@ -473,27 +473,41 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('id_paciente_turno').value = '';
     }
 
+    $(document).ready(function () {
+        $('#fechas_input').datepicker({
+            format: 'dd/mm/yyyy',    // Formato de fecha que se enviará
+            multidate: true,         // Permitir múltiples selecciones
+            todayHighlight: true,    // Resaltar la fecha actual
+            autoclose: false         // Mantener abierto el selector hasta que se haga clic fuera
+        });
+    });
+
     // Manejar el envío del formulario de creación de turno
     document.getElementById('createTurnoForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
         const formData = new FormData(this);
+        const fechas = document.getElementById('fechas_input').value.split(','); // Separar las fechas seleccionadas
 
-        fetch('./ABM/crearTurno.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.text())
-            .then(result => {
-                alert(result);
-                $('#createTurnoModal').modal('hide');
-                // Actualizar la grilla de horarios o el calendario después de crear el turno
-                updateCalendar();
+        fechas.forEach(fecha => {
+            formData.set('fecha_input', fecha.trim());  // Configurar cada fecha individualmente
+
+            fetch('./ABM/crearTurno.php', {
+                method: 'POST',
+                body: formData
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+                .then(response => response.text())
+                .then(result => {
+                    alert(result);
+                    $('#createTurnoModal').modal('hide');
+                    updateCalendar();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
     });
+
 
     // Manejar el envío del formulario de editar de turno
     document.getElementById('editTurnoForm').addEventListener('submit', function (event) {

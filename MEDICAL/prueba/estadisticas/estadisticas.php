@@ -263,11 +263,61 @@ if ($resultTitle && $resultTitle->num_rows > 0) {
         </a>
       </div>
 
+      <div class="col d-flex justify-content-center">
+        <a href="#" id="openPacientesPrestacionesModalLink">
+          <div class="card h-100">
+            <div class="first-content">
+              <img src="../img/reportes/plan.png" alt="Ingresos">
+            </div>
+            <div class="third-content">
+              <h3 class="mt-3">Preastaciones por paciente</h3>
+            </div>
+          </div>
+        </a>
+      </div>
+
 
 
     </div>
   </div>
   <!-- FIN Cards Container -->
+
+  <!--PACI PRESTACIONES FIN-->
+  <div class="modal fade" id="openPacientesPrestacionesModal" tabindex="-1" aria-labelledby="pacientesPrestacionesModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pacientesPrestacionesModalLabel">Prestaciones por paciente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="pacientesBocaForm">
+            <div class="mb-3">
+              <label for="fechaDesdePacientesPrestaciones" class="form-label">Fecha Desde</label>
+              <input type="date" class="form-control" id="fechaDesdePacientesPrestaciones" required>
+            </div>
+            <div class="mb-3">
+              <label for="fechaHastaPacientesPrestaciones" class="form-label">Fecha Hasta</label>
+              <input type="date" class="form-control" id="fechaHastaPacientesPrestaciones" required>
+            </div>
+            <div class="col-md-4 form-group">
+              <label for="obra_social_paci_prestaciones">Obra Social:*</label>
+              <select class="form-control" id="obra_social_paci_prestaciones" name="obra_social_paci_prestaciones" required>
+                <option value="">Seleccionar...</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" id="generatePacientesPrestacionesBtn">Generar PDF</button>
+          <button type="button" class="btn btn-success" id="generatePacientesPrestacionesExcelBtn">Generar Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--PACI PRESTACIONES FIN-->
 
   <!--PACI BOCA FIN-->
   <div class="modal fade" id="openPacientesBocaModal" tabindex="-1" aria-labelledby="pacientesBocaModalLabel"

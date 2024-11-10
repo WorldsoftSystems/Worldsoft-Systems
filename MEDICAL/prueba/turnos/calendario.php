@@ -21,6 +21,14 @@
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- CSS para Bootstrap Datepicker -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+    <!-- JavaScript para Bootstrap Datepicker -->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
@@ -345,8 +353,8 @@
                             <input type="hidden" id="id_prof_input" name="id_prof_input">
                         </div>
                         <div class="form-group">
-                            <label for="fecha_input">Fecha</label>
-                            <input type="text" class="form-control" id="fecha_input" name="fecha_input" required>
+                            <label for="fechas_input">Fechas</label>
+                            <input type="text" class="form-control" id="fechas_input" name="fechas_input" required>
                         </div>
                         <div class="form-group">
                             <label for="hora_input">Hora</label>

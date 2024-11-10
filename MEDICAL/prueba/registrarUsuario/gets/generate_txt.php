@@ -356,17 +356,15 @@ SELECT DISTINCT
     hora_pract,
     parentesco,
     ingreso_modalidad,
-    CASE
-        WHEN modalidad_op = modalidad_full THEN op
-        ELSE ''  -- O puedes usar '' para devolver vacío
-    END AS op,
+    op,
+    modalidad_op,
     sexo,
     modalidad_full,
     MAX(valid_date) AS ult_atencion,
     diag,
     cantidad
 FROM ValidRecords
-WHERE modalidad_full != '11' AND modalidad_full != '12'
+WHERE modalidad_full != '11' AND modalidad_full != '12' AND COALESCE(modalidad_op, modalidad_full) = modalidad_full
 GROUP BY nombre, benef, paciente_id, tipo_afiliado, matricula_n, boca_atencion, codigo, fecha_pract, fecha_egreso, motivo_egreso, hora_pract, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
 ORDER BY nombre ASC;
 ";
@@ -444,11 +442,11 @@ ORDER BY nombre ASC;
                     case 10:
                         $modalidad_formateada = 4;
                         break;
-                    case 11:
-                        $modalidad_formateada = 5;
+                    case 8:
+                        $modalidad_formateada = 4;
                         break;
-                    case 12:
-                        $modalidad_formateada = 6;
+                    case 9:
+                        $modalidad_formateada = 4;
                         break;
                     default:
                         // Mantiene el valor original si no hay coincidencia
@@ -497,6 +495,7 @@ ORDER BY nombre ASC;
         p.hora_admision,
         p.parentesco,
         orden.op,
+        orden.modalidad_op,
         p.boca_atencion,
         p.nro_hist_int,
         prof.matricula_n,
@@ -626,15 +625,35 @@ SELECT DISTINCT
     parentesco,
     ingreso_modalidad,
     op,
+    modalidad_op,
     sexo,
     modalidad_full,
     MAX(valid_date) AS ult_atencion,
     diag,
     cantidad
 FROM ValidRecords
-WHERE modalidad_full = '11' OR modalidad_full = '12'
-GROUP BY nombre, benef, paciente_id, tipo_afiliado, matricula_n, boca_atencion, codigo, fecha_pract, fecha_egreso, motivo_egreso, hora_pract, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
+WHERE (modalidad_full = '11' OR modalidad_full = '12') 
+  AND COALESCE(modalidad_op, modalidad_full) = modalidad_full
+GROUP BY 
+    nombre, 
+    benef, 
+    paciente_id, 
+    tipo_afiliado, 
+    matricula_n, 
+    boca_atencion, 
+    codigo, 
+    fecha_pract, 
+    fecha_egreso, 
+    motivo_egreso, 
+    hora_pract, 
+    parentesco, 
+    ingreso_modalidad, 
+    sexo, 
+    modalidad_full, 
+    diag
 ORDER BY nombre ASC;
+
+
 ";
 
     $resultPaciInternacionPsi = $conn->query($sqlInternacionPsi);
@@ -718,10 +737,10 @@ ORDER BY nombre ASC;
                 // Construye la línea con la conversión de modalidad
                 switch ($modalidad) {
                     case 11:
-                        $modalidad_formateada = 5;
+                        $modalidad_formateada = 6;
                         break;
                     case 12:
-                        $modalidad_formateada = 6;
+                        $modalidad_formateada = 5;
                         break;
                     default:
                         // Mantiene el valor original si no hay coincidencia

@@ -9,7 +9,7 @@ $database = "worldsof_medical_prueba";
 $hostname = "localhost";
 $username = "root";
 $password = "";
-$database = "medical_prueba"; 
+$database = "medical_test"; 
 
 
 // Crear conexión
