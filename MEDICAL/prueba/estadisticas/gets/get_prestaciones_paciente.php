@@ -13,7 +13,7 @@ if (empty($fecha_desde) || empty($fecha_hasta)) {
 }
 
 // Consulta SQL para agrupar prestaciones por paciente
-$sql = "SELECT DISTINCT
+$sql = "SELECT 
     p.id AS paciente_id,
     CONCAT(p.nombre,' - ', o.siglas) AS nombre,
     p.benef,

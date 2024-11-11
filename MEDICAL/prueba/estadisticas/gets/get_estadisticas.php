@@ -13,7 +13,7 @@ if (empty($fecha_desde) || empty($fecha_hasta)) {
 }
 
 // Consulta SQL sin la tabla
-$sql = "SELECT DISTINCT
+$sql = "SELECT
     CONCAT(p.nombre, ' - ', o.siglas) AS nombre,
     p.benef,
     p.parentesco,
@@ -50,7 +50,8 @@ LEFT JOIN obra_social o ON o.id = p.obra_social
 LEFT JOIN practicas pract ON pract.id_paciente = p.id
 LEFT JOIN actividades act ON act.id = pract.actividad
 WHERE (pract.fecha BETWEEN ? AND ?)
-AND p.obra_social = ?";
+AND p.obra_social = ?
+GROUP BY p.id,pract.fecha,pract.hora";
 
 // Preparar la consulta
 $stmt = $conn->prepare($sql);
