@@ -140,9 +140,10 @@ $resultProfesionales = $conn->query($sqlProfesionales);
                             <td><?= $rowProfesional['desc_especialidad'] ?></td>
                             <td>
                                 <button class="btn btn-primary"
-                                    onclick="gestionarDisponibilidad(<?= $rowProfesional['id_prof'] ?>)">
+                                    onclick="gestionarDisponibilidad(<?= $rowProfesional['id_prof'] ?>, '<?= $rowProfesional['nombreYapellido'] ?>')">
                                     Horarios de profesional
                                 </button>
+
 
 
 
@@ -173,7 +174,21 @@ $resultProfesionales = $conn->query($sqlProfesionales);
 
                         <div id="contenedor-disponibilidades-actuales" class="mb-3">
                             <h5>Disponibilidades actuales</h5>
-                            <ul id="lista-disponibilidades"></ul>
+                            <!-- Tabla para mostrar las disponibilidades -->
+                            <table class="table table-bordered" id="tabla-disponibilidades">
+                                <thead>
+                                    <tr>
+                                        <th>Día</th>
+                                        <th>Desde</th>
+                                        <th>Hasta</th>
+                                        <th>Intervalo (min)</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista-disponibilidades">
+                                    <!-- Las filas de disponibilidad se agregarán aquí dinámicamente -->
+                                </tbody>
+                            </table>
                         </div>
 
                         <div id="contenedor-horarios">
@@ -280,10 +295,13 @@ $resultProfesionales = $conn->query($sqlProfesionales);
         });
 
 
-        function gestionarDisponibilidad(id_prof) {
+        function gestionarDisponibilidad(id_prof, nombreProfesional) {
             document.getElementById('id_prof').value = id_prof;
             document.getElementById('contenedor-horarios').innerHTML = '';
             document.getElementById('lista-disponibilidades').innerHTML = '';
+
+            // Actualizar el título del modal con el nombre del profesional
+            document.getElementById('gestionarDisponibilidadLabel').textContent = `Gestionar Disponibilidad de ${nombreProfesional}`;
 
             // Llamada AJAX para cargar disponibilidades existentes
             fetch(`./obtenerDisponibilidades.php?id_prof=${id_prof}`)
@@ -292,15 +310,22 @@ $resultProfesionales = $conn->query($sqlProfesionales);
                     const lista = document.getElementById('lista-disponibilidades');
                     if (data.length > 0) {
                         data.forEach(disponibilidad => {
-                            const item = document.createElement('li');
-                            item.innerHTML = `
-                        ${disponibilidad.dia_semana}: ${disponibilidad.hora_inicio} - ${disponibilidad.hora_fin}, Intervalo: ${disponibilidad.intervalo} min
-                        <button class="btn btn-danger btn-sm" onclick="eliminarDisponibilidad(${disponibilidad.id})">Eliminar</button>
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                        <td>${disponibilidad.dia_semana}</td>
+                        <td>${disponibilidad.hora_inicio}</td>
+                        <td>${disponibilidad.hora_fin}</td>
+                        <td>${disponibilidad.intervalo} min</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarDisponibilidad(${disponibilidad.id})">Eliminar</button>
+                        </td>
                     `;
-                            lista.appendChild(item);
+                            lista.appendChild(row);
                         });
                     } else {
-                        lista.innerHTML = '<li>No hay disponibilidades registradas.</li>';
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td colspan="5" class="text-center">No hay disponibilidades registradas.</td>`;
+                        lista.appendChild(row);
                     }
                 })
                 .catch(error => console.error('Error al cargar disponibilidades:', error));
@@ -308,6 +333,7 @@ $resultProfesionales = $conn->query($sqlProfesionales);
             agregarHorario(); // Agregar un horario inicial para agregar nuevas disponibilidades
             $('#gestionarDisponibilidadModal').modal('show');
         }
+
 
 
         function eliminarDisponibilidad(id_disponibilidad) {
