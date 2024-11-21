@@ -27,6 +27,16 @@ if (!isset($_SESSION['usuario'])) {
     exit; // Asegura que el script se detenga después de redirigir
 }
 
+// Suponiendo que el valor de cod_prof se obtiene, por ejemplo, de $_GET['cod_prof']
+$cod_prof = isset($_GET['cod_prof']) ? $_GET['cod_prof'] : null;
+
+if ($cod_prof) {
+    // Obtener la especialidad del profesional usando la función
+    $especialidad = obtenerEspecialidadProfesional($cod_prof);
+} else {
+    // Si no hay cod_prof, asignar un valor predeterminado o manejar el error
+    $especialidad = "Especialidad no especificada";
+}
 
 ?>
 
@@ -181,18 +191,12 @@ if (!isset($_SESSION['usuario'])) {
                 <select id="cod_practica" name="cod_practica" required
                     class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
                     <option value="">Seleccionar Código de Práctica</option>
-                    <?php
-                    // Obtener códigos de práctica y descripciones
-                    $codigos_practica = obtenerCodigosPractica();
-                    foreach ($codigos_practica as $cod_practica) {
-                        // Obtener la descripción para el código de práctica actual
-                        $descripcion = obtenerDescripcionPractica($cod_practica);
-                        // Imprimir opción con código de práctica y descripción
-                        echo "<option value='" . $cod_practica . "'>" . $cod_practica . " - " . $descripcion . "</option>";
-                    }
-                    ?>
+                    <option value="521001">521001 - PRESCRIPCION FARMACOLOGICA Y SEGUIMIENTO DE CONTROL DE TRATAMIENTO
+                    </option>
+                    <option value="520101">520101 - PSICOTERAPIA INDIVIDUAL (SESIONES DE 30 A 60 MINUTOS)</option>
                 </select>
             </div>
+
 
 
             <div class="mb-4">
@@ -449,11 +453,17 @@ if (!isset($_SESSION['usuario'])) {
             // Definir la variable cod_prof en un ámbito más amplio
             let cod_prof;
 
+            
             // Agregar un event listener para detectar cambios en el elemento select con id cod_prof
             document.getElementById('cod_prof').addEventListener('change', function () {
-                cod_prof = this.value; // Obtener el valor seleccionado del profesional
-                cargarPacientesPorProfesional(cod_prof); // Llamar a la función para cargar pacientes por profesional
+                var cod_prof = this.value; // Obtener el valor seleccionado del profesional
+
+                // Llamar a la función para cargar pacientes por profesional
+                cargarPacientesPorProfesional(cod_prof);
+
+                
             });
+
 
             // Ejemplo de cómo manejar el clic en las páginas
             document.querySelectorAll('.pagina').forEach(pagina => {
@@ -468,7 +478,7 @@ if (!isset($_SESSION['usuario'])) {
             });
 
             //MODAL EDITAR
-            function abrirModalEditar(codPaci, nombreYapellido, benef, token,fecha, codPractica, codDiag) {
+            function abrirModalEditar(codPaci, nombreYapellido, benef, token, fecha, codPractica, codDiag) {
                 // Asignar los valores a los campos del modal
                 document.getElementById('idPaciente').value = codPaci;
                 document.getElementById('nombreYapellidoModal').value = nombreYapellido;

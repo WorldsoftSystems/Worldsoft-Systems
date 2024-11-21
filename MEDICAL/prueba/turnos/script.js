@@ -296,16 +296,18 @@ document.addEventListener('DOMContentLoaded', function () {
                         row.cells[5].title = turno.observaciones;
                         row.cells[5].addEventListener('click', () => openEditModal(turno));
 
+                        // Establecer colores en base a la llegada y atención
                         if (turno.llego === 'SI' && turno.atendido === 'SI') {
                             for (let i = 0; i < 6; i++) {
-                                row.cells[i].style.backgroundColor = '#7abaf5';
+                                row.cells[i].style.backgroundColor = '#7abaf5'; // Color si llegó y fue atendido
                             }
                         } else if (turno.llego === 'SI') {
                             for (let i = 0; i < 6; i++) {
-                                row.cells[i].style.backgroundColor = '#ff8d30';
+                                row.cells[i].style.backgroundColor = '#ff8d30'; // Color si llegó pero no fue atendido
                             }
                         }
                     } else {
+                        // Si no hay turno en el intervalo, marcar la celda como vacía y habilitarla para agregar turno
                         for (let i = 1; i < 6; i++) {
                             row.cells[i].classList.add('empty-cell');
                             row.cells[i].addEventListener('click', () => openCreateModal(intervalo, selectedDate));
@@ -356,7 +358,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const addSobreturnoButton = document.createElement('button');
                 addSobreturnoButton.innerText = 'Agregar Sobreturno';
-
                 addSobreturnoButton.classList.add('btn', 'btn-custom'); // Agregar clases de estilo
                 addSobreturnoButton.addEventListener('click', () => openCreateModal(null, selectedDate));
 
@@ -364,6 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => console.error('Error al cargar el horario:', error));
     }
+
 
 
     profesionalSelect.addEventListener('change', () => {

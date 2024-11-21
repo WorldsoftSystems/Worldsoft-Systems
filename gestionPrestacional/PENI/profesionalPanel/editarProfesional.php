@@ -46,6 +46,15 @@
                         </select>
                     </div>
 
+                    <div class="mb-4">
+                        <label for="profesional" class="block text-sm font-medium text-gray-700">Profesional:</label>
+                        <select id="profesional" name="profesional" required
+                            class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
+                            <option value="">Seleccionar Profesional</option>
+                        </select>
+                    </div>
+
+
                     <button type="submit" name="actualizar"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Actualizar</button>
                 </form>
@@ -56,6 +65,28 @@
         }
         ?>
     </div>
+    <script>
+        // Función para cargar los profesionales desde la base de datos
+        function loadProfesionales() {
+            fetch('./gets/get_profesionales.php')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById("profesional");
+                    data.forEach(prof => {
+                        const option = document.createElement("option");
+                        option.value = prof.cod_prof;
+                        option.textContent = `${prof.apellido} ${prof.nombre}`;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error al cargar profesionales:", error));
+        }
+
+        // Llamar a la función cuando la página se cargue
+        document.addEventListener("DOMContentLoaded", loadProfesionales);
+        
+
+    </script>
 </body>
 
 </html>

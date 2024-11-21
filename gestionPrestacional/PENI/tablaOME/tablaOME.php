@@ -16,12 +16,22 @@ $profesional = isset ($_GET['profesional']) ? $_GET['profesional'] : '';
 // Obtener la lista de profesionales para el filtro
 $profesionales = obtenerProfesionales();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Actualizar el estado 'cargado' del paciente en la base de datos
-    $cod_paci = $_POST['cod_paci'];
-    $nuevo_estado = $_POST['nuevo_estado'];
-    actualizarEstadoCargado($cod_paci, $nuevo_estado);
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'actualizar_estado_cargado') {
+    // Asegura el formato JSON para la respuesta
+    header('Content-Type: application/json');
+    
+    // Obtener y validar parámetros necesarios
+    if (isset($_POST['cod_paci']) && isset($_POST['nuevo_estado'])) {
+        $cod_paci = $_POST['cod_paci'];
+        $nuevo_estado = $_POST['nuevo_estado'];
+        actualizarEstadoCargado($cod_paci, $nuevo_estado);
+    } else {
+        echo json_encode(["success" => false, "message" => "Faltan parámetros"]);
+    }
+    exit; // Termina la ejecución para evitar conflictos
 }
+
+
 
 
 // Obtener el número de registros a mostrar
@@ -194,7 +204,6 @@ if (!isset($_SESSION['usuario'])) {
                         <th class="px-4 py-2">Especialidad</th>
                         <th class="px-4 py-2">Diagnostico</th>
                         <th class="px-4 py-2">Fecha</th>
-                        <th class="px-4 py-2">Token</th>
                         <th class="px-4 py-2">Cargado</th>
                     </tr>
                 </thead>
@@ -210,18 +219,18 @@ if (!isset($_SESSION['usuario'])) {
                         echo "<td class='border px-4 py-2'>" . obtenerEspecialidadProfesional($paciente["cod_prof"]) . "</td>";
                         echo "<td class='border px-4 py-2'>" . $paciente["cod_diag"] . "</td>";
                         echo "<td class='border px-4 py-2'>" . date('d/m/Y H:i:s', strtotime($paciente["fecha"])) . "</td>";
-                        echo "<td class='border px-4 py-2'>" . $paciente["token"] . "</td>";
                         echo "<td class='border px-4 py-2'>";
 
-                        // Formulario para cambiar el estado 'cargado'
-                        echo "<form method='post'>";
+                        echo "<form method='post' action='" . $_SERVER['PHP_SELF'] . "'>";  // Asegúrate de usar la misma URL
                         echo "<input type='hidden' name='cod_paci' value='" . $paciente["cod_paci"] . "'>";
+                        echo "<input type='hidden' name='action' value='actualizar_estado_cargado'>"; // Añadir identificador de acción
                         echo "<select name='nuevo_estado' onchange='this.form.submit()'>";
-                        echo "<option value='no_cargado'" . ($paciente["cargado"] == 'no_cargado' ? " selected" : "") . ">No cargado</option>";
+                        echo "<option value=' '" . ($paciente["cargado"] == 'no_cargado' ? " selected" : "") . ">No cargado</option>";
                         echo "<option value='cargado'" . ($paciente["cargado"] == 'cargado' ? " selected" : "") . ">Cargado</option>";
                         echo "</select>";
                         echo "</form>";
-                        echo "</td>";
+
+
                         
                          // Botón para generar QR
                         echo "<td class='border px-4 py-2'>";

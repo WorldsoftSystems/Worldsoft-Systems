@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost:3306
--- Tiempo de generación: 22-09-2024 a las 20:08:56
--- Versión del servidor: 10.6.19-MariaDB-cll-lve-log
--- Versión de PHP: 8.3.11
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 15-11-2024 a las 01:39:03
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `worldsof_OME`
+-- Base de datos: `worldsof_gestion_prestacional_peni`
 --
 
 -- --------------------------------------------------------
@@ -10756,7 +10756,10 @@ INSERT INTO `paciente` (`cod_paci`, `nombreYapellido`, `benef`, `cod_prof`, `cod
 (10784, 'IBAEZ OLGA ESTER', 15078510270900, 82, 520101, '2024-09-21 18:12:28', 'F45.9', '', '2024-09-21 15:12:28'),
 (10785, 'SOPRANZETTI STELLA MARIS', 15027838230200, 82, 520101, '2024-09-21 18:13:40', 'F33', '', '2024-09-21 15:13:40'),
 (10786, 'NICOLAS TRAVILAO ROCIO DANIELA', 15539235370740, 82, 520101, '2024-09-21 18:14:36', 'F20', '', '2024-09-21 15:14:36'),
-(10787, 'GRAZIANI PATRICIO MARCELO', 14002310470900, 82, 520101, '2024-09-21 18:15:28', 'F42.9', '', '2024-09-21 15:15:28');
+(10787, 'GRAZIANI PATRICIO MARCELO', 14002310470900, 82, 520101, '2024-09-21 18:15:28', 'F42.9', '', '2024-09-21 15:15:28'),
+(10788, 'LIVINGSTON ESTELA BEATRIZ', 1001560410400, 72, 520101, '2024-10-28 03:00:00', 'F02.1', '', '2024-10-28 14:53:58'),
+(10789, 'LIVINGSTON ESTELA BEATRIZ', 1001560410400, 80, 520101, '2024-10-28 23:44:07', 'F02', '', '2024-10-28 20:44:07'),
+(10790, 'CERDEIRA GLADYS MABEL', 15039855120900, 80, 520101, '2024-10-28 23:45:01', 'F02', '', '2024-10-28 20:45:01');
 
 --
 -- Índices para tablas volcadas
@@ -10780,7 +10783,7 @@ ALTER TABLE `paciente`
 -- AUTO_INCREMENT de la tabla `paciente`
 --
 ALTER TABLE `paciente`
-  MODIFY `cod_paci` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10788;
+  MODIFY `cod_paci` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10791;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

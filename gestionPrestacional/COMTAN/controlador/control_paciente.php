@@ -72,7 +72,7 @@ function actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token,
 
 
 // Manejar la solicitud
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST'  && $_POST['action'] != 'actualizar_estado_cargado') {
     // Verificar que se reciban todos los parámetros necesarios
     if (isset($_POST['id'], $_POST['nombreYapellido'], $_POST['benef'], $_POST['cod_practica'], $_POST['token'], $_POST['cod_diag'])) {
         $id = $_POST['id'];
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['success' => false, 'message' => 'Error al actualizar el paciente']);
         }
     } else {
-        echo json_encode(['success' => false, 'message' => 'Faltan parámetros']);
+        echo json_encode(['success' => false, 'message' => 'Faltan parametros']);
     }
     exit;
 }
@@ -439,26 +439,32 @@ function actualizarEstadoCargado($cod_paci, $nuevo_estado)
 {
     global $conn;
 
-    // Preparar la consulta SQL para actualizar el estado 'cargado' del paciente
+    // Preparar la consulta SQL
     $sql = "UPDATE paciente SET cargado = ? WHERE cod_paci = ?";
 
     // Preparar la sentencia
     $stmt = $conn->prepare($sql);
 
-    // Verificar si la preparación de la sentencia fue exitosa
+    // Verifica si la sentencia se preparó correctamente
     if (!$stmt) {
         die("Error al preparar la consulta: " . $conn->error);
     }
 
-    // Vincular los parámetros
-    $stmt->bind_param("si", $nuevo_estado, $cod_paci);
+    // Vincula los parámetros
+    if (!$stmt->bind_param("si", $nuevo_estado, $cod_paci)) {
+        die("Error al vincular los parámetros: " . $stmt->error);
+    }
 
-    // Ejecutar la consulta
+    // Ejecuta la consulta
     if ($stmt->execute()) {
-        return true; // La actualización se realizó con éxito
+        // Responde con mensaje de éxito
+        echo json_encode(["success" => true, "message" => "Estado actualizado con éxito"]);
+        // Redirige a la misma página para recargar
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
     } else {
-        // Si hay un error en la ejecución, mostrar el mensaje de error
-        die("Error al ejecutar la consulta: " . $stmt->error);
+        // Responde con mensaje de error si no se ejecutó correctamente
+        echo json_encode(["success" => false, "message" => "Error al ejecutar la consulta"]);
     }
 }
 

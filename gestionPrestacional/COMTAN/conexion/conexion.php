@@ -1,17 +1,18 @@
 <?php
-/*
-COMTAN
+
+
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "worldsof_gestion_prestacional_comtan";
-*/
 
+/*
+COMTAN
 $servername = "localhost";
 $username = "worldsof_OME";
 $password = "Wss1593.";
 $dbname = "worldsof_gestion_prestacional_comtan"; 
-
+*/
 
 
 // Crear conexión

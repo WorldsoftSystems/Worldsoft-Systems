@@ -601,6 +601,9 @@ $conn->close();
                             <button type="submit" class="btn btn-primary btn-custom-save">Guardar</button>
                         </div>
                     </form>
+                    <button class="btn btn-primary" id="btnGenerarPDF">
+                        <i class="fas fa-file-pdf"></i> Generar Planilla
+                    </button>
                 </div>
             </div>
         </div>

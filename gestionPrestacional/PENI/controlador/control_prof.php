@@ -10,8 +10,9 @@ if (isset($_POST['agregar'])) {
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
     $especialidad = $_POST['especialidad']; // Agregar la especialidad obtenida del formulario
+    $prof_g = $_POST['profesional'];
 
-    if (agregarProfesor($nombre, $apellido, $especialidad)) { // Llamar a la función con la especialidad
+    if (agregarProfesor($nombre, $apellido, $especialidad,$prof_g)) { // Llamar a la función con la especialidad
         $_SESSION['alert_message'] = "Profesional registrado correctamente";
     } else {
         $_SESSION['alert_message'] = "Error al agregar el registro: " . $conn->error;
@@ -42,9 +43,10 @@ if (isset($_POST['actualizar'])) {
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
     $especialidad = $_POST['especialidad']; // Capturar el valor de la especialidad desde el formulario
+    $prof_g = $_POST['profesional'];
 
     // Llamar a la función para actualizar el profesional
-    if (actualizarProfesor($id, $nombre, $apellido, $especialidad)) {
+    if (actualizarProfesor($id, $nombre, $apellido, $especialidad, $prof_g)) {
         $_SESSION['alert_message'] = "Profesional actualizado correctamente";
     } else {
         $_SESSION['alert_message'] = "Error al actualizar el registro: " . $conn->error;

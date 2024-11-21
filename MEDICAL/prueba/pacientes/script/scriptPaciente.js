@@ -1,11 +1,93 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Solo mostrar la alerta si el parámetro 'success' está presente al cargar la página
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('success') && urlParams.get('success') === 'true') {
+    const successAlertShown = sessionStorage.getItem("successAlertShown");
+
+    if (urlParams.has('success') && urlParams.get('success') === 'true' && !successAlertShown) {
+        // Muestra la alerta y marca que ya se ha mostrado
         alert("El paciente se ha editado correctamente.");
+        sessionStorage.setItem("successAlertShown", "true"); // Evita mostrar la alerta nuevamente
         urlParams.delete('success');
-        window.history.replaceState({}, document.title, window.location.pathname);
+        window.history.replaceState({}, document.title, window.location.pathname);  // Elimina el parámetro de la URL
     }
 });
+
+document.getElementById('btnGenerarPDF').addEventListener('click', function () {
+    const pacienteId = document.getElementById('id').value;
+
+    if (!pacienteId) {
+        return; // No mostrar alerta si no se ha seleccionado un paciente
+    }
+
+    // Realizar una solicitud AJAX para obtener los datos del paciente
+    fetch(`./dato/obtenerPaciente.php?id=${pacienteId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                // Genera el PDF con un ligero retraso para evitar conflictos con la alerta
+                setTimeout(() => generarPDF(data), 100);
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener los datos:', error);
+        });
+});
+
+// Función para generar el PDF
+function generarPDF(paciente) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Estilo del PDF
+    doc.setFont('helvetica');
+    doc.setFontSize(16);
+    
+    // Título
+    doc.setTextColor(40, 45, 52);
+    doc.text(`Ficha de Paciente - ${paciente.nombre}`, 14, 20);
+
+    // Tabla de datos adicionales
+    const tableHeaders = ['Campo', 'Valor'];
+    const tableData = [
+        ['ID', paciente.id],
+        ['Nombre', paciente.nombre],
+        ['Beneficio', paciente.benef],
+        ['Parentesco', paciente.parentesco],
+        ['Obra Social', paciente.obra],
+        ['Fecha de Nacimiento', formatDate(paciente.fecha_nac)],
+        ['Sexo', paciente.sexo],
+        ['Domicilio', paciente.domicilio || 'No disponible'],
+        ['Localidad', paciente.localidad || 'No disponible'],
+        ['Teléfono', paciente.telefono || 'No disponible']
+    ];
+
+    doc.autoTable({
+        head: [tableHeaders],
+        body: tableData,
+        startY: 30, // Inicia la tabla después de los textos
+        theme: 'grid', // Estilo de la tabla con líneas
+        headStyles: {
+            fillColor: [41, 128, 185], // Color azul para el encabezado
+            textColor: 255, // Texto blanco
+            fontSize: 12
+        },
+        bodyStyles: {
+            fontSize: 10
+        },
+        margin: { top: 150 }, // Margen superior
+        styles: {
+            cellWidth: 'auto',
+            valign: 'middle'
+        }
+    });
+
+    // Generar el PDF en formato blob y abrirlo en una nueva pestaña
+    const pdfBlob = doc.output('blob');
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    window.open(pdfUrl, '_blank');
+}
+
+
 
 function formatDate(dateString) {
     var parts = dateString.split('-');

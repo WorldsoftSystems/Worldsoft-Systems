@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost:3306
--- Tiempo de generación: 22-09-2024 a las 20:09:24
--- Versión del servidor: 10.6.19-MariaDB-cll-lve-log
--- Versión de PHP: 8.3.11
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 12-11-2024 a las 15:00:44
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `worldsof_OME`
+-- Base de datos: `worldsof_gestion_prestacional_comtan`
 --
 
 -- --------------------------------------------------------
@@ -31,52 +31,43 @@ CREATE TABLE `prof` (
   `cod_prof` int(11) NOT NULL,
   `nombre` varchar(255) NOT NULL,
   `apellido` varchar(255) NOT NULL,
-  `especialidad` varchar(255) NOT NULL
+  `especialidad` varchar(255) NOT NULL,
+  `prof_generador` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `prof`
 --
 
-INSERT INTO `prof` (`cod_prof`, `nombre`, `apellido`, `especialidad`) VALUES
-(54, 'Doris ', 'Isidori - ALLEN', 'psicologia'),
-(55, 'Maria Veronica', 'Hernalz - CHOELE CHOEL', 'psiquiatria'),
-(56, 'Mylton ', 'Mercado', 'psiquiatria'),
-(57, 'Adriana ', 'Salamanca - CIPOLLETTI', 'psicologia'),
-(58, 'Maria ', 'Valenzuela - CIPOLLETTI', 'psicologia'),
-(59, 'Cintia', 'Apezetche - CIPOLLETTI', 'psicologia'),
-(60, 'Veronica ', 'Nunez - EL BOLSON', 'psicologia'),
-(61, 'Cecilia', 'Oriol - EL BOLSON', 'psicologia'),
-(62, 'Alejo ', 'Fowler', 'psiquiatria'),
-(63, 'Azul Luna', 'Genovessi Stoffel - GRAL. ROCA', 'psicologia'),
-(64, 'Mercedes Jael', 'Ramirez - GRAL. ROCA', 'psicologia'),
-(65, 'Maria', 'Rodriguez - GRAL. ROCA', 'psicologia'),
-(66, 'Belen', 'Ponce - GRAL. ROCA', 'psicologia'),
-(68, 'Adrian ', 'Volta - LAS GRUTAS - SAN ANTONIO OESTE', 'psicologia'),
-(69, 'Romina ', 'Ricco - LAS GRUTAS - SAN ANTONIO OESTE', 'psicologia'),
-(71, 'Manuel ', 'Romero - CONESA', 'psicologia'),
-(72, 'Axel Oscar ', 'Ganza Perez', 'psiquiatria'),
-(73, 'Laura', 'Bortolin ', 'psiquiatria'),
-(74, 'Mariana', 'Patelepen ', 'psiquiatria'),
-(75, 'Alejandro ', 'Izaguirre - SAN CARLOS DE BARILOCHE', 'psicologia'),
-(76, 'Alejandra ', 'Martinez - SAN CARLOS DE BARILOCHE', 'psicologia'),
-(77, 'Marcela ', 'Celano - SAN CARLOS DE BARILOCHE', 'psicologia'),
-(79, 'Virginia', 'Scarpelli - SAN CARLOS DE BARILOCHE', 'psicologia'),
-(80, 'Valeria ', 'Acevedo - SAN CARLOS DE BARILOCHE', 'psicologia'),
-(81, 'Manuel', 'Montero', 'psiquiatria'),
-(82, 'Patricia', 'Garcia - VIEDMA', 'psicologia'),
-(83, 'Jesica Laura ', 'Vecino - VIEDMA', 'psicologia'),
-(84, 'Brenda ', 'Velozo  - VILLA REGINA', 'psicologia'),
-(85, 'Maria ', 'Vesprini - VILLA REGINA', 'psicologia'),
-(88, 'Liliana Mabel', 'Saracco  - SAN CARLOS DE BARILOCHE', 'psicologia'),
-(89, '..', '..', 'psicologia'),
-(90, 'Lilian Marianela', 'Fernandez - VILLA REGINA', 'psicologia'),
-(91, 'WALTER', 'ROSENDO', 'psiquiatria'),
-(92, 'Ornella', 'Vellico', 'psicologia'),
-(93, 'MONICA GRACIELA', 'LANGUNI', 'psicologia'),
-(94, 'Ivana', 'Del Valle Gimenez ', 'psiquiatria'),
-(95, 'JULIETA MACARENA', 'VENDIGNI', 'psicologia'),
-(96, 'Manuel', 'Romero', 'psicologia');
+INSERT INTO `prof` (`cod_prof`, `nombre`, `apellido`, `especialidad`, `prof_generador`) VALUES
+(48, 'ANRES', 'BALLENT', 'psiquiatria', NULL),
+(49, 'CELESTE', 'BEHOTAS', 'psiquiatria', NULL),
+(50, 'MARIA CLAUDIA', 'CASTRO', 'psiquiatria', NULL),
+(51, 'AGUSTIN', 'FORBITO', 'psiquiatria', NULL),
+(53, 'LISANDRO ESTEBAN', 'GILLIGAN', 'psiquiatria', NULL),
+(54, 'ROMINA', 'SILVA', 'psiquiatria', NULL),
+(55, 'SILVINA', 'OLIVERA', 'psiquiatria', NULL),
+(56, 'CARLOS EDUADO', 'PEREZ', 'psiquiatria', NULL),
+(58, 'FRANCO', 'MILESI', 'psicologia', NULL),
+(59, 'LUCIA', 'HANSEN', 'psicologia', NULL),
+(60, 'JORGELINA', 'MICHIA', 'psicologia', NULL),
+(61, 'CLAUDIA', 'GHEZZI', 'psicologia', NULL),
+(62, 'MICAELA', 'BUJOSA', 'psicologia', NULL),
+(63, 'MARIA LAURA', 'GIANGIOBBE', 'psicologia', NULL),
+(64, 'PAULA', 'ROMERO', 'psicologia', NULL),
+(65, 'VANESA', 'MARTINEZ', 'psicologia', NULL),
+(66, 'PRICILA', 'CLERICI ERHARDT', 'psicologia', NULL),
+(67, 'SILVINA', 'PRESA', 'psicologia', NULL),
+(68, 'ROCIO', 'SAENZ', 'psicologia', NULL),
+(69, 'JOHANA MARISOL', 'MURILLO', 'psicologia', NULL),
+(70, 'NANCY EDITH', 'FERNANDEZ', 'psicologia', NULL),
+(71, 'EMILIANO JAVIER', 'BUDRONI', 'psicologia', NULL),
+(72, 'JESSICA', 'GALOTTI', 'psicologia', NULL),
+(73, 'MARTIN', 'LARDAPIDE', 'psiquiatria', NULL),
+(74, 'VERONICA', 'CERONO', 'psicologia', NULL),
+(75, 'MARIA CELINA ', 'GIANNOTTI ', 'psicologia', NULL),
+(76, 'MARIA FLORENCIA', 'RISSO', 'psicologia', NULL),
+(77, 'a', 'a', 'psicologia', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -86,7 +77,8 @@ INSERT INTO `prof` (`cod_prof`, `nombre`, `apellido`, `especialidad`) VALUES
 -- Indices de la tabla `prof`
 --
 ALTER TABLE `prof`
-  ADD PRIMARY KEY (`cod_prof`);
+  ADD PRIMARY KEY (`cod_prof`),
+  ADD KEY `fk_generador_pf` (`prof_generador`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -96,7 +88,17 @@ ALTER TABLE `prof`
 -- AUTO_INCREMENT de la tabla `prof`
 --
 ALTER TABLE `prof`
-  MODIFY `cod_prof` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `cod_prof` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `prof`
+--
+ALTER TABLE `prof`
+  ADD CONSTRAINT `fk_generador_pf` FOREIGN KEY (`prof_generador`) REFERENCES `prof` (`cod_prof`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

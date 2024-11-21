@@ -119,193 +119,78 @@ $resultProfesionales = $conn->query($sqlProfesionales);
     <div class="container">
         <div class="title-container">
             <h2>Disponibilidad</h2>
-            <button type="button" class="btn btn-custom btn-lg" data-bs-toggle="modal"
-                data-bs-target="#agregarDisponibilidadModal">
-                Agregar Disponibilidad <img src="../../img/iconoCrearEsp.png" alt="Icono Crear Disponibilidad"
-                    style="width: 50px; height: 50px; margin-left: 8px;">
-            </button>
         </div>
+        <!-- Campo de búsqueda -->
+        <input type="text" id="searchInput" class="form-control mb-3"
+            placeholder="Buscar por profesional o especialidad" onkeyup="filtrarTabla()">
+
         <table class="table table-striped table-bordered">
             <thead class="table-custom">
                 <tr>
-                    <th>ID</th>
                     <th>Profesional</th>
-                    <th>Día de la Semana</th>
-                    <th>Hora de Inicio</th>
-                    <th>Hora de Fin</th>
-                    <th>Intervalo</th>
+                    <th>Especialidad</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php if ($result->num_rows > 0): ?>
-                    <?php while ($row = $result->fetch_assoc()): ?>
-
+            <tbody id="tableBody">
+                <?php if ($resultProfesionales->num_rows > 0): ?>
+                    <?php while ($rowProfesional = $resultProfesionales->fetch_assoc()): ?>
                         <tr>
-                            <td><?= $row["id"] ?></td>
-                            <td style="display: none;"><?= $row["id_prof"] ?></td>
-                            <td><?= $row["nombreYapellido"] . ' - ' . $row["desc_especialidad"] ?></td>
-                            <td><?= $row["dia_semana"] ?></td>
-                            <td><?= $row["hora_inicio"] ?></td>
-                            <td><?= $row["hora_fin"] ?></td>
-                            <td><?= $row["intervalo"] ?></td>
+                            <td><?= $rowProfesional['nombreYapellido'] ?></td>
+                            <td><?= $rowProfesional['desc_especialidad'] ?></td>
                             <td>
-                                <button class="btn btn-custom-editar"
-                                    onclick='editarDisponibilidad(<?= json_encode($row) ?>)'><i
-                                        class="fas fa-pencil-alt"></i></button>
+                                <button class="btn btn-primary"
+                                    onclick="gestionarDisponibilidad(<?= $rowProfesional['id_prof'] ?>)">
+                                    Horarios de profesional
+                                </button>
 
-                                <a href="?eliminar=<?= $row['id'] ?>" class="btn btn-danger"
-                                    onclick="return confirm('¿Estás seguro de que deseas eliminar esta disponibilidad?');"><i
-                                        class="fas fa-trash-alt"></i></a>
+
+
                             </td>
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="6">No se encontraron resultados</td>
+                        <td colspan="3">No se encontraron profesionales.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
 
-    <div class="modal fade" id="agregarDisponibilidadModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <!-- Modal para gestionar disponibilidad -->
+    <div class="modal fade" id="gestionarDisponibilidadModal" tabindex="-1"
+        aria-labelledby="gestionarDisponibilidadLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Agregar Disponibilidad</h5>
+                    <h5 class="modal-title" id="gestionarDisponibilidadLabel">Gestionar Disponibilidad</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formDisponibilidad" action="./agregarDisponibilidad.php" method="POST">
-                        <input type="hidden" id="id" name="id">
-                        <div class="form-group">
-                            <label for="id_prof">Profesional</label>
-                            <select class="form-control" id="id_prof" name="id_prof" required>
-                                <option value="">Seleccione un profesional</option>
-                                <?php while ($rowProfesional = $resultProfesionales->fetch_assoc()): ?>
-                                    <option value="<?= $rowProfesional['id_prof'] ?>">
-                                        <?= $rowProfesional['nombreYapellido'] . ' - ' . $rowProfesional['desc_especialidad'] ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
+                    <form id="formDisponibilidad" action="agregarDisponibilidad.php" method="POST">
+                        <input type="hidden" id="id_prof" name="id_prof">
+
+                        <div id="contenedor-disponibilidades-actuales" class="mb-3">
+                            <h5>Disponibilidades actuales</h5>
+                            <ul id="lista-disponibilidades"></ul>
                         </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Día</th>
-                                        <th>Desde</th>
-                                        <th>Hasta</th>
-                                        <th>Intervalo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Lunes</td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_inicio_lunes"
-                                                name="horario_inicio_lunes">
-                                        </td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_fin_lunes"
-                                                name="horario_fin_lunes">
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control" id="intervalo_lunes"
-                                                name="intervalo_lunes">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Martes</td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_inicio_martes"
-                                                name="horario_inicio_martes">
-                                        </td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_fin_martes"
-                                                name="horario_fin_martes">
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control" id="intervalo_martes"
-                                                name="intervalo_martes">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Miércoles</td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_inicio_miercoles"
-                                                name="horario_inicio_miercoles">
-                                        </td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_fin_miercoles"
-                                                name="horario_fin_miercoles">
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control" id="intervalo_miercoles"
-                                                name="intervalo_miercoles">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jueves</td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_inicio_jueves"
-                                                name="horario_inicio_jueves">
-                                        </td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_fin_jueves"
-                                                name="horario_fin_jueves">
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control" id="intervalo_jueves"
-                                                name="intervalo_jueves">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Viernes</td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_inicio_viernes"
-                                                name="horario_inicio_viernes">
-                                        </td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_fin_viernes"
-                                                name="horario_fin_viernes">
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control" id="intervalo_viernes"
-                                                name="intervalo_viernes">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sábado</td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_inicio_sabado"
-                                                name="horario_inicio_sabado">
-                                        </td>
-                                        <td>
-                                            <input type="time" class="form-control" id="horario_fin_sabado"
-                                                name="horario_fin_sabado">
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control" id="intervalo_sabado"
-                                                name="intervalo_sabado">
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div id="contenedor-horarios">
+                            <!-- Aquí se agregarán dinámicamente los horarios -->
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary btn-custom-save">Guardar</button>
-                        </div>
+
+                        <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
 
+                </div>
             </div>
         </div>
     </div>
+
 
 
 
@@ -326,101 +211,165 @@ $resultProfesionales = $conn->query($sqlProfesionales);
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Verificar si hay un mensaje de éxito
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('success') && urlParams.get('success') === 'true') {
-                alert("La disponibilidad se ha editado correctamente.");
-                urlParams.delete('success');
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
+        document.addEventListener('DOMContentLoaded', function () {
+            // El código de filtrado de tabla solo se ejecutará después de que el DOM esté cargado.
+            function filtrarTabla() {
+                var input = document.getElementById('searchInput');
+                var filter = input.value.toLowerCase();
 
-            document.getElementById('formDisponibilidad').addEventListener('submit', function (e) {
-                e.preventDefault(); // Evitar el envío del formulario por defecto
+                var table = document.getElementById('tableBody'); // Aquí accedemos al tbody
+                var rows = table.getElementsByTagName('tr'); // Obtenemos las filas de la tabla
 
-                const formData = new FormData(this);
-                const xhr = new XMLHttpRequest();
-                xhr.open("POST", this.action, true);
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        const response = JSON.parse(xhr.responseText);
-                        let hayError = false;
+                for (var i = 0; i < rows.length; i++) {
+                    var tdProfesional = rows[i].getElementsByTagName('td')[0]; // Primer columna
+                    var tdEspecialidad = rows[i].getElementsByTagName('td')[1]; // Segunda columna
 
-                        response.forEach(res => {
-                            if (res.error) {
-                                alert(res.error); // Mostrar la alerta si hay un error
-                                hayError = true;
-                            } else if (res.success) {
-                                alert(res.success); // Mostrar el mensaje de éxito
-                            }
-                        });
+                    if (tdProfesional && tdEspecialidad) {
+                        var textProfesional = tdProfesional.textContent || tdProfesional.innerText;
+                        var textEspecialidad = tdEspecialidad.textContent || tdEspecialidad.innerText;
 
-                        // Si no hubo errores, recargar la página
-                        if (!hayError) {
-                            window.location.href = './disponibilidad.php?success=true'; // Redirigir a la página con éxito
+                        // Comprobamos si el texto del profesional o de la especialidad coincide con el filtro
+                        if (textProfesional.toLowerCase().indexOf(filter) > -1 || textEspecialidad.toLowerCase().indexOf(filter) > -1) {
+                            rows[i].style.display = ''; // Mostramos la fila
+                        } else {
+                            rows[i].style.display = 'none'; // Ocultamos la fila
                         }
-                    } else {
-                        alert("Error al procesar la solicitud.");
                     }
-                };
-                xhr.send(formData);
-            });
-
-            // Funciones de edición y limpieza de formulario
-            var dia;
-
-            function editarDisponibilidad(disponibilidad) {
-                // Limpiar campos del formulario
-                document.getElementById('formDisponibilidad').reset();
-
-                // Cambiar el título del modal
-                document.getElementById('exampleModalLabel').innerText = 'Editar Disponibilidad';
-
-                // Cambiar el texto del botón de guardar
-                document.querySelector('.btn-custom-save').innerText = 'Guardar Cambios';
-
-                // Rellenar el formulario con los datos de la disponibilidad seleccionada
-                document.getElementById('id').value = disponibilidad.id;
-                document.getElementById('id_prof').value = disponibilidad.id_prof;
-
-                // Manipular las horas para eliminar los segundos
-                var hora_inicio = disponibilidad.hora_inicio.split(':').slice(0, 2).join(':');
-                var hora_fin = disponibilidad.hora_fin.split(':').slice(0, 2).join(':');
-                dia = disponibilidad.dia_semana;
-
-                // Asignar los valores de tiempo a los campos correspondientes
-                document.getElementById('horario_inicio_' + dia).value = hora_inicio;
-                document.getElementById('horario_fin_' + dia).value = hora_fin;
-                document.getElementById('intervalo_' + dia).value = disponibilidad.intervalo;
-
-                // Mostrar el modal
-                var modal = new bootstrap.Modal(document.getElementById('agregarDisponibilidadModal'));
-                modal.show();
-            }
-
-            function limpiarFormulario() {
-                // Restaurar el título original del modal
-                document.getElementById('exampleModalLabel').innerText = 'Agregar Disponibilidad';
-
-                // Restaurar el texto original del botón de guardar
-                document.querySelector('.btn-custom-save').innerText = 'Guardar';
-
-                // Limpiar los campos del formulario
-                document.getElementById('id').value = '';
-                document.getElementById('id_prof').value = '';
-                if (dia) {
-                    document.getElementById('horario_inicio_' + dia).value = '';
-                    document.getElementById('horario_fin_' + dia).value = '';
-                    document.getElementById('intervalo_' + dia).value = '';
                 }
             }
 
-            window.editarDisponibilidad = editarDisponibilidad;
-
-            var btnAgregarDisponibilidadModal = document.querySelector('button[data-bs-target="#agregarDisponibilidadModal"]');
-            btnAgregarDisponibilidadModal.addEventListener('click', limpiarFormulario);
+            // Asignar la función filtrarTabla al evento keyup
+            document.getElementById('searchInput').addEventListener('keyup', filtrarTabla);
         });
 
+
+
+        document.getElementById("formDisponibilidad").addEventListener("submit", function (e) {
+            e.preventDefault(); // Evitar que se recargue la página
+
+            // Crear un objeto FormData para enviar el formulario
+            const formData = new FormData(this);
+
+            // Usar fetch para enviar los datos al servidor
+            fetch("agregarDisponibilidad.php", {
+                method: "POST",
+                body: formData
+            })
+                .then(response => response.json())  // Esperar respuesta JSON
+                .then(data => {
+                    console.log(data); // Para depurar la respuesta
+
+                    // Iterar sobre la respuesta para mostrar los mensajes
+                    data.forEach(item => {
+                        if (item.success) {
+                            alert(item.success);  // Mostrar mensaje de éxito
+                        } else if (item.error) {
+                            alert(item.error);  // Mostrar mensaje de error
+                        }
+                    });
+
+                    // Si la respuesta tiene éxito, cerrar el modal y recargar la disponibilidad
+                    if (data.some(item => item.success)) {
+                        gestionarDisponibilidad(document.getElementById('id_prof').value);  // Recargar disponibilidades
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);  // Si hay un error en la solicitud
+                    alert('Hubo un problema al procesar la solicitud.');
+                });
+        });
+
+
+        function gestionarDisponibilidad(id_prof) {
+            document.getElementById('id_prof').value = id_prof;
+            document.getElementById('contenedor-horarios').innerHTML = '';
+            document.getElementById('lista-disponibilidades').innerHTML = '';
+
+            // Llamada AJAX para cargar disponibilidades existentes
+            fetch(`./obtenerDisponibilidades.php?id_prof=${id_prof}`)
+                .then(response => response.json())
+                .then(data => {
+                    const lista = document.getElementById('lista-disponibilidades');
+                    if (data.length > 0) {
+                        data.forEach(disponibilidad => {
+                            const item = document.createElement('li');
+                            item.innerHTML = `
+                        ${disponibilidad.dia_semana}: ${disponibilidad.hora_inicio} - ${disponibilidad.hora_fin}, Intervalo: ${disponibilidad.intervalo} min
+                        <button class="btn btn-danger btn-sm" onclick="eliminarDisponibilidad(${disponibilidad.id})">Eliminar</button>
+                    `;
+                            lista.appendChild(item);
+                        });
+                    } else {
+                        lista.innerHTML = '<li>No hay disponibilidades registradas.</li>';
+                    }
+                })
+                .catch(error => console.error('Error al cargar disponibilidades:', error));
+
+            agregarHorario(); // Agregar un horario inicial para agregar nuevas disponibilidades
+            $('#gestionarDisponibilidadModal').modal('show');
+        }
+
+
+        function eliminarDisponibilidad(id_disponibilidad) {
+            if (!confirm("¿Estás seguro de que deseas eliminar esta disponibilidad?")) {
+                return;
+            }
+
+            fetch('eliminarDisponibilidad.php', {
+                method: 'POST',
+                body: JSON.stringify({ id: id_disponibilidad }), // Enviar el id en el cuerpo de la solicitud
+                headers: {
+                    'Content-Type': 'application/json'  // Especificar que estamos enviando JSON
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.success);
+                        gestionarDisponibilidad(document.getElementById('id_prof').value); // Recargar disponibilidades
+                    } else {
+                        alert(data.error || 'Error al eliminar la disponibilidad.');
+                    }
+                })
+                .catch(error => console.error('Error al eliminar disponibilidad:', error));
+        }
+
+
+        function agregarHorario() {
+            const contenedor = document.getElementById('contenedor-horarios');
+            const index = contenedor.children.length;
+            const html = `
+        <div class="horario-group" style="margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="dia_${index}">Día:</label>
+                <select class="form-control" id="dia_${index}" name="horarios[${index}][dia]">
+                    <option value="lunes">Lunes</option>
+                    <option value="martes">Martes</option>
+                    <option value="miercoles">Miércoles</option>
+                    <option value="jueves">Jueves</option>
+                    <option value="viernes">Viernes</option>
+                    <option value="sabado">Sábado</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="inicio_${index}">Hora Inicio:</label>
+                <input type="time" class="form-control" id="inicio_${index}" name="horarios[${index}][inicio]" required>
+            </div>
+            <div class="form-group">
+                <label for="fin_${index}">Hora Fin:</label>
+                <input type="time" class="form-control" id="fin_${index}" name="horarios[${index}][fin]" required>
+            </div>
+            <div class="form-group">
+                <label for="intervalo_${index}">Intervalo (min):</label>
+                <input type="number" class="form-control" id="intervalo_${index}" name="horarios[${index}][intervalo]" value="20" required>
+            </div>
+        </div>`;
+            contenedor.insertAdjacentHTML('beforeend', html);
+        }
+
+        function eliminarHorario(button) {
+            button.parentElement.remove();
+        }
 
 
 

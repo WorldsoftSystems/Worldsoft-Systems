@@ -29,16 +29,31 @@ while ($row = $disponibilidad_result->fetch_assoc()) {
     $hora_fin = new DateTime($row['hora_fin']);
     $intervalo = $row['intervalo'];
 
+    // Crear los intervalos de tiempo
     $intervalos = array();
     while ($hora_inicio < $hora_fin) {
         $intervalos[] = $hora_inicio->format('H:i');
         $hora_inicio->add(new DateInterval("PT{$intervalo}M"));
     }
 
-    $disponibilidad[] = array(
-        "dia_semana" => $dia_semana,
-        "intervalos" => $intervalos
-    );
+    // Verificar si ya existe una disponibilidad para ese día
+    $found = false;
+    foreach ($disponibilidad as &$disp) {
+        if ($disp['dia_semana'] === $dia_semana) {
+            // Fusionar los intervalos si ya existe una disponibilidad para ese día
+            $disp['intervalos'] = array_merge($disp['intervalos'], $intervalos);
+            $found = true;
+            break;
+        }
+    }
+
+    // Si no existe una disponibilidad para el día, agregar una nueva
+    if (!$found) {
+        $disponibilidad[] = array(
+            "dia_semana" => $dia_semana,
+            "intervalos" => $intervalos
+        );
+    }
 }
 
 $stmt_disponibilidad->close();
@@ -58,6 +73,7 @@ $result_turnos = $stmt_turnos->get_result();
 $turnos = array();
 while ($row = $result_turnos->fetch_assoc()) {
     $turnos[] = $row;
+
 }
 
 $stmt_turnos->close();
