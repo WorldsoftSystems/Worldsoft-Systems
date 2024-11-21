@@ -49,16 +49,17 @@ function generarPDF(paciente) {
     // Tabla de datos adicionales
     const tableHeaders = ['Campo', 'Valor'];
     const tableData = [
-        ['ID', paciente.id],
-        ['Nombre', paciente.nombre],
-        ['Beneficio', paciente.benef],
-        ['Parentesco', paciente.parentesco],
+        ['Nombres y Apellido', paciente.nombre || 'No disponible'],
+        ['Nº Afiliado', paciente.benef+'/'+paciente.parentesco || 'No disponible'],
+        ['T. Doc y DNI', paciente.tipo_doc+' '+paciente.nro_doc || 'No disponible'],
+        ['Fecha de Nacimiento', formatDate(paciente.fecha_nac) || 'No disponible'],
         ['Obra Social', paciente.obra],
-        ['Fecha de Nacimiento', formatDate(paciente.fecha_nac)],
-        ['Sexo', paciente.sexo],
+        ['Sexo', paciente.sexo || 'No disponible'],
         ['Domicilio', paciente.domicilio || 'No disponible'],
         ['Localidad', paciente.localidad || 'No disponible'],
-        ['Teléfono', paciente.telefono || 'No disponible']
+        ['Teléfono', paciente.telefono || 'No disponible'],
+        ['Fecha de admision', paciente.admision || 'No disponible'],
+        ['Diagnostico', paciente.diag_full || 'No disponible']
     ];
 
     doc.autoTable({

@@ -3,7 +3,7 @@
 $hostname = "localhost";
 $username = "worldsof_OME";
 $password = "Wss1593.";
-$database = "worldsof_medical_prueba";
+$database = "medical_test";
 */
 
 $hostname = "localhost";

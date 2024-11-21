@@ -602,7 +602,7 @@ $conn->close();
                         </div>
                     </form>
                     <button class="btn btn-primary" id="btnGenerarPDF">
-                        <i class="fas fa-file-pdf"></i> Generar Planilla
+                        <i class="fas fa-file-pdf"></i> FICHA DE PACIENTE
                     </button>
                 </div>
             </div>
