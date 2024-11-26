@@ -5,11 +5,12 @@ $id_prof = $_GET['id_prof'] ?? '';
 $fecha_desde = $_GET['fecha_desde'] ?? '';
 $fecha_hasta = $_GET['fecha_hasta'] ?? '';
 
+// Verificar conexión
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Consulta SQL ajustada para traer todos los profesionales si `id_prof` está vacío
+// Consulta SQL: incluir filtro para `id_prof` solo si no está vacío
 $sql = "SELECT t.*, 
                CONCAT(paci.nombre, ' - Afiliado:', paci.benef, '/', paci.parentesco, ' - ', os.siglas, ' - Tel:', COALESCE(paci.telefono, 'Sin teléfono')) AS nombre_paciente,
                CONCAT(a.codigo, ' - ', a.descripcion) AS motivo_full,
@@ -21,11 +22,11 @@ $sql = "SELECT t.*,
         LEFT JOIN obra_social os ON os.id = paci.obra_social
         WHERE t.fecha BETWEEN ? AND ?";
 
-// Agregar filtro de profesional solo si no es vacío
+// Agregar filtro de profesional solo si `id_prof` no está vacío
 if ($id_prof !== '') {
     $sql .= " AND t.id_prof = ?";
 }
-$sql .= " ORDER BY t.id_prof, t.hora ASC";  // Agrupa por profesional y luego ordena por hora
+$sql .= " ORDER BY t.id_prof, t.hora ASC";
 
 // Preparar y ejecutar la consulta
 $stmt = $conn->prepare($sql);
@@ -33,8 +34,9 @@ if ($stmt === false) {
     die("Prepare failed: " . $conn->error);
 }
 
+// Vincular parámetros de acuerdo a si `id_prof` está vacío o no
 if ($id_prof !== '') {
-    $stmt->bind_param("iss", $id_prof, $fecha_desde, $fecha_hasta);
+    $stmt->bind_param("ssi", $fecha_desde, $fecha_hasta, $id_prof);
 } else {
     $stmt->bind_param("ss", $fecha_desde, $fecha_hasta);
 }

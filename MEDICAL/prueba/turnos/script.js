@@ -741,6 +741,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         turno.hora,
                         turno.nombre_paciente,
                         turno.motivo_full,
+                        formatDate(turno.fecha),
                         turno.llego,
                         turno.atendido,
                         turno.observaciones
@@ -798,7 +799,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Configuración de la tabla para los turnos del profesional actual
                     doc.autoTable({
-                        head: [['Hora', 'Paciente', 'Motivo', 'Llegó', 'Atendido', 'Observaciones']],
+                        head: [['Hora', 'Paciente', 'Motivo','Fecha', 'Llegó', 'Atendido', 'Observaciones']],
                         body: turnosPorProfesional[profesional],
                         startY: currentY + 10,
                         margin: { left: 15, right: 15 },
@@ -812,9 +813,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             0: { cellWidth: 30 },
                             1: { cellWidth: 70 },
                             2: { cellWidth: 40 },
-                            3: { cellWidth: 20 },
+                            3: { cellWidth: 30 },
                             4: { cellWidth: 20 },
-                            5: { cellWidth: 50 }
+                            5: { cellWidth: 50 },
+                            6: { cellWidth: 50 }
                         }
                     });
                 });
