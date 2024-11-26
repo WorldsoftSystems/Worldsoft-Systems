@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('nro_hist_int').value = paciente.nro_hist_int;
         document.getElementById('hora_admision').value = paciente.hora_admision;
         document.getElementById('ugl_paciente').value = paciente.ugl_descripcion;
-
+        document.getElementById('ugl_paciente').readOnly = true;
 
         // Primero, carga las modalidades
         $.ajax({

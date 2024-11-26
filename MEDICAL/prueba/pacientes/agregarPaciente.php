@@ -27,18 +27,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $modalidad_act = $_POST['modalidad_act'];
     $hora_admision = $_POST['hora_admision'];
     $tipo_historia = $_POST['tipo_historia'];
-    $ugl_descripcion = $_POST['ugl_paciente'];  // Este es el texto (descripción) enviado por el formulario
+    $ugl_id = $_POST['ugl_paciente']; // Este es el ID o la descripción seleccionada
 
-    // 1. Aquí va la consulta SQL para convertir la descripción a ID:
-    $sql_ugl = "SELECT id FROM codigo_ugl WHERE descripcion = ?";
-    $stmt_ugl = $conn->prepare($sql_ugl);
-    $stmt_ugl->bind_param("s", $ugl_descripcion);  // Vinculamos la descripción como parámetro
-    $stmt_ugl->execute();
-    $stmt_ugl->bind_result($ugl_id);  // El resultado será el ID del UGL
-    $stmt_ugl->fetch();
-    $stmt_ugl->close();
+    // Agrega un registro en el log para verificar el valor recibido
+    error_log("Valor recibido en 'ugl_paciente': $ugl_id");
 
-    // Si no se encuentra el UGL, devolvemos un error
+    // Verifica si el valor recibido es un número (ID) o una descripción (texto)
+    if (is_numeric($ugl_id)) {
+        // Si es numérico, asumimos que es el ID
+        $ugl_id = (int) $ugl_id;
+        error_log("Interpretado como ID: $ugl_id");
+    } else {
+        // Si no es numérico, asumimos que es una descripción y hacemos la consulta para obtener el ID
+        $sql_ugl = "SELECT id FROM codigo_ugl WHERE descripcion = ?";
+        $stmt_ugl = $conn->prepare($sql_ugl);
+        $stmt_ugl->bind_param("s", $ugl_id); // Aquí usamos directamente $ugl_id como descripción
+        $stmt_ugl->execute();
+        $stmt_ugl->bind_result($ugl_id);
+        $stmt_ugl->fetch();
+        $stmt_ugl->close();
+        
+        error_log("ID obtenido para la descripción '$ugl_id': " . ($ugl_id ? $ugl_id : 'No encontrado'));
+    }
+
+    // Verifica si se obtuvo el ID correctamente
     if (!$ugl_id) {
         $response['success'] = false;
         $response['message'] = 'No se encontró un UGL correspondiente.';
