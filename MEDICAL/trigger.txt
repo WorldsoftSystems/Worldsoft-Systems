@@ -1,0 +1,28 @@
+DELIMITER //
+
+CREATE TRIGGER `before_insert_paci_diag`
+BEFORE INSERT ON `paci_diag`
+FOR EACH ROW
+BEGIN
+    DECLARE v_id INT;
+
+    -- Busca el id en la tabla diag según el codigo
+    SELECT `id` INTO v_id 
+    FROM `diag` 
+    WHERE `codigo` = NEW.codigo 
+    LIMIT 1;
+
+    -- Si se encuentra el id, actualiza el nuevo registro en paci_diag
+    IF v_id IS NOT NULL THEN
+        SET NEW.codigo = v_id;
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El codigo no existe en diag';
+    END IF;
+END;
+
+//
+
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `before_insert_paci_diag`;
+

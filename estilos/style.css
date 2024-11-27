@@ -9,16 +9,18 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    text-decoration: none;
+    text-decoration: none !important;
     list-style: none;
     --transition-time: 0.5s;
     font-family: 'Poppins', sans-serif;
+    
 }
 
 #Inicio {
     background-image: linear-gradient(rgba(0, 5, 27, 0.815), rgba(1, 0, 37, 0.5)), url("../img/home.jpg");
     background-repeat: no-repeat;
     background-size:cover;
+    padding-bottom: 2.9rem;
 }
 
 
@@ -104,12 +106,64 @@ nav ul li a {
 
 
 
-/* Adjustments for smaller screens */
-@media screen and (max-width: 760px) {
-    .nav_fixed {
-        position: fixed;
+
+/* Estilo para los botones */
+.button-container {
+    display: flex;
+    justify-content: center; /* Centramos los botones en pantallas grandes */
+    flex-wrap: nowrap; /* No permitir que los botones se ajusten en una nueva línea */
+    gap: 15px; /* Espacio entre los botones */
+    margin-top: -0.4rem;
+    padding: 0 1rem; /* Añadir un poco de padding horizontal */
+    overflow-x: auto; /* Habilitar desplazamiento horizontal en pantallas pequeñas */
+    width: 100%;
+    box-sizing: border-box; /* Asegurar que el padding esté dentro del ancho del contenedor */
+    
+}
+
+.button-container .btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff; /* Color de fondo de los botones */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex-shrink: 0; /* Prevenir que los botones se reduzcan */
+    min-width: 120px; /* Asegurar que los botones tengan un tamaño mínimo adecuado */
+}
+
+.button-container .btn:hover {
+    background-color: #0056b3; /* Cambia el color al pasar el cursor */
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 768px) {
+    .button-container {
+        justify-content: flex-start; /* Alinear los botones a la izquierda en pantallas pequeñas */
+        padding: 0; /* Eliminar padding adicional en pantallas pequeñas */
+        overflow-x: auto; /* Permitir desplazamiento horizontal en pantallas pequeñas */
+        scrollbar-width: thin; /* Ancho fino para el scrollbar en Firefox */
+    }
+
+    .button-container::-webkit-scrollbar {
+        height: 8px; /* Altura del scrollbar en navegadores Webkit (Chrome, Safari) */
+    }
+
+    .button-container::-webkit-scrollbar-thumb {
+        background-color: #007bff; /* Color del scrollbar */
+        border-radius: 10px;
+    }
+
+    .button-container .btn {
+        flex-shrink: 0; /* Evitar que los botones se encojan */
+        min-width: 120px; /* Mínimo ancho para los botones */
     }
 }
+
+
+
+
 
 
 .select {
@@ -340,7 +394,7 @@ a {
 
 .card {
     font-size: 'O';
-    --bg-filter-opacity: 0.5;
+    --bg-filter-opacity: 0.7;
     background-image: linear-gradient(rgba(0, 0, 0, var(--bg-filter-opacity)), rgba(0, 0, 0, var(--bg-filter-opacity))), var(--bg-img);
     height: 20em;
     width: 15em;
@@ -369,6 +423,7 @@ a {
     margin: 0;
     font-size: 1.5em;
     line-height: 1.2em;
+    color: white !important;
 }
 
 .card p {
@@ -376,6 +431,7 @@ a {
     font-family: 'Open Sans';
     margin-top: 0.5em;
     line-height: 2em;
+    color: white !important;
 }
 
 .card:before,
@@ -524,6 +580,13 @@ footer {
 
 
 /* MEDIA QUERIES */
+/* Adjustments for smaller screens */
+@media screen and (max-width: 760px) {
+    .nav_fixed {
+        position: fixed;
+    }
+}
+
 @media screen and (max-width: 1285px) {
     .cards-wrapper {
         grid-template-columns: 1fr 1fr;

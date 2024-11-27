@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin+Condensed:wght@400;500;600;700&display=swap');
+
+
+
+
+
+:root {
+  --primary-color: #0d2f44;
+  /* Define tu color aquí */
+}
+
+
+h1 {
+  color: #0d2f44 !important;
+  /* Cambia el color del texto */
+  text-align: center;
+  /* Centra el texto */
+  margin-bottom: 30px;
+  /* Añade espacio en la parte inferior del título */
+}
+
+body,
+html {
+  background-color: #bfe6f8 !important;
+  font-family: 'Cabin Condensed', sans-serif !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+
+.navbar {
+  background-color: var(--primary-color) !important;
+}
+
+/* Aplica el color de fondo al encabezado de la tabla */
+.table-custom th {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  /* Para asegurar que el texto sea visible */
+}
+
+/* Efecto de transición para una transición suave */
+.card {
+  transition: all 0.3s ease;
+}
+
+
+
+/* Efecto al hacer hover */
+.card:hover {
+  transform: scale(1.05);
+  /* Aumenta ligeramente el tamaño */
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+  /* Agrega una sombra suave */
+  background: linear-gradient(to bottom, #0d2f44 0%, rgba(56, 118, 233, 0.8) 100%);
+  /* Aplica un degradado */
+}
+
+/* Otros estilos */
+.card {
+  width: 12rem;
+  height: 12rem;
+  background: var(--primary-color);
+  border-radius: 10px;
+  font-size: 30px;
+  font-weight: 900;
+  color: #bfe6f8;
+}
+
+.first-content img {
+  max-width: 50%;
+  height: auto;
+  display: block;
+}
+
+.first-content h3,
+.third-content h3 {
+  margin-top: 10px;
+}
+
+.first-content,
+.third-content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  border-radius: 15px;
+  position: relative;
+  text-align: center;
+  padding-top: 10px;
+}
+
+.third-content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  border-radius: 15px;
+  position: relative;
+  text-align: center;
+}
+
+
+.footer-logo-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+footer.bg-dark {
+  background-color: transparent !important;
+  padding-top: 10rem;
+}
+
+
+.footer-logo-text img {
+  margin-right: 0.5rem;
+}
