@@ -144,7 +144,10 @@ $resultProfesionales = $conn->query($sqlProfesionales);
                                     Horarios de profesional
                                 </button>
 
-
+                                <button class="btn btn-primary"
+                                    onclick="gestionarAusencias(<?= $rowProfesional['id_prof'] ?>, '<?= $rowProfesional['nombreYapellido'] ?>')">
+                                    Gestionar Ausencias
+                                </button>
 
 
                             </td>
@@ -207,6 +210,97 @@ $resultProfesionales = $conn->query($sqlProfesionales);
     </div>
 
 
+    <!-- Modal AUSENCIAS-->
+    <div class="modal fade" id="ausenciasModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Gestión de Ausencias</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="profesionalInfo"></h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Inicio</th>
+                                <th>Fin</th>
+                                <th>Motivo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ausenciasTableBody">
+                            <!-- Las ausencias se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                    <button class="btn btn-success mt-3" onclick="agregarAusencia()">Agregar Ausencia</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Ausencia -->
+    <div class="modal fade" id="agregarAusenciaModal" tabindex="-1" aria-labelledby="agregarModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarModalLabel">Agregar Nueva Ausencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarAusencia">
+                        <input type="hidden" id="idProfAusencia" name="id_prof">
+                        <div class="mb-3">
+                            <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="fechaInicio" name="fecha_inicio" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaFin" class="form-label">Fecha de Fin</label>
+                            <input type="date" class="form-control" id="fechaFin" name="fecha_fin" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="motivo" class="form-label">Motivo</label>
+                            <textarea class="form-control" id="motivo" name="motivo" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Ausencia -->
+    <div class="modal fade" id="editarAusenciaModal" tabindex="-1" aria-labelledby="editarModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarModalLabel">Editar Ausencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarAusencia">
+                        <input type="hidden" id="idAusenciaEditar" name="id_ausencia">
+                        <div class="mb-3">
+                            <label for="fechaInicioEditar" class="form-label">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="fechaInicioEditar" name="fecha_inicio" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaFinEditar" class="form-label">Fecha de Fin</label>
+                            <input type="date" class="form-control" id="fechaFinEditar" name="fecha_fin" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="motivoEditar" class="form-label">Motivo</label>
+                            <textarea class="form-control" id="motivoEditar" name="motivo" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
 
@@ -226,6 +320,142 @@ $resultProfesionales = $conn->query($sqlProfesionales);
     </footer>
 
     <script>
+
+        function formatDate(dateString) {
+            var parts = dateString.split('-');
+            var year = parts[0];
+            var month = parts[1];
+            var day = parts[2];
+            return day + "/" + month + "/" + year;
+        }
+
+        function gestionarAusencias(idProf, nombre) {
+            // Actualiza información del profesional
+            document.getElementById('profesionalInfo').innerText = `Ausencias de: ${nombre}`;
+            document.getElementById('idProfAusencia').value = idProf;
+            // Llama al servidor para obtener las ausencias
+            fetch(`./ausencias/obtener_ausencias.php?id_prof=${idProf}`)
+                .then(response => response.json())
+                .then(data => {
+                    const ausenciasTableBody = document.getElementById('ausenciasTableBody');
+                    ausenciasTableBody.innerHTML = ''; // Limpia la tabla
+
+                    // Llena la tabla con las ausencias
+                    data.forEach(ausencia => {
+                        ausenciasTableBody.innerHTML += `
+                    <tr>
+                        <td>${formatDate(ausencia.fecha_inicio)}</td>
+                        <td>${formatDate(ausencia.fecha_fin)}</td>
+                        <td>${ausencia.motivo}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editarAusencia(${ausencia.id})">Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarAusencia(${ausencia.id})">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+                    });
+                })
+                .catch(error => console.error('Error al cargar ausencias:', error));
+
+            // Muestra el modal
+            const modal = new bootstrap.Modal(document.getElementById('ausenciasModal'));
+            modal.show();
+        }
+
+        function agregarAusencia() {
+            // Obtén el ID del profesional actual
+            const idProf = document.getElementById('idProfAusencia').value;
+
+            // Limpia el formulario
+            document.getElementById('formAgregarAusencia').reset();
+
+            // Muestra el modal
+            const modal = new bootstrap.Modal(document.getElementById('agregarAusenciaModal'));
+            modal.show();
+        }
+
+        // Manejar el envío del formulario
+        document.getElementById('formAgregarAusencia').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('./ausencias/agregar_ausencia.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data); // Muestra el resultado del servidor
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('agregarAusenciaModal'));
+                    modal.hide(); // Oculta el modal después de guardar
+                    // Recarga la tabla de ausencias
+                    const idProf = document.getElementById('idProfAusencia').value;
+                    gestionarAusencias(idProf, document.getElementById('profesionalInfo').innerText.split(': ')[1]);
+                })
+                .catch(error => console.error('Error al agregar la ausencia:', error));
+        });
+
+
+        function editarAusencia(id) {
+            // Llama al servidor para obtener los datos de la ausencia
+            fetch(`./ausencias/obtener_ausencia.php?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Rellena el formulario del modal con los datos de la ausencia
+                    document.getElementById('idAusenciaEditar').value = data.id;
+                    document.getElementById('fechaInicioEditar').value = data.fecha_inicio;
+                    document.getElementById('fechaFinEditar').value = data.fecha_fin;
+                    document.getElementById('motivoEditar').value = data.motivo;
+
+                    // Abre el modal
+                    const modal = new bootstrap.Modal(document.getElementById('editarAusenciaModal'));
+                    modal.show();
+                })
+                .catch(error => console.error('Error al cargar los datos de la ausencia:', error));
+        }
+
+        // Manejo del formulario para editar
+        document.getElementById('formEditarAusencia').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('./ausencias/editar_ausencia.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data); // Mensaje del servidor
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editarAusenciaModal'));
+                    modal.hide(); // Oculta el modal después de guardar
+                    location.reload(); // Recarga la lista de ausencias
+                })
+                .catch(error => console.error('Error al guardar los cambios:', error));
+        });
+
+
+        function eliminarAusencia(id) {
+            if (confirm('¿Estás seguro de eliminar esta ausencia?')) {
+                fetch(`./ausencias/eliminar_ausencias.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: id }),
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        location.reload();
+                    })
+                    .catch(error => console.error('Error al eliminar la ausencia:', error));
+            }
+        }
+
+
+
         document.addEventListener('DOMContentLoaded', function () {
             // El código de filtrado de tabla solo se ejecutará después de que el DOM esté cargado.
             function filtrarTabla() {

@@ -247,7 +247,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
     function updateCalendar() {
         const selectedProf = profesionalSelect.value;
         const selectedDate = new Date(year, month, 1).toISOString().slice(0, 10);
