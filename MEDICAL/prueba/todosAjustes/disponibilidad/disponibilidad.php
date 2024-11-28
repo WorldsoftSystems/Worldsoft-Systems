@@ -388,7 +388,9 @@ $resultProfesionales = $conn->query($sqlProfesionales);
                 .then(data => {
                     alert(data); // Muestra el resultado del servidor
                     const modal = bootstrap.Modal.getInstance(document.getElementById('agregarAusenciaModal'));
-                    modal.hide(); // Oculta el modal después de guardar
+                    modal.hide();
+                    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+
                     // Recarga la tabla de ausencias
                     const idProf = document.getElementById('idProfAusencia').value;
                     gestionarAusencias(idProf, document.getElementById('profesionalInfo').innerText.split(': ')[1]);
