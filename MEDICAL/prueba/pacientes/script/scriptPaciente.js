@@ -114,6 +114,7 @@ function formatDate(dateString) {
     return day + "/" + month + "/" + year;
 }
 
+
 //BARRA DE BUSQUEDA 
 document.getElementById('searchButton').addEventListener('click', realizarBusqueda);
 
@@ -213,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('nro_hist_int').value = paciente.nro_hist_int;
         document.getElementById('hora_admision').value = paciente.hora_admision;
         document.getElementById('ugl_paciente').value = paciente.ugl_descripcion;
-
+        
         // Primero, carga las modalidades
         $.ajax({
             url: './dato/get_modalidad.php',
@@ -282,18 +283,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // Limpiar o vaciar el div de bajaMensaje
         var bajaMensaje = document.getElementById('bajaMensaje');
         bajaMensaje.innerHTML = ''; // Vacía el contenido del div
-
-        // Aquí llamamos al backend para obtener los parámetros
-        fetch('./dato/obtener_parametros.php')
-            .then(response => response.json()) // Convertimos la respuesta en JSON
-            .then(data => {
-                console.log(data)
-                document.getElementById('nro_hist_amb').value = data[0].num_hist_amb;
-                document.getElementById('nro_hist_int').value = data[0].num_hist_int;
-            })
-            .catch(error => {
-                console.error('Error al obtener los datos del backend:', error);
-            });
     }
 
     window.editarPaciente = editarPaciente;

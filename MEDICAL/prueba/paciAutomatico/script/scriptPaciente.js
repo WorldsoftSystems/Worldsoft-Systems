@@ -25,6 +25,7 @@ document.getElementById('btnGenerarPDF').addEventListener('click', function () {
         .then(data => {
             if (data) {
                 // Genera el PDF con un ligero retraso para evitar conflictos con la alerta
+
                 setTimeout(() => generarPDF(data), 100);
             }
         })
@@ -41,17 +42,17 @@ function generarPDF(paciente) {
     // Estilo del PDF
     doc.setFont('helvetica');
     doc.setFontSize(16);
-    
+
     // Título
     doc.setTextColor(40, 45, 52);
     doc.text(`Ficha de Paciente - ${paciente.nombre}`, 14, 20);
 
     // Tabla de datos adicionales
-    const tableHeaders = ['', 'DATOS PERSONALES'];
+    const tableHeaders = ['', '  DATOS PERSONALES'];
     const tableData = [
         ['Nombres y Apellido', paciente.nombre || 'No disponible'],
-        ['Nº Afiliado', paciente.benef+'/'+paciente.parentesco || 'No disponible'],
-        ['T. Doc y DNI', paciente.tipo_doc+' '+paciente.nro_doc || 'No disponible'],
+        ['Nº Afiliado', paciente.benef + '/' + paciente.parentesco || 'No disponible'],
+        ['T. Doc y DNI', paciente.tipo_doc + ' ' + paciente.nro_doc || 'No disponible'],
         ['Fecha de Nacimiento', formatDate(paciente.fecha_nac) || 'No disponible'],
         ['Obra Social', paciente.obra],
         ['Sexo', paciente.sexo || 'No disponible'],
@@ -59,7 +60,10 @@ function generarPDF(paciente) {
         ['Localidad', paciente.localidad || 'No disponible'],
         ['Teléfono', paciente.telefono || 'No disponible'],
         ['Fecha de admision', formatDate(paciente.admision) || 'No disponible'],
-        ['Diagnostico', paciente.diag_full || 'No disponible']
+        ['Diagnostico', paciente.diag_full || 'No disponible'],
+        ['Profesional', paciente.profesional || 'No disponible'],
+        ['Modalidad', paciente.modalidad || 'No disponible'],
+        ['Egreso', paciente.tipo_egreso || 'Sin egreso']
     ];
 
     doc.autoTable({
@@ -82,10 +86,22 @@ function generarPDF(paciente) {
         }
     });
 
-    // Generar el PDF en formato blob y abrirlo en una nueva pestaña
-    const pdfBlob = doc.output('blob');
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-    window.open(pdfUrl, '_blank');
+    const imgUrl = '../img/logo.png';
+    var img = new Image();
+    img.onload = function () {
+        const imgWidth = 29; // Ancho de la imagen
+        const imgHeight = 25; // Altura de la imagen
+        const pageWidth = doc.internal.pageSize.getWidth(); // Ancho de la página
+        const xImg = (pageWidth - imgWidth) / 2; // Calcular la posición X para centrar
+        const yImg = 160; // La posición Y justo debajo de la tabla
+
+        // Agregar la imagen al PDF
+        doc.addImage(img, 'PNG', xImg, yImg, imgWidth, imgHeight);
+
+        // Abrir el PDF en una nueva pestaña del navegador
+        window.open(doc.output('bloburl'));
+    };
+    img.src = imgUrl;
 }
 
 
@@ -197,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('nro_hist_int').value = paciente.nro_hist_int;
         document.getElementById('hora_admision').value = paciente.hora_admision;
         document.getElementById('ugl_paciente').value = paciente.ugl_descripcion;
-        
+
         // Primero, carga las modalidades
         $.ajax({
             url: './dato/get_modalidad.php',
@@ -266,6 +282,18 @@ document.addEventListener("DOMContentLoaded", function () {
         // Limpiar o vaciar el div de bajaMensaje
         var bajaMensaje = document.getElementById('bajaMensaje');
         bajaMensaje.innerHTML = ''; // Vacía el contenido del div
+
+        // Aquí llamamos al backend para obtener los parámetros
+        fetch('./dato/obtener_parametros.php')
+            .then(response => response.json()) // Convertimos la respuesta en JSON
+            .then(data => {
+                console.log(data)
+                document.getElementById('nro_hist_amb').value = data[0].num_hist_amb;
+                document.getElementById('nro_hist_int').value = data[0].num_hist_int;
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos del backend:', error);
+            });
     }
 
     window.editarPaciente = editarPaciente;
