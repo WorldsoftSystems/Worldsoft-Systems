@@ -219,7 +219,7 @@
                     <button id="generatePdfBtn" class="btn  btn-custom">Turnos asignados</button>
                     <button id="recordatorioBtn" class="btn  btn-custom">Recordatorios →</button>
                     <!-- Botón de descarga -->
-                    <a href="../../../descargas/recordatorio_medical.zip" download >
+                    <a href="https://worldsoftsystems.com.ar/MEDICAL/descargas/recordatorio_medical.zip" download>
                         <button class="btn  btn-custom">Descargar Recordatorio</button>
                     </a>
                 </div>

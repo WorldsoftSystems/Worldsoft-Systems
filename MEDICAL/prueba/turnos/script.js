@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Pintar los días de vacaciones de gris
             if (daysOnVacation.has(i)) {
-                dayElement.style.backgroundColor = '#d3d3d3';  // Gris para días de vacaciones
+                dayElement.style.backgroundColor = '#C19ADE';  // Gris para días de vacaciones
             }
 
             if (selectedDay && selectedDay.day === i && selectedDay.month === month + 1 && selectedDay.year === year) {

@@ -12,7 +12,7 @@ if (isset($_GET['id'])) {
     CONCAT(d.codigo, ' ', d.descripcion) AS diag_full, 
     prof.nombreYapellido AS profesional, 
     m.descripcion AS modalidad,
-    tE.descripcion AS tipo_egreso
+    e.fecha_egreso AS tipo_egreso
     FROM paciente p
     LEFT JOIN obra_social o ON o.id = p.obra_social
     LEFT JOIN (
@@ -36,7 +36,7 @@ if (isset($_GET['id'])) {
     ) pM ON pM.id_paciente = p.id
     LEFT JOIN modalidad m ON m.id = pM.modalidad
     LEFT JOIN (
-        SELECT id_paciente, motivo 
+        SELECT id_paciente, fecha_egreso 
         FROM egresos 
         WHERE (id_paciente, fecha_egreso) IN (
             SELECT id_paciente, MAX(fecha_egreso) 
@@ -44,7 +44,6 @@ if (isset($_GET['id'])) {
             GROUP BY id_paciente
         )
     ) e ON e.id_paciente = p.id
-    LEFT JOIN tipo_egreso tE ON tE.id = e.motivo
     LEFT JOIN profesional prof ON prof.id_prof = p.id_prof
     WHERE p.id = ?
 ";
