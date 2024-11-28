@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-11-2024 a las 16:50:30
+-- Tiempo de generación: 28-11-2024 a las 13:38:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `medical_pq2001`
+-- Base de datos: `medical_base`
 --
 
 -- --------------------------------------------------------
@@ -258,6 +258,20 @@ CREATE TABLE `antecedentes_personales` (
   `creencias_religiosas` varchar(255) NOT NULL,
   `toxicomanias` varchar(255) NOT NULL,
   `rasgos_personalidad` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ausencias`
+--
+
+CREATE TABLE `ausencias` (
+  `id` int(11) NOT NULL,
+  `id_prof` int(11) NOT NULL,
+  `fecha_inicio` date NOT NULL,
+  `fecha_fin` date NOT NULL,
+  `motivo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -37194,6 +37208,13 @@ ALTER TABLE `antecedentes_personales`
   ADD KEY `fk_antecendes_personales_paciente` (`id_paciente`);
 
 --
+-- Indices de la tabla `ausencias`
+--
+ALTER TABLE `ausencias`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_prof` (`id_prof`);
+
+--
 -- Indices de la tabla `bocas_atencion`
 --
 ALTER TABLE `bocas_atencion`
@@ -37575,6 +37596,12 @@ ALTER TABLE `antecedentes_personales`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT de la tabla `ausencias`
+--
+ALTER TABLE `ausencias`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `bocas_atencion`
 --
 ALTER TABLE `bocas_atencion`
@@ -37889,6 +37916,12 @@ ALTER TABLE `antecedentes_familiares`
 --
 ALTER TABLE `antecedentes_personales`
   ADD CONSTRAINT `fk_antecendes_personales_paciente` FOREIGN KEY (`id_paciente`) REFERENCES `paciente` (`id`);
+
+--
+-- Filtros para la tabla `ausencias`
+--
+ALTER TABLE `ausencias`
+  ADD CONSTRAINT `ausencias_ibfk_1` FOREIGN KEY (`id_prof`) REFERENCES `profesional` (`id_prof`);
 
 --
 -- Filtros para la tabla `cuentas`

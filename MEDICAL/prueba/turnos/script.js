@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    function renderCalendar(disponibilidad = [], turnos = []) {
+    function renderCalendar(disponibilidad = [], turnos = [], ausencias = []) {
         calendar.innerHTML = '';
 
         const header = document.createElement('div');
@@ -166,6 +166,27 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+
+        const daysOnVacation = new Set();
+
+        ausencias.forEach(ausencia => {
+            const startDate = new Date(ausencia.fecha_inicio);
+            const endDate = new Date(ausencia.fecha_fin);
+    
+            startDate.setDate(startDate.getDate() + 1);
+            // Agregar un día a la fecha
+            endDate.setDate(endDate.getDate() + 1);
+
+            // Marcar todos los días dentro del rango de la ausencia
+            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                if (d.getMonth() === month) { // Asegurarse que esté en el mes correcto
+                    daysOnVacation.add(d.getDate());
+                }
+            }
+        });
+
+
+
         for (let i = 1; i <= daysInMonth; i++) {
             const dayElement = document.createElement('div');
             dayElement.classList.add('calendar-day');
@@ -203,6 +224,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 dayElement.classList.add('fully-booked');
             }
 
+            // Pintar los días de vacaciones de gris
+            if (daysOnVacation.has(i)) {
+                dayElement.style.backgroundColor = '#d3d3d3';  // Gris para días de vacaciones
+            }
+
             if (selectedDay && selectedDay.day === i && selectedDay.month === month + 1 && selectedDay.year === year) {
                 dayElement.classList.add('selected-day');
                 selectedDayElement = dayElement;
@@ -228,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`./gets/get-schedule.php?date=${selectedDate}&prof=${selectedProf}`)
             .then(response => response.json())
             .then(data => {
-                renderCalendar(data.disponibilidad, data.todos_turnos);
+                renderCalendar(data.disponibilidad, data.todos_turnos, data.ausencias);
 
                 if (selectedDay) {
                     // Restaurar la selección del día después de actualizar el calendario
@@ -272,6 +298,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
 
+                // Crear un array con las horas de las ausencias y los motivos
+                const ausenciasHoras = data.ausencias.map(aus => {
+                    const ausenciaStart = new Date(aus.fecha_inicio);
+
+                    // Crear un objeto Date para la fecha de fin y establecer la hora a las 23:59:59
+                    const ausenciaEnd = new Date(aus.fecha_fin);
+                    // Agregar un día a la fecha
+                    ausenciaEnd.setDate(ausenciaEnd.getDate() + 1);
+                    return {
+                        start: ausenciaStart,
+                        end: ausenciaEnd,
+                        motivo: aus.motivo // Obtener el motivo de la ausencia
+                    };
+                });
+
+
                 intervalos.forEach(intervalo => {
                     const row = scheduleBody.insertRow();
                     row.insertCell(0).innerText = intervalo;
@@ -281,36 +323,62 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     const turno = data.turnos.find(turno => turno.hora.startsWith(intervalo));
+                    // Comprobar si el intervalo está dentro de una ausencia
+                    const isAbsent = ausenciasHoras.some(ausencia => {
+                        const intervaloHora = new Date(`${selectedDate}T${intervalo}:00`);
 
-                    if (turno) {
-                        row.cells[1].innerText = turno.nombre_paciente;
-                        row.cells[1].classList.add('editable-cell');
-                        row.cells[1].addEventListener('click', () => openEditModal(turno));
-                        row.cells[2].innerText = turno.motivo_full;
-                        row.cells[2].addEventListener('click', () => openEditModal(turno));
-                        row.cells[3].innerText = turno.llego;
-                        row.cells[3].addEventListener('click', () => openEditModal(turno));
-                        row.cells[4].innerText = turno.atendido;
-                        row.cells[4].addEventListener('click', () => openEditModal(turno));
-                        row.cells[5].innerText = turno.observaciones;
-                        row.cells[5].title = turno.observaciones;
-                        row.cells[5].addEventListener('click', () => openEditModal(turno));
+                        // Compara correctamente el intervalo con la ausencia
+                        // Asegúrate de que el final de la ausencia se considere hasta el último segundo del 29
+                        return intervaloHora >= ausencia.start && intervaloHora <= ausencia.end;
+                    });
 
-                        // Establecer colores en base a la llegada y atención
-                        if (turno.llego === 'SI' && turno.atendido === 'SI') {
-                            for (let i = 0; i < 6; i++) {
-                                row.cells[i].style.backgroundColor = '#7abaf5'; // Color si llegó y fue atendido
-                            }
-                        } else if (turno.llego === 'SI') {
-                            for (let i = 0; i < 6; i++) {
-                                row.cells[i].style.backgroundColor = '#ff8d30'; // Color si llegó pero no fue atendido
-                            }
+                    // Si es una ausencia, marcar la celda con el motivo
+                    if (isAbsent) {
+                        // Buscar el motivo de la ausencia para ese intervalo
+                        const ausencia = ausenciasHoras.find(ausencia => {
+                            const intervaloHora = new Date(`${selectedDate}T${intervalo}:00`);
+
+                            // Compara correctamente el intervalo con la ausencia
+                            return intervaloHora >= ausencia.start && intervaloHora <= ausencia.end;
+                        });
+
+                        row.cells[1].innerText = ausencia ? ausencia.motivo : 'Motivo desconocido';
+                        row.cells[1].style.backgroundColor = '#d3d3d3'; // Gris para ausente
+                        row.cells[1].classList.add('absent-cell');
+                        for (let i = 2; i < 6; i++) {
+                            row.cells[i].style.backgroundColor = '#d3d3d3'; // Resto de las celdas también en gris
                         }
                     } else {
-                        // Si no hay turno en el intervalo, marcar la celda como vacía y habilitarla para agregar turno
-                        for (let i = 1; i < 6; i++) {
-                            row.cells[i].classList.add('empty-cell');
-                            row.cells[i].addEventListener('click', () => openCreateModal(intervalo, selectedDate));
+                        if (turno) {
+                            row.cells[1].innerText = turno.nombre_paciente;
+                            row.cells[1].classList.add('editable-cell');
+                            row.cells[1].addEventListener('click', () => openEditModal(turno));
+                            row.cells[2].innerText = turno.motivo_full;
+                            row.cells[2].addEventListener('click', () => openEditModal(turno));
+                            row.cells[3].innerText = turno.llego;
+                            row.cells[3].addEventListener('click', () => openEditModal(turno));
+                            row.cells[4].innerText = turno.atendido;
+                            row.cells[4].addEventListener('click', () => openEditModal(turno));
+                            row.cells[5].innerText = turno.observaciones;
+                            row.cells[5].title = turno.observaciones;
+                            row.cells[5].addEventListener('click', () => openEditModal(turno));
+
+                            // Establecer colores en base a la llegada y atención
+                            if (turno.llego === 'SI' && turno.atendido === 'SI') {
+                                for (let i = 0; i < 6; i++) {
+                                    row.cells[i].style.backgroundColor = '#7abaf5'; // Color si llegó y fue atendido
+                                }
+                            } else if (turno.llego === 'SI') {
+                                for (let i = 0; i < 6; i++) {
+                                    row.cells[i].style.backgroundColor = '#ff8d30'; // Color si llegó pero no fue atendido
+                                }
+                            }
+                        } else {
+                            // Si no hay turno en el intervalo, marcar la celda como vacía y habilitarla para agregar turno
+                            for (let i = 1; i < 6; i++) {
+                                row.cells[i].classList.add('empty-cell');
+                                row.cells[i].addEventListener('click', () => openCreateModal(intervalo, selectedDate));
+                            }
                         }
                     }
                 });
@@ -799,7 +867,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Configuración de la tabla para los turnos del profesional actual
                     doc.autoTable({
-                        head: [['Hora', 'Paciente', 'Motivo','Fecha', 'Llegó', 'Atendido', 'Observaciones']],
+                        head: [['Hora', 'Paciente', 'Motivo', 'Fecha', 'Llegó', 'Atendido', 'Observaciones']],
                         body: turnosPorProfesional[profesional],
                         startY: currentY + 10,
                         margin: { left: 15, right: 15 },

@@ -95,13 +95,29 @@ while ($row = $result_turnos_todos->fetch_assoc()) {
 }
 
 $stmt_turnos_todos->close();
+
+// Obtener ausencias del profesional
+$ausencias_sql = "SELECT * FROM ausencias WHERE id_prof = ?";
+$stmt_ausencias = $conn->prepare($ausencias_sql);
+$stmt_ausencias->bind_param("i", $prof);
+$stmt_ausencias->execute();
+$result_ausencias = $stmt_ausencias->get_result();
+
+$ausencias = array();
+while ($row = $result_ausencias->fetch_assoc()) {
+    $ausencias[] = $row;
+}
+$stmt_ausencias->close();
+
+
 $conn->close();
 
 // Preparar respuesta JSON
 $response = array(
     "disponibilidad" => $disponibilidad,
     "turnos" => $turnos,
-    "todos_turnos" => $turnos_todos
+    "todos_turnos" => $turnos_todos,
+    "ausencias" => $ausencias
 );
 
 header('Content-Type: application/json');

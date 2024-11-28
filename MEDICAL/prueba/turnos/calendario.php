@@ -21,7 +21,6 @@
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    
     <!-- CSS para Bootstrap Datepicker -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
@@ -219,6 +218,10 @@
 
                     <button id="generatePdfBtn" class="btn  btn-custom">Turnos asignados</button>
                     <button id="recordatorioBtn" class="btn  btn-custom">Recordatorios →</button>
+                    <!-- Botón de descarga -->
+                    <a href="../../../descargas/recordatorio_medical.zip" download >
+                        <button class="btn  btn-custom">Descargar Recordatorio</button>
+                    </a>
                 </div>
             </div>
         </div>
