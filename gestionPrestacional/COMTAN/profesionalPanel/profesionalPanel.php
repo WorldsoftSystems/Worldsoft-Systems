@@ -86,7 +86,7 @@ if (!isset($_SESSION['usuario'])) {
             <!-- Select para Profesionales cargado con AJAX -->
             <div class="mb-4">
                 <label for="profesional" class="block text-sm font-medium text-gray-700">Profesional:</label>
-                <select id="profesional" name="profesional" required
+                <select id="profesional" name="profesional" 
                     class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
                     <option value="">Seleccionar Profesional</option>
                 </select>

@@ -128,7 +128,55 @@ if ($cod_prof) {
         </p>
 
         <!-- Formulario para agregar nuevo paciente -->
-        <h2 class="text-2xl font-bold mb-2">Agregar Nueva Prestacion</h2>
+        <div class="container">
+            <div class="row">
+                <!-- Columna -->
+                <div class="col-12">
+                    <!-- Contenedor en línea -->
+                    <div class="d-flex align-items-center mb-3">
+                        <h2 class="text-2xl font-bold me-3">Agregar Nueva Prestación</h2>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                            Reporte de Prestaciones
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Reporte de prestaciones</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-4">
+                                    <label for="fecha_desde"
+                                        class="block text-sm font-medium text-gray-700">Desde:</label>
+                                    <input type="date" id="fecha_desde" name="fecha_desde"
+                                        class="mt-1 p-2 block w-100 border border-gray-300 rounded-md">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="fecha_hasta"
+                                        class="block text-sm font-medium text-gray-700">Hasta:</label>
+                                    <input type="date" id="fecha_hasta" name="fecha_hasta"
+                                        class="mt-1 p-2 block w-100 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="btnGenerarPDF" class="btn btn-success">
+                                    Generar PDF
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <form method="post" class="mb-4" id="formAgregar">
             <!-- Formulario para seleccionar el profesional -->
             <div class="mb-4">
@@ -191,9 +239,7 @@ if ($cod_prof) {
                 <select id="cod_practica" name="cod_practica" required
                     class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
                     <option value="">Seleccionar Código de Práctica</option>
-                    <option value="521001">521001 - PRESCRIPCION FARMACOLOGICA Y SEGUIMIENTO DE CONTROL DE TRATAMIENTO
-                    </option>
-                    <option value="520101">520101 - PSICOTERAPIA INDIVIDUAL (SESIONES DE 30 A 60 MINUTOS)</option>
+                    <!-- Las opciones serán insertadas dinámicamente con base en la especialidad -->
                 </select>
             </div>
 
@@ -220,98 +266,11 @@ if ($cod_prof) {
 
         </form>
 
-        <br>
-        <div class="flex items-center mb-4">
-            <h2 class="text-3xl font-bold mr-4">Reporte de prestaciones</h2>
-        </div>
-
-        <div class="mb-4">
-            <label for="fecha_desde" class="block text-sm font-medium text-gray-700">Desde:</label>
-            <input type="date" id="fecha_desde" name="fecha_desde"
-                class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-        </div>
-
-        <div class="mb-4">
-            <label for="fecha_hasta" class="block text-sm font-medium text-gray-700">Hasta:</label>
-            <input type="date" id="fecha_hasta" name="fecha_hasta"
-                class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-        </div>
-
-        <button id="btnGenerarPDF" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-            Generar PDF
-        </button>
-
+        <h1>Prestaciones</h1>
         <div id="contenedorPacientes"></div>
         <div id="paginacion"></div>
 
-        <!-- EDITAR MODAL-->
-        <!-- Modal -->
-        <div class="modal fade" id="modalEditarPaciente" tabindex="-1" role="dialog"
-            aria-labelledby="modalEditarPacienteLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalEditarPacienteLabel">Editar Paciente</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formEditarPaciente">
-                            <input type="hidden" name="id" id="idPaciente">
 
-                            <div class="mb-4">
-                                <label for="nombreYapellidoModal" class="block text-sm font-medium text-gray-700">Nombre
-                                    y Apellido:</label>
-                                <input type="text" id="nombreYapellidoModal" name="nombreYapellido" required
-                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="benefModal"
-                                    class="block text-sm font-medium text-gray-700">Beneficio:</label>
-                                <input type="text" id="benefModal" name="benef" required
-                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="tokenModal" class="block text-sm font-medium text-gray-700">Token:</label>
-                                <input type="text" id="tokenModal" name="token" required
-                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                            </div>
-
-                            <div class="mb-2">
-                                <label for="fecha_edit" class="form-label">Fecha</label>
-                                <input type="date" class="form-control" id="fecha_edit" name="fecha_edit">
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="cod_practicaModal" class="block text-sm font-medium text-gray-700">Código de
-                                    Práctica:</label>
-                                <select id="cod_practicaModal" name="cod_practica" required
-                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                                    <option value="">Seleccionar Código de Práctica</option>
-                                    <!-- Aquí se llenarán las opciones con JavaScript -->
-                                </select>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="cod_diagModal"
-                                    class="block text-sm font-medium text-gray-700">Diagnóstico:</label>
-                                <select id="cod_diagModal" name="cod_diag" required
-                                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                                    <option value="">Seleccionar Diagnóstico</option>
-                                    <!-- Aquí se llenarán las opciones con JavaScript -->
-                                </select>
-                            </div>
-
-                            <button type="submit"
-                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Actualizar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Aquí va el script de JavaScript -->
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -368,6 +327,17 @@ if ($cod_prof) {
                 window.location.href = url;
             }
 
+            // Función para formatear la fecha en formato argentino (DD/MM/YYYY)
+            function formatearFecha(fecha) {
+                if (!fecha) return 'N/A'; // Si no hay fecha, retornar 'N/A'
+
+                // Extraer solo la parte de la fecha
+                const fechaSolo = fecha.split(' ')[0]; // '2024-08-13'
+                const [year, month, day] = fechaSolo.split('-'); // Separar en componentes
+
+                return `${day}/${month}/${year}`; // Retornar en formato DD/MM/YYYY
+            }
+
             function cargarPacientesPorProfesional(cod_prof, pagina = 1) {
                 const limite = 50; // Número de pacientes por página
                 const offset = (pagina - 1) * limite; // Calcular el desplazamiento
@@ -392,27 +362,18 @@ if ($cod_prof) {
                     });
             }
 
-            // Función para formatear la fecha en formato argentino (DD/MM/YYYY)
-            function formatearFecha(fecha) {
-                if (!fecha) return 'N/A'; // Si no hay fecha, retornar 'N/A'
-
-                // Extraer solo la parte de la fecha
-                const fechaSolo = fecha.split(' ')[0]; // '2024-08-13'
-                const [year, month, day] = fechaSolo.split('-'); // Separar en componentes
-
-                return `${day}/${month}/${year}`; // Retornar en formato DD/MM/YYYY
-            }
-
-            function mostrarPacientes(data, pagina, cod_prof) { // Acepta cod_prof como tercer parámetro
+            function mostrarPacientes(data, pagina, cod_prof) {
                 var contenedorPacientes = document.getElementById('contenedorPacientes');
                 contenedorPacientes.innerHTML = ''; // Limpiar cualquier contenido anterior de pacientes
 
                 // Crear la tabla y sus encabezados
+                var tableContainer = document.createElement('div');
+                tableContainer.classList.add('table-responsive'); // Clase de Bootstrap para hacer la tabla desplazable en móviles
                 var table = document.createElement('table');
-                table.classList.add('table'); // Agregar la clase 'table'
+                table.classList.add('table', 'table-striped', 'table-bordered'); // Clases de Bootstrap para mejor estilo
                 var thead = document.createElement('thead');
                 var headerRow = document.createElement('tr');
-                headerRow.innerHTML = '<th>Nombre y Apellido</th><th>Beneficio</th><th>Profesional</th><th>Práctica</th><th>Diagnóstico</th><th>Fecha</th>';
+                headerRow.innerHTML = '<th>Nombre y Apellido</th><th>Beneficio</th><th>Profesional</th><th>Práctica</th><th>Diagnóstico</th><th>Fecha</th><th>Acciones</th>';
                 thead.appendChild(headerRow);
                 table.appendChild(thead);
 
@@ -421,17 +382,21 @@ if ($cod_prof) {
                 data.pacientes.forEach(function (paciente) {
                     var row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${paciente.nombreYapellido}</td>
-                        <td>${paciente.benef}</td>
-                        <td>${paciente.nom_prof}</td>
-                        <td>${paciente.cod_practica}</td>
-                        <td>${paciente.cod_diag || 'N/A'}</td>
-                        <td>${formatearFecha(paciente.fecha) || 'N/A'}</td>
-                        `;
+            <td>${paciente.nombreYapellido}</td>
+            <td>${paciente.benef}</td>
+            <td>${paciente.nom_prof}</td>
+            <td>${paciente.cod_practica}</td>
+            <td>${paciente.cod_diag || 'N/A'}</td>
+            <td>${formatearFecha(paciente.fecha) || 'N/A'}</td>
+            <td>
+                <button class="btn btn-danger btn-sm btn-eliminar" data-id="${paciente.cod_paci}">Eliminar</button>
+            </td>
+        `;
                     tbody.appendChild(row);
                 });
                 table.appendChild(tbody);
-                contenedorPacientes.appendChild(table);
+                tableContainer.appendChild(table); // Agregar la tabla al contenedor responsivo
+                contenedorPacientes.appendChild(tableContainer);
 
                 // Crear los botones de paginación
                 var paginacion = document.getElementById('paginacion');
@@ -439,30 +404,117 @@ if ($cod_prof) {
                 for (let i = 1; i <= Math.ceil(data.total / 50); i++) { // Calcular el total de páginas
                     var button = document.createElement('button');
                     button.textContent = i;
+                    button.classList.add('btn', 'btn-primary', 'btn-sm'); // Agregar clases de Bootstrap a los botones
                     button.onclick = function () {
-
                         cargarPacientesPorProfesional(cod_prof, i); // Llamar a cargar con la página seleccionada
                     };
                     if (i === pagina) { // Desactivar el botón de la página actual
                         button.disabled = true;
+                        button.classList.add('btn-secondary');
                     }
                     paginacion.appendChild(button);
                 }
+
+                // Agregar funcionalidad al botón de eliminación
+                document.querySelectorAll('.btn-eliminar').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const pacienteId = button.getAttribute('data-id'); // Obtener el ID del paciente
+                        eliminarPaciente(pacienteId); // Llamar a la función eliminar solo con el ID
+                    });
+                });
             }
+
 
             // Definir la variable cod_prof en un ámbito más amplio
             let cod_prof;
 
-            
-            // Agregar un event listener para detectar cambios en el elemento select con id cod_prof
-            document.getElementById('cod_prof').addEventListener('change', function () {
-                var cod_prof = this.value; // Obtener el valor seleccionado del profesional
 
-                // Llamar a la función para cargar pacientes por profesional
-                cargarPacientesPorProfesional(cod_prof);
+            // Función para cargar las opciones del select de prácticas con base en la especialidad
+            function actualizarSelectPractica(especialidad) {
+                const selectPractica = document.getElementById('cod_practica');
+                selectPractica.innerHTML = ''; // Limpiar opciones previas
 
-                
-            });
+                // Agregar las opciones según la especialidad
+                if (especialidad === 'psiquiatria') {
+                    selectPractica.innerHTML += `
+                    <option value="521001">521001 - PRESCRIPCION FARMACOLOGICA Y SEGUIMIENTO DE CONTROL DE TRATAMIENTO</option>
+                    `;
+                } else {
+                    selectPractica.innerHTML += `
+                    <option value="520101">520101 - PSICOTERAPIA INDIVIDUAL (SESIONES DE 30 A 60 MINUTOS)</option>
+                    `;
+                }
+            }
+
+            // Función para obtener la especialidad del profesional desde el backend
+            function obtenerEspecialidadDelProfesional(cod_prof) {
+                // Llamamos al PHP que obtiene la especialidad del profesional
+                fetch(`../controlador/control_paciente.php?cod_prof=${cod_prof}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const especialidad = data.especialidad; // Aquí obtenemos la especialidad del profesional
+                            actualizarSelectPractica(especialidad);  // Actualizamos el select según la especialidad
+                        } else {
+                            console.error('Error al obtener especialidad:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al obtener especialidad:', error);
+                    });
+            }
+
+            // Función para manejar el cambio en el select de profesional
+            function manejarCambioProfesional() {
+                const cod_prof = document.getElementById('cod_prof').value;
+
+                if (cod_prof) {
+                    obtenerEspecialidadDelProfesional(cod_prof); // Llamamos la función que obtiene la especialidad y actualiza las prácticas
+                    cargarPacientesPorProfesional(cod_prof);
+                } else {
+                    document.getElementById('cod_practica').innerHTML = '<option value="">Seleccionar Código de Práctica</option>';
+                }
+            }
+
+            // Asignamos el event listener para el select de profesionales
+            document.getElementById('cod_prof').addEventListener('change', manejarCambioProfesional);
+
+
+            function eliminarPaciente(id) {
+                console.log('Paciente a eliminar:', id); // Depuración: Verificar el ID recibido
+
+                if (confirm('¿Está seguro de que desea eliminar este paciente?')) {
+                    fetch(`../controlador/control_paciente.php?eliminarPaciente=true&id=${id}`, {
+                        method: 'DELETE'
+                    })
+                        .then(response => {
+                            // Verifica si la respuesta es correcta y si es JSON
+                            return response.text().then(text => {
+                                try {
+                                    return JSON.parse(text); // Intenta parsear el texto como JSON
+                                } catch (error) {
+                                    console.error('Respuesta del servidor no es JSON:', text);
+                                    throw new Error('Respuesta inesperada del servidor');
+                                }
+                            });
+                        })
+                        .then(data => {
+                            console.log('Respuesta del servidor:', data); // Depuración: Verificar la respuesta del servidor
+
+                            if (data.success) {
+                                alert('Paciente eliminado con éxito.');
+                                cargarPacientesPorProfesional(cod_prof); // Recargar la lista de pacientes
+                            } else {
+                                alert('Error al eliminar el paciente: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al eliminar paciente:', error);
+                        });
+                }
+            }
+
+
 
 
             // Ejemplo de cómo manejar el clic en las páginas

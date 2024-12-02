@@ -46,7 +46,7 @@ if (isset($_POST['agregar'])) {
 }
 
 // Función para actualizar paciente
-function actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token,$fecha, $codDiag)
+function actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token, $fecha, $codDiag)
 {
     global $conn; // Usar la conexión a la base de datos
 
@@ -57,7 +57,7 @@ function actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token,
         return false; // Devolver falso si la preparación de la consulta falla
     }
 
-    $stmt->bind_param('sssssss', $nombreYapellido, $benef, $codPractica,$fecha, $token, $codDiag, $id);
+    $stmt->bind_param('sssssss', $nombreYapellido, $benef, $codPractica, $fecha, $token, $codDiag, $id);
 
     // Ejecutar la consulta y devolver el resultado
     if ($stmt->execute()) {
@@ -70,7 +70,7 @@ function actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token,
 
 
 // Manejar la solicitud
-if ($_SERVER['REQUEST_METHOD'] === 'POST'  && $_POST['action'] != 'actualizar_estado_cargado') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['action'] != 'actualizar_estado_cargado') {
     // Verificar que se reciban todos los parámetros necesarios
     if (isset($_POST['id'], $_POST['nombreYapellido'], $_POST['benef'], $_POST['cod_practica'], $_POST['token'], $_POST['cod_diag'])) {
         $id = $_POST['id'];
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'  && $_POST['action'] != 'actualizar_es
         $fecha_edit = $_POST['fecha_edit'];
 
         // Llamar a la función para actualizar el paciente
-        if (actualizarPaciente($id, $nombreYapellido, $benef, $codPractica,$token,$fecha_edit, $codDiag)) {
+        if (actualizarPaciente($id, $nombreYapellido, $benef, $codPractica, $token, $fecha_edit, $codDiag)) {
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Error al actualizar el paciente']);
@@ -467,6 +467,39 @@ function actualizarEstadoCargado($cod_paci, $nuevo_estado)
 }
 
 
+function eliminarPaciente($id) {
+    global $conn; // Acceder a la conexión global
+
+    // Sanitizar el ID
+    $id = intval($id);
+
+    // Preparar y ejecutar la consulta de eliminación
+    $stmt = $conn->prepare("DELETE FROM paciente WHERE cod_paci = ?");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        $stmt->close();
+        return ['success' => true, 'message' => 'Paciente eliminado correctamente.'];
+    } else {
+        // Si hay un error en la ejecución de la consulta, muestra el error
+        $stmt->close();
+        return ['success' => false, 'message' => 'Error al eliminar el paciente: ' . $conn->error];
+    }
+}
+
+// Manejo de la solicitud DELETE
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && isset($_GET['eliminarPaciente']) && $_GET['eliminarPaciente'] === 'true') {
+    if (isset($_GET['id'])) { // Obtener el ID desde $_GET
+        $id = intval($_GET['id']); // Sanitizar el ID
+
+        // Llamar a la función para eliminar el paciente
+        $resultado = eliminarPaciente($id);
+        echo json_encode($resultado);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'ID del paciente no proporcionado.']);
+    }
+}
+
 
 
 
@@ -580,8 +613,6 @@ if (isset($_GET['obtenerNombreProfesional']) && isset($_GET['cod_prof'])) {
 }
 
 
-
-
 function obtenerEspecialidadProfesional($cod_prof)
 {
     global $conn;
@@ -602,6 +633,21 @@ function obtenerEspecialidadProfesional($cod_prof)
         return $row['especialidad'];
     } else {
         return "Especialidad no especificada"; // O un mensaje apropiado si no se encuentra la especialidad
+    }
+}
+
+// Si se recibe el código del profesional por GET
+if (isset($_GET['cod_prof'])) {
+    $cod_prof = intval($_GET['cod_prof']);
+
+    // Llamar la función para obtener la especialidad
+    $especialidad = obtenerEspecialidadProfesional($cod_prof);
+
+    // Responder en formato JSON
+    if ($especialidad) {
+        echo json_encode(['success' => true, 'especialidad' => $especialidad]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Profesional no encontrado o sin especialidad']);
     }
 }
 

@@ -10,23 +10,24 @@ if (isset($_POST['agregar'])) {
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
     $especialidad = $_POST['especialidad']; // Agregar la especialidad obtenida del formulario
-    $prof_g = $_POST['profesional'];
+    $prof_g = !empty($_POST['profesional']) ? $_POST['profesional'] : NULL;
 
-    if (agregarProfesor($nombre, $apellido, $especialidad,$prof_g)) { // Llamar a la función con la especialidad
+    if (agregarProfesor($nombre, $apellido, $especialidad, $prof_g)) {
         $_SESSION['alert_message'] = "Profesional registrado correctamente";
     } else {
-        $_SESSION['alert_message'] = "Error al agregar el registro: " . $conn->error;
+        $_SESSION['alert_message'] = "Error al agregar el registro.";
     }
 
     // Redirigir después de agregar para evitar reenvío de formulario
     header("Location: ../profesionalPanel/profesionalPanel.php");
     exit(); // Asegura que el script se detenga después de la redirección
+
 }
 
 
 if (isset($_GET['eliminar'])) {
     $id = $_GET['eliminar'];
-    
+
     if (eliminarProfesor($id)) {
         $_SESSION['alert_message'] = "Profesional eliminado correctamente";
     } else {
