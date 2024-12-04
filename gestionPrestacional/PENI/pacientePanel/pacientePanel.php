@@ -503,7 +503,7 @@ if ($cod_prof) {
 
                             if (data.success) {
                                 alert('Paciente eliminado con éxito.');
-                                cargarPacientesPorProfesional(cod_prof); // Recargar la lista de pacientes
+                                location.reload(); // Recargar la página
                             } else {
                                 alert('Error al eliminar el paciente: ' + data.message);
                             }

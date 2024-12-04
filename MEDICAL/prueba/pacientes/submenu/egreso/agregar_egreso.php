@@ -17,16 +17,18 @@ if ($conn->connect_error) {
 }
 
 // Obtener la fecha máxima de las prácticas del paciente
-$sqlMaxFecha = "SELECT MAX(fecha) AS max_fecha FROM practicas WHERE id_paciente = ?";
+$sqlMaxFecha = "SELECT MAX(fecha) AS max_fecha, MAX(hora) AS max_hora FROM practicas WHERE id_paciente = ?";
 $stmtMaxFecha = $conn->prepare($sqlMaxFecha);
 $stmtMaxFecha->bind_param('i', $idPaciente);
 $stmtMaxFecha->execute();
 $resultMaxFecha = $stmtMaxFecha->get_result();
 $row = $resultMaxFecha->fetch_assoc();
 $maxFecha = $row['max_fecha'];
+$maxHora = $row['max_hora'];
+
 
 // Verificar si la fecha del egreso es mayor que la fecha máxima de las prácticas
-if ($fecha <= $maxFecha) {
+if ($fecha < $maxFecha || ($fecha == $maxFecha && $hora_egreso <= $maxHora)) {
     echo json_encode(['status' => 'error', 'message' => 'La fecha de egreso debe ser mayor que la fecha máxima de las prácticas del paciente.']);
 } else {
     // Preparar la consulta para insertar el egreso
