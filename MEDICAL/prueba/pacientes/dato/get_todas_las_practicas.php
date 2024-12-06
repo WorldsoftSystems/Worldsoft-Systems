@@ -14,12 +14,14 @@ if ($pacienteId === '') {
 }
 
 // Preparar y ejecutar la consulta para obtener las modalidades activas del paciente
-$sqlModalidadesActivas = "SELECT pm.modalidad 
-    FROM paci_modalidad pm 
-    LEFT JOIN egresos e ON pm.id_paciente = e.id_paciente AND pm.modalidad = e.modalidad
-    WHERE pm.id_paciente = ? AND e.id_paciente IS NULL
-    GROUP BY pm.modalidad
-    HAVING COUNT(e.id) = 0
+$sqlModalidadesActivas = "SELECT pm.modalidad
+FROM paci_modalidad pm
+LEFT JOIN egresos e 
+    ON pm.id_paciente = e.id_paciente 
+    AND pm.modalidad = e.modalidad
+    AND pm.fecha <= e.fecha_egreso
+WHERE pm.id_paciente = ?
+  AND (e.id_paciente IS NULL OR pm.fecha > e.fecha_egreso);
 ";
 $stmtModalidadesActivas = $conn->prepare($sqlModalidadesActivas);
 $stmtModalidadesActivas->bind_param("i", $pacienteId);

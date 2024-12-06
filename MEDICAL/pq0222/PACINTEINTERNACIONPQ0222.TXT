@@ -29,7 +29,7 @@
 "203","GALAN PATRICIA ALCIRA","4",1959/03/08,"F","null","null","null","null","null","DNI","22596333",2024/09/10,"08:00","  19","155903509508","10","00","null","null",1,1,"NULL","null"
 "161","GILARDI RAFAEL EDGARDO","4",1974/01/01,"M","null","null","null","null","null","DNI","24134569",2024/05/15,"08:00","  19","150306588302","10","16","null","null",1,1,"NULL","null"
 "111","GIMENEZ VICTORIA","4",2009/11/26,"F","null","null","null","null","null","DNI","45630641",2024/01/20,"08:00","  19","155878973201","10","02","null","null",1,1,"NULL","null"
-"93","Gonzï¿½lez, Josï¿½ Valentï¿½n","4",1947/02/15,"M","null","null","null","null","null","DNI","12168946",2023/11/11,"08:00","   6","110907034902","10","00","null","null",1,1,"NULL","null"
+"93","González, José Valentín","4",1947/02/15,"M","null","null","null","null","null","DNI","12168946",2023/11/11,"08:00","   6","110907034902","10","00","null","null",1,1,"NULL","null"
 "195","HERRERA MAURICIO","4",2004/09/21,"M","null","null","null","null","null","DNI","47961847",2024/09/25,"08:00","  19","150578794106","10","02","null","null",1,1,"NULL","null"
 "9","ISLA CARMEN OFELIA","4",1961/01/01,"F","null","null","null","null","null","DNI","14647704",2023/09/20,"00:00","  12","995414647704","10","00","null","null",1,1,"NULL","null"
 "136","ISO MARISA","4",1958/04/03,"F","null","null","null","null","null","DNI","569346",2024/03/01,"08:00","  19","155514973105","37","00","null","null",1,1,"NULL","null"
