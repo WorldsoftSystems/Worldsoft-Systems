@@ -188,6 +188,7 @@
 </head>
 
 <body>
+
     <button class="button" style="vertical-align:middle; margin-left:7rem"
         onclick="window.location.href = '../inicio/home.php';">
         <span>VOLVER</span>
@@ -407,53 +408,22 @@
                                 readonly>
                         </div>
                         <button type="submit" class="btn btn-custom">Confirmar Turno</button>
+                        <button type="button" class="btn btn-custom" data-bs-toggle="modal"
+                            data-bs-target="#agregarPacienteModal">
+                            Nuevo Paciente
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL BUSCAR PACIENTES -->
-    <div class="modal fade" id="buscarPacientesModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Buscar Pacientes</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Barra de búsqueda -->
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="searchInput" placeholder="Buscar paciente..."
-                                aria-label="Buscar paciente...">
-                            <button class="btn btn-primary btn-custom" type="button">
-                                <i class="bi bi-search "></i>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Lista de pacientes -->
-                    <div id="patientList" class="patient-list">
-                        <!-- La lista de pacientes se cargará dinámicamente aquí -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <!-- Botón para cerrar y abrir otro modal -->
-                    <button type="button" class="btn btn-secondary" id="closeAndOpenModal">Cerrar</button>
-                    <button type="button" class="btn btn-primary btn-custom-save" id="addPatient">Agregar
-                        Paciente</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 
 
     <!-- MODAL PACIENTE -->
     <div class="modal fade" id="agregarPacienteModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+        aria-hidden="true" data-bs-backdrop="static">
+
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-body">
@@ -467,6 +437,14 @@
                                     <option value="">Seleccionar...</option>
                                 </select>
                             </div>
+
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="boca_atencion">Boca de atención:*</label>
+                                <select class="form-control" id="boca_atencion" name="boca_atencion" required>
+                                    <option value="">Seleccionar...</option>
+                                </select>
+                            </div>
+
                             <div class="col-md-4 form-group">
                                 <label for="benef">Beneficiario(12):*</label>
                                 <input type="number" class="form-control" id="benef" name="benef" required>
@@ -482,6 +460,16 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="ugl_paciente">UGL:</label>
+                                <input type="text" class="form-control" id="ugl_paciente" name="ugl_paciente" required
+                                    readonly>
+                            </div>
+
+
                         </div>
 
                         <div class="row">
@@ -510,9 +498,17 @@
                                     <option value="">Seleccionar...</option>
                                 </select>
                             </div>
-                            <div class="col-md-4 form-group">
-                                <label for="tipo_doc">Tipo de Doc.:*</label>
-                                <input type="text" class="form-control" id="tipo_doc" name="tipo_doc" required>
+                            <div class="col-md-4 form-group mb-3">
+                                <label for="tipo_doc">Tipo de Documento:*</label>
+                                <select class="form-control" id="tipo_doc" name="tipo_doc" required>
+                                    <option value="">Seleccione un tipo de documento</option>
+                                    <option value="DNI">DNI</option>
+                                    <option value="LC">LC</option>
+                                    <option value="LE">LE</option>
+                                    <option value="CI">CI</option>
+                                    <option value="PAS">Pasaporte</option>
+                                    <option value="OTRO">Otro</option>
+                                </select>
                             </div>
                             <div class="col-md-4 form-group">
                                 <label for="nro_doc">Número de Documento:*</label>
@@ -520,16 +516,18 @@
                             </div>
                         </div>
 
-
-
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label for="admision">Fecha de Admisión:*</label>
                                 <input type="date" class="form-control" id="admision" name="admision" required>
                             </div>
-                            <div class="col-md-4 form-group">
-                                <label for="modalidad">Modalidad:*</label>
-                                <select class="form-control" id="modalidad" name="modalidad" required>
+                            <div class="col-md-2 form-group mb-3">
+                                <label for="hora_admision">Hora*:</label>
+                                <input type="time" class="form-control" id="hora_admision" name="hora_admision">
+                            </div>
+                            <div class="col-md-3 form-group mb-3">
+                                <label for="modalidad_act">Modalidad Activa:*</label>
+                                <select class="form-control" id="modalidad_act" name="modalidad_act" required>
                                     <option value="">Seleccionar...</option>
                                 </select>
                             </div>
@@ -546,58 +544,24 @@
                                 <label for="op">Nº de Orden de prestacion:</label>
                                 <input type="text" class="form-control" id="op" name="op">
                             </div>
-                            <div class="col-md-4 form-group">
-                                <label for="ocupacion">Ocupación:</label>
-                                <input type="text" class="form-control" id="ocupacion" name="ocupacion">
-                            </div>
+
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-4 form-group">
-                                <label for="hijos">Hijos:</label>
-                                <input type="number" class="form-control" id="hijos" name="hijos">
-                            </div>
-
-                            <div class="col-md-4 form-group">
-                                <label for="telefono">Teléfono:</label>
-                                <input type="text" class="form-control" id="telefono" name="telefono">
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label for="c_postal">Código Postal:</label>
-                                <input type="number" class="form-control" id="c_postal" name="c_postal">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 form-group">
-                                <label for="localidad">Localidad:</label>
-                                <input type="text" class="form-control" id="localidad" name="localidad">
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label for="partido">Partido:</label>
-                                <input type="text" class="form-control" id="partido" name="partido">
-                            </div>
-
-                            <div class="col-md-4 form-group">
-                                <label for="domicilio">Domicilio</label>
-                                <input type="text" class="form-control" id="domicilio" name="domicilio">
-                            </div>
-                        </div>
-
-
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary btn-custom-save"
+
+                            <button type="button" class="btn btn-warning" id="btnCompletarManualmente">Completar
+                                manualmente</button>
+
+                            <button type="button" class="btn btn-primary btn-custom-save"
                                 id="guardarPacienteBtn">Guardar</button>
+
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-
 
     <!-- Pie de página -->
     <footer class="bg-dark text-white text-center py-4 mt-auto">

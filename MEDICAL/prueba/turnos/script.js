@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
         ausencias.forEach(ausencia => {
             const startDate = new Date(ausencia.fecha_inicio);
             const endDate = new Date(ausencia.fecha_fin);
-    
+
             startDate.setDate(startDate.getDate() + 1);
             // Agregar un día a la fecha
             endDate.setDate(endDate.getDate() + 1);
@@ -978,6 +978,243 @@ $(document).ready(function () {
     });
 });
 
+//AGREGAR PACIENTE
+document.addEventListener('DOMContentLoaded', function () {
+    // Al abrir el modal "agregarPacienteModal", cerrar "createTurnoModal"
+    $('#agregarPacienteModal').on('show.bs.modal', function () {
+        $('#createTurnoModal').modal('hide'); // Oculta el modal principal
+    });
+
+    // Al cerrar el modal "agregarPacienteModal", volver a abrir "createTurnoModal"
+    $('#agregarPacienteModal').on('hidden.bs.modal', function () {
+        $('#createTurnoModal').modal('show'); // Vuelve a mostrar el modal principal
+    });
+});
+
+// Función para convertir el input en un select
+function convertirInputEnSelect() {
+    var uglInput = document.getElementById('ugl_paciente');
+    var uglValue = uglInput.value;  // Guardar el valor actual
+
+    // Crear el nuevo elemento select
+    var selectUGL = document.createElement('select');
+    selectUGL.className = 'form-control';
+    selectUGL.id = 'ugl_paciente';
+    selectUGL.name = 'ugl_paciente';
+    selectUGL.required = true;
+
+    // Agregar la opción predeterminada
+    var defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Seleccione UGL';
+    selectUGL.appendChild(defaultOption);
+
+    // Obtener UGLs mediante AJAX
+    fetch('../pacientes/dato/obtener_ugl.php')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(item => {
+                var option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.descripcion;
+                selectUGL.appendChild(option);
+            });
+
+            // Establecer el valor actual si está disponible
+            selectUGL.value = uglValue;
+
+            // Reemplazar el input por el select
+            uglInput.parentNode.replaceChild(selectUGL, uglInput);
+        })
+        .catch(error => console.error('Error al cargar UGLs:', error));
+}
+
+
+
+
+$(document).ready(function () {
+    $.ajax({
+        url: '../pacientes/dato/get_obras_sociales.php',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            data.forEach(function (item) {
+                var optionText = item.siglas + ' - ' + item.razon_social;
+                $('#obra_social').append(new Option(optionText, item.id));
+            });
+        },
+        error: function (error) {
+            console.error("Error fetching data: ", error);
+        }
+    });
+
+    $.ajax({
+        url: '../pacientes/dato/get_modalidad.php',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            data.forEach(function (item) {
+                var optionText = item.codigo + ' - ' + item.descripcion;
+                $('#modalidad_act').append(new Option(optionText, item.id));
+            });
+        },
+        error: function (error) {
+            console.error("Error fetching data: ", error);
+        }
+    });
+
+    $.ajax({
+        url: '../pacientes/dato/get_tipo_afiliado.php',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            data.forEach(function (item) {
+                var optionText = item.codigo + ' - ' + item.descripcion;
+                $('#tipo_afiliado').append(new Option(optionText, item.id));
+            });
+        },
+        error: function (error) {
+            console.error("Error fetching data: ", error);
+        }
+    });
+
+    $.ajax({
+        url: '../pacientes/dato/get_bocas_atencion.php',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            data.forEach(function (item) {
+                var optionText = item.boca;
+                $('#boca_atencion').append(new Option(optionText, item.id));
+            });
+        },
+        error: function (error) {
+            console.error("Error fetching data: ", error);
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.getElementById('btnCompletarManualmente').addEventListener('click', function () {
+        var nombreInput = document.getElementById('nombre');
+        nombreInput.removeAttribute('readonly');  // Elimina el atributo readonly
+        nombreInput.focus();  // Opcional: pone el foco en el campo para que el usuario pueda escribir
+
+        // Para 'fecha_nac'
+        var fechaNacInput = document.getElementById('fecha_nac');
+        fechaNacInput.removeAttribute('readonly');  // Elimina el atributo readonly
+        fechaNacInput.focus();  // Opcional: pone el foco en el campo para que el usuario pueda escribir
+
+        // Para 'ugl_paciente'
+        convertirInputEnSelect();  // Llama a la función para convertir el input en select
+
+        // Enfoca el nuevo select si es necesario
+        var uglPacienteSelect = document.getElementById('ugl_paciente');
+        uglPacienteSelect.focus();  // Opcional: pone el foco en el select
+    });
+
+    document.getElementById('btnBuscar').addEventListener('click', function () {
+        // Obtener los valores de los campos de "Beneficio" y "Parentesco"
+        var beneficio = $('#benef').val();
+        var parentesco = $('#parentesco').val();
+
+        // Realizar la solicitud al backend
+        fetch(`https://worldsoftsystems.com.ar/buscar?beneficio=${beneficio}&parentesco=${parentesco}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si se encontró el nombre y apellido
+                if (data.resultado) {
+                    function convertDateFormat(dateStr) {
+                        const parts = dateStr.split('/');
+                        // Asegúrate de que tienes el formato esperado
+                        if (parts.length === 3) {
+                            return `${parts[2]}-${parts[1]}-${parts[0]}`; // Devuelve en formato "yyyy-MM-dd"
+                        }
+                        return dateStr; // Devuelve original si no es un formato esperado
+                    }
+
+
+
+                    // Actualizar el campo de nombre y apellido con el resultado
+                    $('#ugl_paciente').val(data.resultado.ugl);
+                    $('#nombre').val(data.resultado.nombreApellido); // Asigna nombre y apellido
+                    // Convertir la fecha y asignarla
+                    const fechaNac = convertDateFormat(data.resultado.fecha_nac);
+                    $('#fecha_nac').val(fechaNac); // Asigna fecha de nacimiento
+
+                } else {
+                    // Mostrar una alerta si no se encuentra el resultado
+                    alert("No se encontró ningún beneficiario con los datos proporcionados.");
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                // Muestra un mensaje de error si ocurre un error durante la solicitud
+                alert("Error al buscar el nombre y apellido.");
+            });
+    });
+
+    document.getElementById('guardarPacienteBtn').addEventListener('click', function (e) {
+        e.preventDefault(); // Evita la acción predeterminada del formulario
+
+        // Obtén el formulario
+        const form = document.getElementById('formPaciente');
+
+        // Crear el objeto FormData con los datos del formulario
+        const formData = new FormData(form);
+
+        // Enviar la solicitud al servidor usando fetch
+        fetch(form.action, {
+            method: form.method,
+            body: formData,
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Mostrar alerta de éxito
+                    alert(data.message || "Paciente agregado correctamente.");
+
+                    // Cerrar el modal actual
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('agregarPacienteModal'));
+                    if (modal) {
+                        modal.hide();
+                    }
+
+                    $('#agregarPacienteModal').on('hidden.bs.modal', function () {
+                        $('#createTurnoModal').modal('show'); // Vuelve a mostrar el modal principal
+                    });
+
+                    // Asignar los valores al formulario externo
+                    document.getElementById('paciente_input').value = data.nombre; // Asigna el nombre concatenado
+                    document.getElementById('paciente_id').value = data.id;       // Asigna el ID
+
+
+
+                    // Limpia el formulario actual
+                    form.reset();
+                } else {
+                    // Mostrar alerta de error
+                    alert(data.message || "Error al agregar el paciente.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Ocurrió un error al procesar la solicitud.");
+            });
+    });
+
+});
 
 
 
