@@ -300,11 +300,13 @@ if ($result->num_rows > 0) {
             AND e.modalidad = (
                 SELECT pm.modalidad
                 FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad 
+                LEFT JOIN actividades a ON a.id = pract.actividad
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha 
+                AND pm.modalidad = a.modalidad
                 ORDER BY pm.fecha DESC
                 LIMIT 1
-            )
+            ) AND e.fecha_egreso BETWEEN '$fechaInicio' AND '$fechaFin' 
             ORDER BY e.fecha_egreso DESC
             LIMIT 1
         ) AS fecha_egreso,
@@ -577,11 +579,13 @@ ORDER BY nombre ASC;
             AND e.modalidad = (
                 SELECT pm.modalidad
                 FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad 
+                LEFT JOIN actividades a ON a.id = pract.actividad
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha 
+                AND pm.modalidad = a.modalidad
                 ORDER BY pm.fecha DESC
                 LIMIT 1
-            )
+            ) AND e.fecha_egreso BETWEEN '$fechaInicio' AND '$fechaFin' 
             ORDER BY e.fecha_egreso DESC
             LIMIT 1
         ) AS fecha_egreso,

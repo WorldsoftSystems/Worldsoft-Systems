@@ -80,12 +80,13 @@ $sql = "WITH ValidRecords AS (
             AND e.modalidad = (
                 SELECT pm.modalidad
                 FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad 
                 LEFT JOIN actividades a ON a.id = pract.actividad
                 WHERE pm.id_paciente = p.id
                 AND pm.modalidad = a.modalidad
                 ORDER BY pm.fecha DESC
                 LIMIT 1
-            )
+            ) AND e.fecha_egreso BETWEEN ? AND ? 
             ORDER BY e.fecha_egreso DESC
             LIMIT 1
         ) AS egreso,
@@ -170,7 +171,7 @@ if ($stmt === false) {
 }
 
 // Enlazar los parámetros
-$stmt->bind_param("ssi", $fecha_desde, $fecha_hasta, $obra_social);
+$stmt->bind_param("ssssi", $fecha_desde, $fecha_hasta,$fecha_desde, $fecha_hasta, $obra_social);
 
 // Ejecutar la consulta
 if (!$stmt->execute()) {
