@@ -282,9 +282,10 @@ if ($result->num_rows > 0) {
             (
                 SELECT m.codigo
                 FROM paci_modalidad pm
-                JOIN modalidad m ON m.id = pm.modalidad
+                JOIN modalidad m ON m.id = pm.modalidad 
+                LEFT JOIN actividades a ON a.id = pract.actividad
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha 
+                AND pm.modalidad = a.modalidad
                 ORDER BY pm.fecha DESC
                 LIMIT 1
             )
@@ -356,7 +357,19 @@ SELECT DISTINCT
     hora_pract,
     parentesco,
     ingreso_modalidad,
-    op,
+    -- Asignamos el op correctamente dependiendo de la modalidad
+    CASE
+        WHEN modalidad_op = modalidad_full THEN op
+        WHEN modalidad_op IS NOT NULL THEN 
+            -- Si modalidad_op tiene un valor, asignamos el op relacionado
+            (SELECT op 
+             FROM paci_op 
+             WHERE id_paciente = paciente_id 
+               AND modalidad_op = modalidad_full 
+             LIMIT 1)
+        ELSE NULL
+    END AS op
+    ,
     modalidad_op,
     sexo,
     modalidad_full,
@@ -364,7 +377,7 @@ SELECT DISTINCT
     diag,
     cantidad
 FROM ValidRecords
-WHERE modalidad_full != '11' AND modalidad_full != '12' AND COALESCE(modalidad_op, modalidad_full) = modalidad_full
+WHERE (modalidad_full != '11' AND modalidad_full != '12')
 GROUP BY nombre, benef, paciente_id, tipo_afiliado, matricula_n, boca_atencion, codigo, fecha_pract, fecha_egreso, motivo_egreso, hora_pract, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
 ORDER BY nombre ASC;
 ";
@@ -530,9 +543,10 @@ ORDER BY nombre ASC;
             (
                 SELECT m.codigo
                 FROM paci_modalidad pm
-                JOIN modalidad m ON m.id = pm.modalidad
+                JOIN modalidad m ON m.id = pm.modalidad 
+                LEFT JOIN actividades a ON a.id = pract.actividad
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha 
+                AND pm.modalidad = a.modalidad
                 ORDER BY pm.fecha DESC
                 LIMIT 1
             )
@@ -624,7 +638,18 @@ SELECT DISTINCT
     hora_pract,
     parentesco,
     ingreso_modalidad,
-    op,
+    -- Asignamos el op correctamente dependiendo de la modalidad
+    CASE
+        WHEN modalidad_op = modalidad_full THEN op
+        WHEN modalidad_op IS NOT NULL THEN 
+            -- Si modalidad_op tiene un valor, asignamos el op relacionado
+            (SELECT op 
+             FROM paci_op 
+             WHERE id_paciente = paciente_id 
+               AND modalidad_op = modalidad_full 
+             LIMIT 1)
+        ELSE NULL
+    END AS op,
     modalidad_op,
     sexo,
     modalidad_full,
@@ -633,7 +658,6 @@ SELECT DISTINCT
     cantidad
 FROM ValidRecords
 WHERE (modalidad_full = '11' OR modalidad_full = '12') 
-  AND COALESCE(modalidad_op, modalidad_full) = modalidad_full
 GROUP BY 
     nombre, 
     benef, 

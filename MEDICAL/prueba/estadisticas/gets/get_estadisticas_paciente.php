@@ -1,6 +1,6 @@
 <?php
 // Incluir el archivo de conexión
-include ('../../conexion.php');
+include('../../conexion.php');
 
 // Obtener los parámetros de la URL
 $fecha_desde = $_GET['fecha_desde'] ?? '';
@@ -21,6 +21,7 @@ $sql = "WITH ValidRecords AS (
         p.benef,
         p.parentesco,
         orden.op,
+        orden.modalidad_op,
         COALESCE(
             (
                 SELECT pm.fecha
@@ -51,13 +52,26 @@ $sql = "WITH ValidRecords AS (
             (
                 SELECT CONCAT(m.codigo , ' - ', m.descripcion)
                 FROM paci_modalidad pm
-                JOIN modalidad m ON m.id = pm.modalidad
+                JOIN modalidad m ON m.id = pm.modalidad 
+                LEFT JOIN actividades a ON a.id = pract.actividad
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha
+                AND pm.modalidad = a.modalidad
                 ORDER BY pm.fecha DESC
                 LIMIT 1
             )
         ) AS modalidad_full,
+        COALESCE(
+            (
+                SELECT m.codigo
+                FROM paci_modalidad pm
+                JOIN modalidad m ON m.id = pm.modalidad 
+                LEFT JOIN actividades a ON a.id = pract.actividad
+                WHERE pm.id_paciente = p.id
+                AND pm.modalidad = a.modalidad
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+        ) AS modalidad_codigo,
         pract.fecha AS fecha_pract,
         (
             SELECT e.fecha_egreso
@@ -66,8 +80,9 @@ $sql = "WITH ValidRecords AS (
             AND e.modalidad = (
                 SELECT pm.modalidad
                 FROM paci_modalidad pm
+                LEFT JOIN actividades a ON a.id = pract.actividad
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha
+                AND pm.modalidad = a.modalidad
                 ORDER BY pm.fecha DESC
                 LIMIT 1
             )
@@ -91,23 +106,61 @@ $sql = "WITH ValidRecords AS (
     LEFT JOIN paci_op orden ON orden.id_paciente = p.id
     WHERE pract.fecha BETWEEN ? AND ?
       AND p.obra_social = ?
+),
+MatchedOps AS (
+    SELECT
+        nombre,
+        benef,
+        parentesco,
+        ingreso_modalidad,
+        CASE
+            WHEN modalidad_op = modalidad_codigo THEN op
+            ELSE NULL
+        END AS op,
+        modalidad_op,
+        modalidad_codigo,
+        sexo,
+        modalidad_full,
+        valid_date AS ult_atencion,
+        egreso,
+        diag,
+        cantidad
+    FROM ValidRecords
 )
-
 SELECT
     nombre,
     benef,
     parentesco,
     ingreso_modalidad,
     op,
-    sexo,
+    modalidad_codigo,
     modalidad_full,
-    MAX(valid_date) AS ult_atencion,
-    egreso,
+    sexo,
+    MAX(ult_atencion) AS ult_atencion,
+    SUM(cantidad) AS cantidad,
+    MAX(egreso) AS egreso,
     diag,
-    SUM(cantidad) AS cantidad
-FROM ValidRecords
-GROUP BY nombre, benef, parentesco, ingreso_modalidad, sexo, modalidad_full, egreso, diag
-ORDER BY nombre ASC;
+    MAX(op) AS op -- Seleccionar la op correspondiente o NULL si no hay coincidencia
+FROM MatchedOps
+GROUP BY
+    nombre,
+    benef,
+    parentesco,
+    ingreso_modalidad,
+    modalidad_codigo,
+    modalidad_full,
+    sexo,
+    diag
+ORDER BY
+    nombre ASC,
+    ingreso_modalidad ASC,
+    modalidad_full ASC;
+
+
+;
+
+
+
 ";
 
 // Preparar la consulta
