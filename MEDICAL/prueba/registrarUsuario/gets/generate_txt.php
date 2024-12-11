@@ -249,7 +249,7 @@ if ($result->num_rows > 0) {
         p.parentesco,
         orden.op,
         orden.modalidad_op,
-        p.boca_atencion,
+        boca.num_boca AS boca_atencion,
         prof.matricula_n,
         p.tipo_afiliado,
         COALESCE(
@@ -341,6 +341,7 @@ if ($result->num_rows > 0) {
     LEFT JOIN paci_diag d ON d.id_paciente = p.id
     LEFT JOIN diag d_id ON d_id.id = d.codigo
     LEFT JOIN paci_op orden ON orden.id_paciente = p.id
+    LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
     WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
       AND p.obra_social = 4  
 )
@@ -511,7 +512,7 @@ ORDER BY nombre ASC;
         p.parentesco,
         orden.op,
         orden.modalidad_op,
-        p.boca_atencion,
+        boca.num_boca AS boca_atencion,
         p.nro_hist_int,
         prof.matricula_n,
         p.tipo_afiliado,
@@ -620,6 +621,7 @@ ORDER BY nombre ASC;
     LEFT JOIN paci_diag d ON d.id_paciente = p.id
     LEFT JOIN diag d_id ON d_id.id = d.codigo
     LEFT JOIN paci_op orden ON orden.id_paciente = p.id
+    LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
     WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
       AND p.obra_social = 4 
 )
