@@ -9,7 +9,7 @@ $database = "medical_test";
 $hostname = "localhost";
 $username = "root";
 $password = "";
-$database = "medical_pq0222"; 
+$database = "medical_test1605"; 
 
 
 // Crear conexión

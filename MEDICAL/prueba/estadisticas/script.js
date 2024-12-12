@@ -2808,9 +2808,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 let startY = 30;
                 const margin = { left: 15 };
 
+                // Separar datos con modalidad definida e indefinida
+                const definedData = data.filter(item => item.modalidad_full && item.modalidad_full.includes(' - '));
+                const undefinedData = data.filter(item => !item.modalidad_full || !item.modalidad_full.includes(' - '));
+
                 // Filtrar las modalidades por internación (11, 12) y ambulatorio (las demás)
-                const internacionData = data.filter(item => ['11', '12'].includes(item.modalidad_full.split(' - ')[0]));
-                const ambulatorioData = data.filter(item => !['11', '12'].includes(item.modalidad_full.split(' - ')[0]));
+                const internacionData = definedData.filter(item => {
+                    const modalidad = item.modalidad_full;
+                    return modalidad && ['11', '12'].includes(modalidad.split(' - ')[0]);
+                });
+
+                const ambulatorioData = definedData.filter(item => {
+                    const modalidad = item.modalidad_full;
+                    return modalidad && !['11', '12'].includes(modalidad.split(' - ')[0]);
+                });
+
 
                 // Variables para los totales
                 let totalAmbulatorio = 0;
@@ -2820,8 +2832,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 function drawModalityTable(modalityData, modality, startY) {
                     doc.setFontSize(12);
 
-                    // Extraer solo la parte después del guion
-                    const modalityDescription = modality.split(' - ')[1];
+                    const modalityDescription = modality && modality.includes(' - ')
+                        ? modality.split(' - ')[1]
+                        : 'MODALIDAD INDEFINIDA';
 
                     doc.text(`MODALIDAD: ${modalityDescription.toUpperCase()}`, pageWidth / 2, startY, { align: 'center' });
 
@@ -2835,7 +2848,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         for (let i = 0; i < modalityData.length; i += maxRowsPerPage) {
                             const chunk = modalityData.slice(i, i + maxRowsPerPage);
-                            console.log(chunk)
                             doc.autoTable({
                                 head: [headers],
                                 body: chunk.map(item => [
@@ -2876,17 +2888,25 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
 
                         // Agregar total de la modalidad debajo de la tabla
-                        startY = doc.autoTable.previous.finalY + 10; // Ajustar posición Y
+                        startY = doc.autoTable.previous.finalY + 10;
                         doc.setFontSize(12);
                         doc.text(`Total para ${modalityDescription.toUpperCase()}: ${modalityData.length}`, margin.left, startY);
 
-                        startY += 10; // Espacio adicional después del total
+                        startY += 10;
                     }
 
                     return startY;
                 }
 
 
+                // Dibujar modalidades indefinidas
+                if (undefinedData.length) {
+                    doc.setFontSize(14);
+                    doc.text('MODALIDADES INDEFINIDAS', pageWidth / 2, startY, { align: 'center' });
+                    startY += 10;
+
+                    startY = drawModalityTable(undefinedData, 'INDEFINIDA', startY);
+                }
 
                 // Agregar sección de INTERNACIÓN (Modalidades 11 y 12)
                 if (internacionData.length) {
