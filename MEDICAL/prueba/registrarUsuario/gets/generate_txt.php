@@ -516,30 +516,14 @@ ORDER BY nombre ASC;
         p.nro_hist_int,
         prof.matricula_n,
         p.tipo_afiliado,
-        COALESCE(
-            (
-                SELECT pm.fecha
+        (SELECT pm.fecha
                 FROM paci_modalidad pm
                 JOIN modalidad m ON m.id = pm.modalidad
+                LEFT JOIN actividades a ON a.id = pract.actividad
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha  
+                AND pm.modalidad = a.modalidad
                 ORDER BY pm.fecha DESC
                 LIMIT 1
-            ),
-            (
-                SELECT pm.fecha
-                FROM paci_modalidad pm
-                JOIN modalidad m ON m.id = pm.modalidad
-                WHERE pm.id_paciente = p.id
-                AND pm.fecha > (
-                    SELECT COALESCE(MAX(e.fecha_egreso), '9999-12-31')
-                    FROM egresos e
-                    WHERE e.id_paciente = p.id
-                )
-                AND pm.fecha <= pract.fecha 
-                ORDER BY pm.fecha ASC
-                LIMIT 1
-            )
         ) AS ingreso_modalidad,
         p.sexo,
         COALESCE(
