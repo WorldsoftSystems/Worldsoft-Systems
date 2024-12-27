@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nro_hist_amb = $_POST['nro_hist_amb'];
     $nro_hist_int = $_POST['nro_hist_int'];
     $ugl_id = $_POST['ugl_paciente']; // Este es el ID o la descripción seleccionada
+    $nro_de_tramite = $_POST['nro_de_tramite'];
 
     // Agrega un registro en el log para verificar el valor recibido
     error_log("Valor recibido en 'ugl_paciente': $ugl_id");
@@ -74,12 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $response['message'] = 'El paciente ya está registrado.';
     } else {
         // Insertar el nuevo paciente
-        $sql = "INSERT INTO paciente (nombre, obra_social, fecha_nac, sexo, domicilio, localidad, partido, c_postal, telefono, tipo_doc, nro_doc, admision, id_prof, benef, parentesco, hijos, ocupacion, tipo_afiliado, boca_atencion, nro_hist_amb, nro_hist_int, hora_admision, ugl_paciente) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO paciente (nombre, obra_social, fecha_nac, sexo, domicilio, localidad, partido, c_postal, telefono, tipo_doc, nro_doc, admision, id_prof, benef, parentesco, hijos, ocupacion, tipo_afiliado, boca_atencion, nro_hist_amb, nro_hist_int, hora_admision, ugl_paciente, nro_de_tramite) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
-            "ssssssssssssiisisiiiisi",
+            "ssssssssssssiisisiiiisis",
             $nombre,
             $obra_social,
             $fecha_nac,
@@ -102,7 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nro_hist_amb, // Ambulatoria
             $nro_hist_int, // Internación
             $hora_admision,
-            $ugl_id
+            $ugl_id,
+            $nro_de_tramite
         );
 
         if ($stmt->execute()) {

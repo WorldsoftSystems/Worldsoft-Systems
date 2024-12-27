@@ -7,11 +7,6 @@ if (isset($_GET['up'])) {
     $_SESSION['up'] = $_GET['up'];
 }
 
-// Verificar que el 'UP' esté configurado
-if (!isset($_SESSION['up'])) {
-    die("Error: No se ha especificado un cliente válido.");
-}
-
 // Incluir conexión
 require_once "./conexion.php";
 

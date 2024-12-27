@@ -2,11 +2,23 @@
 require_once "../../conexion.php";
 
 // Consulta para obtener todos los pacientes (sin paginación)
-$sql = "SELECT p.*, u.descripcion AS ugl_descripcion 
-        FROM paciente p 
-        LEFT JOIN codigo_ugl u ON u.id = p.ugl_paciente 
-        ORDER BY p.nombre ASC
-        LIMIT 100"; // Limita los resultados a 300
+$sql = "SELECT DISTINCT  p.*, 
+       u.descripcion AS ugl_descripcion, 
+       m.descripcion AS modalidad_actual
+       FROM paciente p
+       LEFT JOIN codigo_ugl u ON u.id = p.ugl_paciente
+       LEFT JOIN paci_modalidad pM ON pM.id_paciente = p.id
+       LEFT JOIN modalidad m ON m.id = (
+           SELECT modalidad 
+           FROM paci_modalidad 
+           WHERE id_paciente = p.id 
+           ORDER BY fecha DESC 
+           LIMIT 1
+       )
+       ORDER BY p.nombre ASC
+       LIMIT 25
+";
+
 $result = $conn->query($sql);
 
 // Verificar si la consulta fue exitosa

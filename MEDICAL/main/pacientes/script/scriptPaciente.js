@@ -153,6 +153,7 @@ function realizarBusqueda() {
                             <td>${paciente.nombre}</td>
                             <td>${paciente.benef}</td>
                             <td>${paciente.parentesco}</td>
+                             <td>${paciente.modalidad_actual}</td>
                             <td>
                                 <button class="btn btn-custom-editar" onclick='editarPaciente(${JSON.stringify(paciente)})'>
                                     <i class="fas fa-pencil-alt"></i>
@@ -214,6 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('nro_hist_int').value = paciente.nro_hist_int;
         document.getElementById('hora_admision').value = paciente.hora_admision;
         document.getElementById('ugl_paciente').value = paciente.ugl_descripcion;
+        document.getElementById('nro_de_tramite').value = paciente.nro_de_tramite || '';
         
         // Primero, carga las modalidades
         $.ajax({
@@ -324,6 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${paciente.nombre}</td>
                             <td>${paciente.benef}</td>
                             <td>${paciente.parentesco}</td>
+                            <td>${paciente.modalidad_actual}</td>
                             <td>
                                 <button class="btn btn-custom-editar" onclick='editarPaciente(${JSON.stringify(paciente)})'>
                                     <i class="fas fa-pencil-alt"></i>

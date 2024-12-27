@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const row = scheduleBody.insertRow();
                     row.insertCell(0).innerText = intervalo;
 
-                    for (let i = 1; i < 6; i++) {
+                    for (let i = 1; i < 7; i++) {
                         row.insertCell(i).innerText = '';
                     }
 
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         row.cells[1].innerText = ausencia ? ausencia.motivo : 'Motivo desconocido';
                         row.cells[1].style.backgroundColor = '#d3d3d3'; // Gris para ausente
                         row.cells[1].classList.add('absent-cell');
-                        for (let i = 2; i < 6; i++) {
+                        for (let i = 2; i < 7; i++) {
                             row.cells[i].style.backgroundColor = '#d3d3d3'; // Resto de las celdas también en gris
                         }
                     } else {
@@ -362,20 +362,23 @@ document.addEventListener('DOMContentLoaded', function () {
                             row.cells[5].innerText = turno.observaciones;
                             row.cells[5].title = turno.observaciones;
                             row.cells[5].addEventListener('click', () => openEditModal(turno));
+                            row.cells[6].innerText = turno.telefono || '';
+                            row.cells[6].title = turno.telefono || '';
+                            row.cells[6].addEventListener('click', () => openEditModal(turno));
 
                             // Establecer colores en base a la llegada y atención
                             if (turno.llego === 'SI' && turno.atendido === 'SI') {
-                                for (let i = 0; i < 6; i++) {
+                                for (let i = 0; i < 7; i++) {
                                     row.cells[i].style.backgroundColor = '#7abaf5'; // Color si llegó y fue atendido
                                 }
                             } else if (turno.llego === 'SI') {
-                                for (let i = 0; i < 6; i++) {
+                                for (let i = 0; i < 7; i++) {
                                     row.cells[i].style.backgroundColor = '#ff8d30'; // Color si llegó pero no fue atendido
                                 }
                             }
                         } else {
                             // Si no hay turno en el intervalo, marcar la celda como vacía y habilitarla para agregar turno
-                            for (let i = 1; i < 6; i++) {
+                            for (let i = 1; i < 7; i++) {
                                 row.cells[i].classList.add('empty-cell');
                                 row.cells[i].addEventListener('click', () => openCreateModal(intervalo, selectedDate));
                             }
@@ -390,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     sobreturnoRow.classList.add('sobreturno-cell'); // Estilo especial para sobreturno
                     sobreturnoRow.insertCell(0).innerText = `Sobreturno: ${sobreturno.hora}`;
 
-                    for (let i = 1; i < 6; i++) {
+                    for (let i = 1; i < 7; i++) {
                         sobreturnoRow.insertCell(i).innerText = '';
                     }
 
@@ -405,14 +408,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     sobreturnoRow.cells[5].innerText = sobreturno.observaciones;
                     sobreturnoRow.cells[5].title = sobreturno.observaciones;
                     sobreturnoRow.cells[5].addEventListener('click', () => openEditModal(sobreturno));
+                    sobreturnoRow.cells[6].innerText = sobreturno.telefono;
+                    sobreturnoRow.cells[6].title = sobreturno.telefono;
+                    sobreturnoRow.cells[6].addEventListener('click', () => openEditModal(sobreturno));
 
                     // Lógica de colores para los sobreturnos
                     if (sobreturno.llego === 'SI' && sobreturno.atendido === 'SI') {
-                        for (let i = 0; i < 6; i++) {
+                        for (let i = 0; i < 7; i++) {
                             sobreturnoRow.cells[i].style.backgroundColor = '#7abaf5'; // Color si llegó y fue atendido
                         }
                     } else if (sobreturno.llego === 'SI') {
-                        for (let i = 0; i < 6; i++) {
+                        for (let i = 0; i < 7; i++) {
                             sobreturnoRow.cells[i].style.backgroundColor = '#ff8d30'; // Color si llegó pero no fue atendido
                         }
                     }
@@ -421,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Crear la fila con el botón para añadir sobreturno
                 const addSobreturnoRow = scheduleBody.insertRow();
                 const addSobreturnoCell = addSobreturnoRow.insertCell(0);
-                addSobreturnoCell.colSpan = 6;
+                addSobreturnoCell.colSpan = 7;
                 addSobreturnoCell.style.textAlign = 'center';
 
                 const addSobreturnoButton = document.createElement('button');
@@ -446,8 +452,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para abrir el modal de edición con los datos del turno
     function openEditModal(turno) {
         // Rellenar el formulario con los datos del turno
-
-
         document.getElementById('turno_id').value = turno.id;
         document.getElementById('id_prof_edit').value = turno.id_prof;
         document.getElementById('fecha').value = formatDate(turno.fecha);
@@ -602,6 +606,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+
+
+
 
 //completar selects de modal agregar paciente
 $(document).ready(function () {
@@ -1214,6 +1221,44 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Obtener el botón de generar QR
+    const qrButton = document.getElementById("qrPaciente");
+
+    if (qrButton) {
+        qrButton.addEventListener("click", function () {
+            const pacienteInfo = document.getElementById("paciente_edit").value;
+
+            if (pacienteInfo) {
+                // Extraer el contenido relevante del paciente
+                const match = pacienteInfo.match(/(\d{12})\/(\d{2})/);
+                if (match) {
+                    const qrContent = `${match[1]}-${match[2]}`;
+
+                    // Generar el QR en el contenedor del modal
+                    const qrContainer = document.getElementById("qrContainer");
+                    qrContainer.innerHTML = ""; // Limpiar cualquier QR previo
+                    new QRCode(qrContainer, {
+                        text: qrContent,
+                        width: 128,
+                        height: 128,
+                    });
+
+                    // Mostrar el modal del QR
+                    const qrModal = new bootstrap.Modal(document.getElementById("qrModal"));
+                    qrModal.show();
+                } else {
+                    alert("No se encontró un número válido en la información del paciente.");
+                }
+            } else {
+                alert("El campo de información del paciente está vacío.");
+            }
+        });
+    } else {
+        console.error("El botón con id 'qrPaciente' no se encuentra en el DOM.");
+    }
 });
 
 

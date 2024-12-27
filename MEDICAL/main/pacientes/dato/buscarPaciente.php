@@ -3,9 +3,17 @@ require_once "../../conexion.php";
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
-$sql = "SELECT p.*, u.descripcion AS ugl_descripcion 
+$sql = "SELECT DISTINCT p.*, u.descripcion AS ugl_descripcion,m.descripcion AS modalidad_actual
         FROM paciente p 
         LEFT JOIN codigo_ugl u ON u.id = p.ugl_paciente 
+        LEFT JOIN paci_modalidad pM ON pM.id_paciente = p.id
+       LEFT JOIN modalidad m ON m.id = (
+           SELECT modalidad 
+           FROM paci_modalidad 
+           WHERE id_paciente = p.id 
+           ORDER BY fecha DESC 
+           LIMIT 1
+       )
         WHERE LOWER(p.nombre) LIKE ? OR LOWER(p.benef) LIKE ? 
         ORDER BY p.nombre ASC";
 

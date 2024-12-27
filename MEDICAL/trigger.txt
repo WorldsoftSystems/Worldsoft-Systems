@@ -9,7 +9,7 @@ BEGIN
     -- Busca el id en la tabla diag según el codigo
     SELECT `id` INTO v_id 
     FROM `diag` 
-    WHERE `codigo` = NEW.codigo 
+    WHERE `codigo` = TRIM(CAST(NEW.codigo AS CHAR)) 
     LIMIT 1;
 
     -- Si se encuentra el id, actualiza el nuevo registro en paci_diag
@@ -25,4 +25,3 @@ END;
 DELIMITER ;
 
 DROP TRIGGER IF EXISTS `before_insert_paci_diag`;
-

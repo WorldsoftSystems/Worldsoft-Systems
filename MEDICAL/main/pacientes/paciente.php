@@ -6,11 +6,12 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Verifica si el usuario ha iniciado sesión
-if (isset($_SESSION['usuario'])) {
+if (isset($_SESSION['up'])) {
     // El usuario ha iniciado sesión, puedes mostrar contenido para usuarios autenticados o ejecutar acciones específicas
 } else {
     header("Location: ../index.php");
 }
+
 
 // Verificar si se ha enviado el parámetro "eliminar"
 if (isset($_GET['eliminar'])) {
@@ -55,7 +56,9 @@ if (isset($_GET['eliminar'])) {
 
 // Obtener todos los pacientes
 $sql = "SELECT p.*
-        FROM paciente p ORDER BY p.nombre ASC";
+        FROM paciente p 
+        ORDER BY p.nombre ASC
+        LIMIT 30";
 $result = $conn->query($sql);
 
 // Consultar el valor de 'inst'
@@ -69,7 +72,15 @@ if ($resultTitle && $resultTitle->num_rows > 0) {
     $title = $row['inst'];
 }
 
+// Determinar cliente desde la sesión
+$cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
 
+// Archivos de script específicos para ciertos clientes
+$scripts_especificos = [
+    'UP3069149922304' => './script/pq0303.js'
+];
+// Determinar el script a cargar
+$script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$cliente] : './script/scriptPaciente.js';
 
 $conn->close();
 
@@ -122,7 +133,7 @@ $conn->close();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
     <!-- Scripts personalizados -->
-    <script src="./script/scriptPaciente.js" defer></script>
+    <script src="<?php echo htmlspecialchars($script_js); ?>" defer></script>
     <script src="./script/submenues.js" defer></script>
 
 
@@ -228,34 +239,12 @@ $conn->close();
                     <th>Nombre</th>
                     <th>Beneficio</th>
                     <th>Parentesco</th>
+                    <th>Modalidad actual</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if ($result->num_rows > 0): ?>
-                    <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= $row["id"] ?></td>
-                            <td><?= $row["nombre"] ?></td>
-                            <td><?= $row["benef"] ?></td>
-                            <td><?= $row["parentesco"] ?></td>
-                            <td>
-                                <button class="btn btn-custom-editar" onclick='editarPaciente(<?= json_encode($row) ?>)'><i
-                                        class="fas fa-pencil-alt"></i></button>
-                                <a href="?eliminar=<?= $row['id'] ?>" class="btn btn-danger"
-                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este paciente?');"><i
-                                        class="fas fa-trash-alt"></i></a>
-                                <button class="btn btn-info" onclick="openReportModal(<?= $row['id'] ?>)">
-                                    <i class="fas fa-file-alt"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="4">No se encontraron resultados</td>
-                    </tr>
-                <?php endif; ?>
+                <!-- Llenado dinamico de pacientes -->
             </tbody>
         </table>
     </div>
@@ -452,6 +441,26 @@ $conn->close();
                                 </div>
 
 
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+
+                                        <?php if ($cliente === 'UP3069149922304'): ?>
+                                            <div class="col-sm-6 form-group mb-2">
+                                                <label for="token">Token:</label>
+                                                <input type="text" class="form-control form-control-sm" id="token"
+                                                    name="token">
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <div class="col-sm-6 form-group mb-2">
+                                            <label for="nro_de_tramite">Nro de Tramite:</label>
+                                            <input type="text" class="form-control form-control-sm" id="nro_de_tramite"
+                                                name="nro_de_tramite">
+                                        </div>
+                                    </div>
+                                </div>
+
+
                             </div>
 
                             <div class="row">
@@ -531,7 +540,7 @@ $conn->close();
                                     </select>
                                 </div>
                                 <div class="col-md-3 form-group mb-3">
-                                    <label for="modalidad_act">Modalidad Activa:*</label>
+                                    <label for="modalidad_act">Modalidad De Ingreso:*</label>
                                     <select class="form-control" id="modalidad_act" name="modalidad_act" required>
                                         <option value="">Seleccionar...</option>
                                     </select>

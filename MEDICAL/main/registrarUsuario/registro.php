@@ -68,6 +68,7 @@ $conn->close();
             <button class="btn btn-info" id="cargarUsuarios">Cargar Usuarios</button>
         <?php else: ?>
             <button class="btn btn-primary" id="generate_txt.php">Generar TXT</button>
+            <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
         <?php endif; ?>
     </div>
 

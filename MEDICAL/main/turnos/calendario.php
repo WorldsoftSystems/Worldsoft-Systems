@@ -1,3 +1,20 @@
+<?php
+require_once "../conexion.php";
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verifica si el usuario ha iniciado sesión
+if (isset($_SESSION['up'])) {
+    // El usuario ha iniciado sesión, puedes mostrar contenido para usuarios autenticados o ejecutar acciones específicas
+} else {
+    header("Location: ../index.php");
+}
+// Determinar cliente desde la sesión
+$cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -40,6 +57,8 @@
     <!--REPORTES -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <!-- Incluye una biblioteca para generar QR (por ejemplo, qrcode.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script src="script.js"></script>
     <style>
@@ -167,7 +186,7 @@
         }
 
         .clickable-cell {
-            cursor: pointer;
+            cursor: pointer !important;
         }
 
         #patientList {
@@ -234,15 +253,16 @@
             <div class="schedule-container">
                 <div id="selected-date">Fecha seleccionada: Ninguna</div>
                 <div style="height: 500px; overflow-y: auto;">
-                    <table id="schedule" class="table table-bordered">
+                    <table id="schedule" class="table table-bordered table-hover">
                         <thead class="thead-light">
                             <tr>
-                                <th>Hora</th>
-                                <th>Paciente</th>
-                                <th>Motivo de Consulta</th>
-                                <th>Llegó</th>
-                                <th>Atendido</th>
-                                <th>Observaciones</th>
+                                <th class="clickable-th">Hora</th>
+                                <th class="clickable-th">Paciente</th>
+                                <th class="clickable-th">Motivo de Consulta</th>
+                                <th class="clickable-th">Llegó</th>
+                                <th class="clickable-th">Atendido</th>
+                                <th class="clickable-th">Observaciones</th>
+                                <th class="clickable-th">Teléfono</th>
                             </tr>
                         </thead>
                         <tbody id="schedule-body">
@@ -264,6 +284,11 @@
                     <button type="button" class="btn btn-custom ms-2" id="printTurnoButton">
                         Imprimir Turno
                     </button>
+                    <?php if ($cliente === 'UP3069149922304'): ?>
+                        <button type="button" class="btn btn-custom ms-2" id="qrPaciente">
+                            Generar Qr
+                        </button>
+                    <?php endif; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -335,6 +360,25 @@
 
                     </form>
                 </div>
+
+                <!-- Modal anidado para mostrar el QR -->
+                <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="qrModalLabel">Código QR</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body d-flex justify-content-center align-items-center">
+                                <!-- Contenedor del QR -->
+                                <div id="qrContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>

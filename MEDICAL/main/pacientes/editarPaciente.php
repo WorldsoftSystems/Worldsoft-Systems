@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nro_hist_amb = $_POST['nro_hist_amb'];
     $nro_hist_int = $_POST['nro_hist_int'];
     $hora_admision = $_POST['hora_admision'];
+    $nro_de_tramite = $_POST['nro_de_tramite'];
 
     // Verificar si existe otro paciente con el mismo benef y parentesco
     $sql_check = "SELECT id FROM paciente WHERE benef = ? AND parentesco = ? AND id != ?";
@@ -65,12 +66,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     boca_atencion = ?,
                     nro_hist_amb = ?,
                     nro_hist_int = ?,
-                    hora_admision = ?
+                    hora_admision = ?,
+                    nro_de_tramite = ?
                 WHERE id = ?";
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
-            "sisssssissisiisisiiiisi",
+            "sisssssissisiisisiiiissi",
             $nombre,
             $obra_social,  // int
             $fecha_nac,    // date
@@ -93,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nro_hist_amb,
             $nro_hist_int,
             $hora_admision,
+            $nro_de_tramite,
             $id            // int
         );
 
