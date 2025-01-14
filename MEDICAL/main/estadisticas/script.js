@@ -62,6 +62,36 @@ document.addEventListener('DOMContentLoaded', function () {
     const generatePacientesPrestacionesBtn = document.getElementById('generatePacientesPrestacionesBtn');
     const generatePacientesPrestacionesExcelBtn = document.getElementById('generatePacientesPrestacionesExcelBtn');
 
+    const openPaciSinDiagModalLink = document.getElementById('openPaciSinDiagModalLink');
+    const generatePaciSinDiagBtn = document.getElementById('generatePaciSinDiagBtn');
+    const generatePaciSinDiagExcelBtn = document.getElementById('generatePaciSinDiagExcelBtn');
+
+    if (openPaciSinDiagModalLink) {
+        openPaciSinDiagModalLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            const modal = new bootstrap.Modal(document.getElementById('openPaciSinDiagnosticoModal'));
+            modal.show();
+        });
+    }
+
+    if (generatePaciSinDiagBtn) {
+        generatePaciSinDiagBtn.addEventListener('click', function () {
+            const fechaDesde = document.getElementById('fechaDesdePaciSinDiag').value;
+            const fechaHasta = document.getElementById('fechaHastaPaciSinDiag').value;
+            const obraSocialId = $('#obra_social_paci_sin_diag').val();
+            generatePaciSinDiagPDF(fechaDesde, fechaHasta, obraSocialId);
+        });
+    }
+
+    if (generatePaciSinDiagExcelBtn) {
+        generatePaciSinDiagExcelBtn.addEventListener('click', function () {
+            const fechaDesde = document.getElementById('fechaDesdePaciSinDiag').value;
+            const fechaHasta = document.getElementById('fechaHastaPaciSinDiag').value;
+            const obraSocialId = $('#obra_social_paci_sin_diag').val();
+            generatePaciSinDiagExcel(fechaDesde, fechaHasta, obraSocialId);
+        });
+    }
+
     if (openPacientesPrestacionesModalLink) {
         openPacientesPrestacionesModalLink.addEventListener('click', function (e) {
             e.preventDefault();
@@ -3174,6 +3204,173 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     //FIN OME
 
+
+    //PACI SIN DIAG
+    function generatePaciSinDiagPDF(fechaDesde, fechaHasta, obraSocialId) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'mm', 'a4');
+
+        function getMaxRowsPerPage(doc, headers, data) {
+            const pageHeight = doc.internal.pageSize.height;
+            const margins = { top: 30, bottom: 20 }; // Ajusta los márgenes si es necesario
+            const rowHeight = 10; // Altura de cada fila
+            const headerHeight = 10; // Altura de la fila del encabezado
+
+            const availableHeight = pageHeight - margins.top - margins.bottom - headerHeight;
+            const maxRows = Math.floor(availableHeight / rowHeight);
+
+            return Math.min(maxRows, data.length);
+        }
+
+        // Llamada al backend para obtener los datos
+        fetch(`./gets/get_pacientes_sin_diagnostico.php?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}&obra_social=${obraSocialId}`)
+            .then(response => response.json())
+            .then(resumen => {
+                if (resumen.error) {
+                    console.error(resumen.error);
+                    return;
+                }
+
+                const formattedFechaDesde = formatDate(fechaDesde);
+                const formattedFechaHasta = formatDate(fechaHasta);
+
+                const title = 'PACIENTES SIN DIAGNÓSTICO';
+                const pageWidth = doc.internal.pageSize.getWidth();
+
+                doc.setFontSize(16);
+                doc.setFont('Helvetica', 'bold');
+                doc.text(title, pageWidth / 2, 10, { align: 'center' });
+                doc.setFont('Helvetica', 'normal');
+
+                const dateRange = `DESDE: ${formattedFechaDesde} HASTA: ${formattedFechaHasta}`;
+                doc.setFontSize(14);
+                doc.text(dateRange, pageWidth / 2, 20, { align: 'center' });
+
+                doc.setFontSize(12);
+                let startY = 30;
+                const margin = { left: 15 };
+
+                const headers = ['NOMBRE', 'OBRA SOCIAL', 'ADMISIÓN', 'BENEFICIO', 'PARENTESCO'];
+                const data = resumen.map(item => [
+                    item.nombre,
+                    item.obra_social,
+                    formatDate(item.admision),
+                    item.benef,
+                    item.parentesco
+                ]);
+
+                // Crear la tabla en el PDF
+                const tableWidth = pageWidth - margin.left * 2;
+
+                if (data.length) {
+                    let tableStartY = startY;
+                    const maxRowsPerPage = getMaxRowsPerPage(doc, headers, data);
+
+                    for (let i = 0; i < data.length; i += maxRowsPerPage) {
+                        const chunk = data.slice(i, i + maxRowsPerPage);
+
+                        doc.autoTable({
+                            head: [headers],
+                            body: chunk,
+                            startY: tableStartY,
+                            margin: margin,
+                            theme: 'striped',
+                            styles: {
+                                fontSize: 10,
+                                cellPadding: 2,
+                                overflow: 'linebreak'
+                            },
+                            columnStyles: {
+                                0: { cellWidth: 60 },
+                                1: { cellWidth: 25 },
+                                2: { cellWidth: 40 },
+                                3: { cellWidth: 35 },
+                                4: { cellWidth: 25 }
+                            },
+                            didDrawPage: function (data) {
+                                tableStartY = data.cursor.y;
+                            },
+                            pageBreak: 'auto'
+                        });
+
+                        if (i + maxRowsPerPage < data.length) {
+                            doc.addPage();
+                            tableStartY = 30;
+                        }
+                    }
+
+                    doc.setFontSize(12);
+                    doc.text(`Total Pacientes Sin Diagnóstico: ${data.length}`, pageWidth / 2, tableStartY + 10, { align: 'center' });
+                } else {
+                    doc.setFontSize(12);
+                    doc.text('No se encontraron pacientes sin diagnóstico en el rango de fechas especificado.', pageWidth / 2, startY, { align: 'center' });
+                }
+
+                // Agregar un logo si es necesario
+                const imgUrl = '../img/logo.png';
+                var img = new Image();
+                img.onload = function () {
+                    const imgWidth = 29;
+                    const imgHeight = 25;
+                    const xImg = (pageWidth - imgWidth) / 2;
+                    const yImg = doc.internal.pageSize.height - imgHeight - 10;
+
+                    doc.addImage(img, 'PNG', xImg, yImg, imgWidth, imgHeight);
+
+                    window.open(doc.output('bloburl'));
+                };
+                img.src = imgUrl;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function generatePaciSinDiagExcel(fechaDesde, fechaHasta, obraSocialId) {
+        // Llamada al backend para obtener los datos
+        fetch(`./gets/get_pacientes_sin_diagnostico.php?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}&obra_social=${obraSocialId}`)
+            .then(response => response.json())
+            .then(resumen => {
+                if (resumen.error) {
+                    console.error(resumen.error);
+                    return;
+                }
+
+                // Crear una hoja de cálculo con los datos obtenidos
+                const headers = ['NOMBRE', 'OBRA SOCIAL', 'ADMISIÓN', 'BENEFICIO', 'PARENTESCO'];
+                const data = resumen.map(item => [
+                    item.nombre,
+                    item.obra_social,
+                    formatDate(item.admision),
+                    item.benef,
+                    item.parentesco
+                ]);
+
+                // Insertar encabezados y datos
+                const worksheetData = [headers, ...data];
+
+                // Crear el libro de trabajo
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+                XLSX.utils.book_append_sheet(wb, ws, 'Pacientes Sin Diagnóstico');
+
+                // Crear un archivo Excel
+                const currentDate = new Date().toISOString().split('T')[0];
+                const fileName = `Pacientes_Sin_Diagnostico_${currentDate}.xlsx`;
+
+                // Descargar el archivo
+                XLSX.writeFile(wb, fileName);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    
+
+    //FIN PACI SIN DIAG
+
+
 });
 
 //barra busqueda
@@ -3216,6 +3413,7 @@ $(document).ready(function () {
                 $('#obra_social_paci_unicos').append(new Option(optionText, item.id));
                 $('#obra_social_paci_boca').append(new Option(optionText, item.id));
                 $('#obra_social_paci_prestaciones').append(new Option(optionText, item.id));
+                $('#obra_social_paci_sin_diag').append(new Option(optionText, item.id));
             });
         },
         error: function (error) {

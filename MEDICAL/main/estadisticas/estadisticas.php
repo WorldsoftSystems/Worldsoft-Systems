@@ -287,6 +287,18 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
         </a>
       </div>
 
+      <div class="col d-flex justify-content-center">
+        <a href="#" id="openPaciSinDiagModalLink">
+          <div class="card h-100">
+            <div class="first-content">
+              <img src="../img/reportes/plan.png" alt="Sin diag">
+            </div>
+            <div class="third-content">
+              <h3 class="mt-3">Pacientes Sin Diag.</h3>
+            </div>
+          </div>
+        </a>
+      </div>
 
 
     </div>
@@ -294,8 +306,8 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
   <!-- FIN Cards Container -->
 
   <!--PACI PRESTACIONES FIN-->
-  <div class="modal fade" id="openPacientesPrestacionesModal" tabindex="-1" aria-labelledby="pacientesPrestacionesModalLabel"
-    aria-hidden="true">
+  <div class="modal fade" id="openPacientesPrestacionesModal" tabindex="-1"
+    aria-labelledby="pacientesPrestacionesModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -314,7 +326,8 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
             </div>
             <div class="col-md-4 form-group">
               <label for="obra_social_paci_prestaciones">Obra Social:*</label>
-              <select class="form-control" id="obra_social_paci_prestaciones" name="obra_social_paci_prestaciones" required>
+              <select class="form-control" id="obra_social_paci_prestaciones" name="obra_social_paci_prestaciones"
+                required>
                 <option value="">Seleccionar...</option>
               </select>
             </div>
@@ -323,7 +336,8 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
           <button type="button" class="btn btn-primary" id="generatePacientesPrestacionesBtn">Generar PDF</button>
-          <button type="button" class="btn btn-success" id="generatePacientesPrestacionesExcelBtn">Generar Excel</button>
+          <button type="button" class="btn btn-success" id="generatePacientesPrestacionesExcelBtn">Generar
+            Excel</button>
         </div>
       </div>
     </div>
@@ -770,6 +784,43 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
     </div>
   </div>
   <!-- FIN Prestaciones por profesional -->
+
+  <!--PACI Sin Diag.-->
+  <div class="modal fade" id="openPaciSinDiagnosticoModal" tabindex="-1" aria-labelledby="paciSinDiagModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="paciSinDiagModalLabel">Pacientes Sin Diag.</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="paciSinDiagForm">
+            <div class="mb-3">
+              <label for="fechaDesdePaciSinDiag" class="form-label">Fecha Desde</label>
+              <input type="date" class="form-control" id="fechaDesdePaciSinDiag" required>
+            </div>
+            <div class="mb-3">
+              <label for="fechaHastaPaciSinDiag" class="form-label">Fecha Hasta</label>
+              <input type="date" class="form-control" id="fechaHastaPaciSinDiag" required>
+            </div>
+            <div class="col-md-4 form-group">
+              <label for="obra_social_paci_sin_diag">Obra Social:*</label>
+              <select class="form-control" id="obra_social_paci_sin_diag" name="obra_social_paci_sin_diag" required>
+                <option value="">Seleccionar...</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" id="generatePaciSinDiagBtn">Generar PDF</button>
+          <button type="button" class="btn btn-success" id="generatePaciSinDiagExcelBtn">Generar Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--PACI Sin Diag.-->
 
   <!-- Pie de página -->
   <footer class="bg-dark text-white text-center py-4 mt-auto">

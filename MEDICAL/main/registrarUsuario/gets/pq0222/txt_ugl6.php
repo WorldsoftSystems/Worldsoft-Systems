@@ -2,7 +2,7 @@
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 // Conexión a la base de datos (modifica los datos de conexión según tu configuración)
-include('../../conexion.php');
+include('../../../conexion.php');
 
 // Verifica la conexión
 if ($conn->connect_error) {

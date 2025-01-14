@@ -1,10 +1,21 @@
 function formatDate(dateString) {
+    if (!dateString || typeof dateString !== "string") {
+        console.error("Invalid dateString:", dateString);
+        return "Invalid Date"; // Devuelve un valor predeterminado o un mensaje de error.
+    }
+
     var parts = dateString.split('-');
+    if (parts.length !== 3) {
+        console.error("Unexpected date format:", dateString);
+        return "Invalid Date";
+    }
+
     var year = parts[0];
     var month = parts[1];
     var day = parts[2];
     return day + "/" + month + "/" + year;
 }
+
 
 
 //EGRESO
@@ -1989,6 +2000,8 @@ function loadPracticasModal() {
         },
         success: function (response) {
             document.getElementById('pracModalBody').innerHTML = response;
+            // Llamamos a la función que maneja la verificación del fetch
+            checkPacienteStatus(benef, parentesco);
             $('#pracModal').modal('show'); // Mostrar el modal de egreso
             $('#formPaciente').hide(); // Ocultar el formulario principal usando jQuery al cargar el modal
         },
@@ -1998,12 +2011,47 @@ function loadPracticasModal() {
     });
 }
 
+// Función para verificar si el paciente está dado de baja y mostrar el título rojo
+// Función para verificar si el paciente está dado de baja y mostrar el título rojo
+async function checkPacienteStatus(benef, parentesco) {
+    const noResultadosTitulo = document.getElementById('noResultadosTitulo');
+    try {
+        // Realizar la solicitud fetch a la URL especificada
+        const response = await fetch(`https://worldsoftsystems.com.ar/buscar?beneficio=${benef}&parentesco=${parentesco}`);
+
+        if (response.ok) {
+            const data = await response.json(); // Suponiendo que la respuesta es JSON
+
+            // Verificar si la respuesta está vacía
+            if (!data.resultado || Object.keys(data.resultado).length === 0) {
+                // Mostrar el título rojo con el mensaje "Paciente dado de baja"
+                noResultadosTitulo.classList.remove('d-none');
+                noResultadosTitulo.innerText = 'Paciente sin afiliacion en pami';
+            } else {
+                // Si hay resultados, asegurarse de que el título rojo esté oculto
+                noResultadosTitulo.classList.add('d-none');
+            }
+        } else {
+            // En caso de que la respuesta no sea exitosa, mostrar el mensaje rojo
+            noResultadosTitulo.classList.remove('d-none');
+            noResultadosTitulo.innerText = 'Paciente sin afiliacion en pami';
+        }
+    } catch (error) {
+        // Si ocurre un error en la solicitud, mostrar el mensaje rojo
+        console.error('Error al verificar el estado del paciente:', error);
+        noResultadosTitulo.classList.remove('d-none');
+        noResultadosTitulo.innerText = 'Paciente sin afiliacion en pami';
+    }
+}
+
 // Función para mostrar el modal de agregar/editar paciente al hacer clic en "Volver" dentro del modal de egreso
 $('#pracModal').on('click', '.btn-volver', function () {
     $('#formPaciente').show(); // Mostrar el formulario principal al hacer clic en "Volver"
     $('#pracModal').modal('hide'); // Ocultar el modal de egreso
     $('#agregarPacienteModal').modal('show'); // Mostrar el modal de agregar/editar paciente
 });
+
+
 
 // Función para cargar la lista de egresos desde la base de datos
 function cargarListaPracticas(idPaciente, page = 1, recordsPerPage = 100) {

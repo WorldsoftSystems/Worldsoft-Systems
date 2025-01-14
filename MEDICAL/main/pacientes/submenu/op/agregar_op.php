@@ -17,7 +17,7 @@ if ($cant == 3) {
 } elseif ($cant == 1) {
     $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 1 month'));
 } else {
-    $fecha_vencimiento = null; // O cualquier otro valor predeterminado si no se cumplen las condiciones
+    $fecha_vencimiento = '0000-00-00'; // O cualquier otro valor predeterminado si no se cumplen las condiciones
 }
 
 

@@ -2,7 +2,7 @@
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 // Conexión a la base de datos (modifica los datos de conexión según tu configuración)
-include('../../conexion.php');
+include('../../../conexion.php');
 
 // Verifica la conexión
 if ($conn->connect_error) {
@@ -60,7 +60,7 @@ if ($result->num_rows > 0) {
 
     // Primera línea dinámica
     $linea1 = "CABECERA\n";
-    $linea2 = "$cuit;;$fechaActual;$periodo;$inst;2;$u_efect;$clave_efect\n";
+    $linea2 = "30-54610431-8;;$fechaActual;$periodo;$inst;2;UP30546104318N6;69645\n";
     // Tercera línea con el texto 'PROFESIONAL'
     $linea3 = "PROFESIONAL\n";
     // Contenido inicial del archivo
@@ -164,7 +164,8 @@ if ($result->num_rows > 0) {
     $sqlBenefs = "SELECT DISTINCT p.*
                  FROM paciente p
                  LEFT JOIN practicas practs ON p.id = practs.id_paciente
-                 WHERE  (practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin') AND p.obra_social = 4
+                 WHERE practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
+                 AND p.obra_social = 4  AND p.ugl_paciente = 37
                  ";
     $resultBenef = $conn->query($sqlBenefs);
 
@@ -201,7 +202,8 @@ if ($result->num_rows > 0) {
     $sqlPacis = "SELECT DISTINCT p.*
                  FROM paciente p
                  LEFT JOIN practicas practs ON p.id = practs.id_paciente
-                 WHERE  practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin' AND p.obra_social = 4
+                 WHERE practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
+                 AND p.obra_social = 4  AND p.ugl_paciente = 37
                  ";
     $resultPaci = $conn->query($sqlPacis);
 
@@ -327,7 +329,7 @@ if ($result->num_rows > 0) {
     LEFT JOIN paci_op orden ON orden.id_paciente = p.id
     LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
     WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
-      AND p.obra_social = 4  
+          AND p.obra_social = 4  AND p.ugl_paciente = 37
 )
 
 SELECT DISTINCT
@@ -591,7 +593,7 @@ ORDER BY nombre ASC;
     LEFT JOIN paci_op orden ON orden.id_paciente = p.id
     LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
     WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
-      AND p.obra_social = 4 
+          AND p.obra_social = 4  AND p.ugl_paciente = 37
 )
 
 SELECT DISTINCT
@@ -788,7 +790,7 @@ ORDER BY nombre ASC;
 
     // Generar la respuesta JSON con el nombre del archivo y el contenido
     $response = array(
-        'filename' => $c_interno . "WSS.txt",  // Nombre dinámico del archivo
+        'filename' => $c_interno . "_ugl_37_WSS.txt",  // Nombre dinámico del archivo
         'content' => $contenido
     );
 

@@ -65,7 +65,27 @@ $conn->close();
             <button class="btn btn-primary" id="txt_ugl10.php">Generar TXT DE UGL 10</button>
             <button class="btn btn-primary" id="txt_ugl37.php">Generar TXT DE UGL 37</button>
             <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
-            <button class="btn btn-info" id="cargarUsuarios">Cargar Usuarios</button>
+
+        <?php elseif ($cliente === 'UP3063207857500'): ?>
+            <div class="columns-container">
+                <!-- Columna de botones INT -->
+                <div class="column">
+                    <h3>INT</h3>
+                    <button class="btn btn-primary" id="txt_ugl35_INT.php">Generar TXT DE UGL 35_INT</button>
+                    <button class="btn btn-primary" id="txt_ugl08_INT.php">Generar TXT DE UGL 08_INT</button>
+                    <button class="btn btn-primary" id="txt_ugl06_INT.php">Generar TXT DE UGL 06_INT</button>
+                </div>
+
+                <!-- Columna de botones AMB -->
+                <div class="column">
+                    <h3>AMB</h3>
+                    <button class="btn btn-primary" id="txt_ugl35_AMB.php">Generar TXT DE UGL 35_AMB</button>
+                    <button class="btn btn-primary" id="txt_ugl08_AMB.php">Generar TXT DE UGL 08_AMB</button>
+                    <button class="btn btn-primary" id="txt_ugl06_AMB.php">Generar TXT DE UGL 06_AMB</button>
+                </div>
+            </div>
+            <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
+
         <?php else: ?>
             <button class="btn btn-primary" id="generate_txt.php">Generar TXT</button>
             <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
@@ -124,73 +144,186 @@ $conn->close();
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-
-        // Cargar usuarios con AJAX
-        document.getElementById('cargarUsuarios').addEventListener('click', function () {
-            fetch('./gets/obtener_usuarios.php')
-                .then(response => response.json())
-                .then(data => {
-                    const tablaBody = document.querySelector('#tablaUsuarios tbody');
-                    tablaBody.innerHTML = ''; // Limpiar la tabla antes de llenarla
-                    data.forEach(usuario => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `<td>${usuario.id}</td><td>${usuario.usuario}</td><td>${usuario.clave}</td>`; // Mostrar la contraseña hasheada
-                        tablaBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Error al cargar usuarios:', error));
-        });
-
-
         //TXT
         document.addEventListener('DOMContentLoaded', function () {
 
-            document.getElementById('txt_ugl10.php').addEventListener('click', function () {
-                // Hacer la solicitud al servidor para obtener los datos
-                fetch('./gets/txt_ugl10.php')
-                    .then(response => response.json())  // Convertir la respuesta en JSON
-                    .then(data => {
-                        // Crear un enlace temporal para descargar el archivo
-                        const element = document.createElement('a');
-                        const file = new Blob([data.content], { type: 'text/plain' });
-                        element.href = URL.createObjectURL(file);
-                        element.download = data.filename;  // Usar el nombre de archivo dinámico
-                        document.body.appendChild(element);
-                        element.click();
-                        document.body.removeChild(element);
-                    });
-            });
-            document.getElementById('txt_ugl6.php').addEventListener('click', function () {
-                // Hacer la solicitud al servidor para obtener los datos
-                fetch('./gets/txt_ugl6.php')
-                    .then(response => response.json())  // Convertir la respuesta en JSON
-                    .then(data => {
-                        // Crear un enlace temporal para descargar el archivo
-                        const element = document.createElement('a');
-                        const file = new Blob([data.content], { type: 'text/plain' });
-                        element.href = URL.createObjectURL(file);
-                        element.download = data.filename;  // Usar el nombre de archivo dinámico
-                        document.body.appendChild(element);
-                        element.click();
-                        document.body.removeChild(element);
-                    });
-            });
+            const txtUgl = document.getElementById('generate_txt.php');
+            if (txtUgl) {
+                txtUgl.addEventListener('click', function () {
+                    // Hacer la solicitud al servidor para obtener los datos
+                    fetch('./gets/generate_txt.php')
+                        .then(response => response.json())  // Convertir la respuesta en JSON
+                        .then(data => {
+                            // Crear un enlace temporal para descargar el archivo
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;  // Usar el nombre de archivo dinámico
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
 
-            document.getElementById('txt_ugl37.php').addEventListener('click', function () {
-                // Hacer la solicitud al servidor para obtener los datos
-                fetch('./gets/txt_ugl37.php')
-                    .then(response => response.json())  // Convertir la respuesta en JSON
-                    .then(data => {
-                        // Crear un enlace temporal para descargar el archivo
-                        const element = document.createElement('a');
-                        const file = new Blob([data.content], { type: 'text/plain' });
-                        element.href = URL.createObjectURL(file);
-                        element.download = data.filename;  // Usar el nombre de archivo dinámico
-                        document.body.appendChild(element);
-                        element.click();
-                        document.body.removeChild(element);
-                    });
-            });
+            //PQ0222
+            const txtUgl10 = document.getElementById('txt_ugl10.php');
+            if (txtUgl10) {
+                txtUgl10.addEventListener('click', function () {
+                    fetch('./gets/pq0222/txt_ugl10.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            // Comprobar si los botones de Generar TXT existen antes de agregar event listeners
+            const txtUgl6 = document.getElementById('txt_ugl6.php');
+            if (txtUgl6) {
+                txtUgl6.addEventListener('click', function () {
+                    fetch('./gets/pq0222/txt_ugl6.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+
+            const txtUgl37 = document.getElementById('txt_ugl37.php');
+            if (txtUgl37) {
+                txtUgl37.addEventListener('click', function () {
+                    fetch('./gets/pq0222/txt_ugl37.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            //FIN PQ0222
+
+
+            //PQ2041 INT
+            const txt_ugl35_INT = document.getElementById('txt_ugl35_INT.php');
+            if (txt_ugl35_INT) {
+                txt_ugl35_INT.addEventListener('click', function () {
+                    fetch('./gets/pq0241/txt_ugl35_INT.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+
+            const txt_ugl08_INT = document.getElementById('txt_ugl08_INT.php');
+            if (txt_ugl08_INT) {
+                txt_ugl08_INT.addEventListener('click', function () {
+                    fetch('./gets/pq0241/txt_ugl08_INT.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+
+            const txt_ugl06_INT = document.getElementById('txt_ugl06_INT.php');
+            if (txt_ugl06_INT) {
+                txt_ugl06_INT.addEventListener('click', function () {
+                    fetch('./gets/pq0241/txt_ugl06_INT.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            //FIN PQ2041 INT
+
+            //PQ2041 AMB
+            const txt_ugl35_AMB = document.getElementById('txt_ugl35_AMB.php');
+            if (txt_ugl35_AMB) {
+                txt_ugl35_AMB.addEventListener('click', function () {
+                    fetch('./gets/pq0241/txt_ugl35_AMB.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            const txt_ugl08_AMB = document.getElementById('txt_ugl08_AMB.php');
+            if (txt_ugl08_AMB) {
+                txt_ugl08_AMB.addEventListener('click', function () {
+                    fetch('./gets/pq0241/txt_ugl08_AMB.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+
+            const txt_ugl06_AMB = document.getElementById('txt_ugl06_AMB.php');
+            if (txt_ugl06_AMB) {
+                txt_ugl06_AMB.addEventListener('click', function () {
+                    fetch('./gets/pq0241/txt_ugl06_AMB.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            //FIN PQ2041 AMB
 
         });
 

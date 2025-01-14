@@ -10,12 +10,19 @@ if ($conn->connect_error) {
 }
 
 // Preparar la consulta para obtener las modalidades que no han sido egresadas para el paciente específico
-$sql = "SELECT pM.*, CONCAT(m.codigo, ' - ', m.descripcion) AS modalidad_full
-    FROM paci_modalidad pM
-    JOIN modalidad m ON pM.modalidad = m.id
-    LEFT JOIN egresos e ON pM.modalidad = e.modalidad AND pM.id_paciente = e.id_paciente
-    WHERE pM.id_paciente = ? AND e.id_paciente IS NULL
-    ORDER BY pM.fecha DESC
+$sql = "SELECT pM.*, 
+       CONCAT(m.codigo, ' - ', m.descripcion) AS modalidad_full
+FROM paci_modalidad pM
+JOIN modalidad m ON pM.modalidad = m.id
+LEFT JOIN (
+    SELECT id_paciente, modalidad, MAX(fecha_egreso) AS max_fecha_egreso
+    FROM egresos
+    GROUP BY id_paciente, modalidad
+) e ON pM.modalidad = e.modalidad AND pM.id_paciente = e.id_paciente
+WHERE pM.id_paciente = ? 
+  AND (e.id_paciente IS NULL OR e.max_fecha_egreso <= pM.fecha)
+ORDER BY pM.fecha DESC;
+
 ";
 
 $stmt = $conn->prepare($sql);

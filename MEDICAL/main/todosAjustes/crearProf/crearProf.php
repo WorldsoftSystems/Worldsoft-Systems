@@ -20,19 +20,30 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['eliminar'])) {
     // Preparar la consulta SQL para eliminar el profesional
     $sql = "DELETE FROM profesional WHERE id_prof = ?";
 
-    // Preparar la sentencia
-    $stmt = $conn->prepare($sql);
+    try {
+        // Preparar la sentencia
+        $stmt = $conn->prepare($sql);
 
-    // Vincular parámetros
-    $stmt->bind_param("i", $id_profesional);
+        // Vincular parámetros
+        $stmt->bind_param("i", $id_profesional);
 
-    // Ejecutar la sentencia
-    if ($stmt->execute()) {
-        // Redireccionar a la misma página después de la eliminación
-        header("Location: {$_SERVER['PHP_SELF']}");
-        exit();
-    } else {
-        echo "Error al intentar eliminar el profesional.";
+        // Ejecutar la sentencia
+        if ($stmt->execute()) {
+            // Redireccionar a la misma página después de la eliminación
+            header("Location: {$_SERVER['PHP_SELF']}");
+            exit();
+        } else {
+            // Mostrar un mensaje de error genérico si la ejecución falla
+            echo "<script>alert('Error al intentar eliminar el profesional.');</script>";
+        }
+    } catch (mysqli_sql_exception $e) {
+        // Detectar el error de restricción de clave foránea
+        if (strpos($e->getMessage(), 'a foreign key constraint fails') !== false) {
+            echo "<script>alert('No se puede eliminar este profesional porque está relacionado con otros registros.');</script>";
+        } else {
+            // Mostrar otros errores no esperados
+            echo "<script>alert('Ha ocurrido un error: " . $e->getMessage() . "');</script>";
+        }
     }
 }
 
@@ -87,8 +98,7 @@ $result = $conn->query($sql);
     </div>
 
     <div class="container">
-        <div class="title-container">
-
+        <div class="title-container d-flex justify-content-between align-items-center mb-3">
             <h2>Profesionales</h2>
             <!-- Botón para agregar profesional -->
             <button type="button" class="btn btn-custom btn-lg" data-bs-toggle="modal"
@@ -96,9 +106,14 @@ $result = $conn->query($sql);
                 Agregar Profesional <img src="../../img/iconoCrearProf.png" alt="Icono Crear Profesional"
                     style="width: 50px; height: 50px; margin-left: 8px;">
             </button>
-
-
         </div>
+
+        <!-- Barra de búsqueda -->
+        <div class="mb-3">
+            <input type="text" id="buscarProfesional" class="form-control"
+                placeholder="Buscar por nombre, especialidad o cualquier campo...">
+        </div>
+
         <table class="table table-striped table-bordered">
             <thead class="table-custom">
                 <tr>
@@ -116,31 +131,31 @@ $result = $conn->query($sql);
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tablaProfesionales">
                 <?php
                 if ($result->num_rows > 0) {
                     // Mostrar datos de cada fila
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>
-                <td>" . $row["nombreYapellido"] . "</td>
-                <td>" . $row["desc_especialidad"] . "</td>
-                <td>" . $row["domicilio"] . "</td>
-                <td>" . $row["localidad"] . "</td>
-                <td>" . $row["codigo_pos"] . "</td>
-                <td>" . $row["matricula_p"] . "</td>
-                <td>" . $row["matricula_n"] . "</td>
-                <td>" . $row["telefono"] . "</td>
-                <td>" . $row["email"] . "</td>
-                <td>" . $row["tipo_doc"] . "</td>
-                <td>" . $row["nro_doc"] . "</td>
-                <td>
-                    <button type='button' class='btn btn-danger' onclick=\"if(confirm('¿Estás seguro de que deseas eliminar este profesional?')){ window.location.href='{$_SERVER['PHP_SELF']}?eliminar=" . $row['id_prof'] . "'; }\"><i class='fas fa-trash-alt'></i></button>
-                    <button type='button' class='btn btn-custom-editar' onclick='editarProfesional(" . json_encode($row) . ")'><i class='fas fa-pencil-alt'></i></button>
-                </td>
-            </tr>";
+                        <td>" . $row["nombreYapellido"] . "</td>
+                        <td>" . $row["desc_especialidad"] . "</td>
+                        <td>" . $row["domicilio"] . "</td>
+                        <td>" . $row["localidad"] . "</td>
+                        <td>" . $row["codigo_pos"] . "</td>
+                        <td>" . $row["matricula_p"] . "</td>
+                        <td>" . $row["matricula_n"] . "</td>
+                        <td>" . $row["telefono"] . "</td>
+                        <td>" . $row["email"] . "</td>
+                        <td>" . $row["tipo_doc"] . "</td>
+                        <td>" . $row["nro_doc"] . "</td>
+                        <td>
+                            <button type='button' class='btn btn-danger' onclick=\"if(confirm('¿Estás seguro de que deseas eliminar este profesional?')){ window.location.href='{$_SERVER['PHP_SELF']}?eliminar=" . $row['id_prof'] . "'; }\"><i class='fas fa-trash-alt'></i></button>
+                            <button type='button' class='btn btn-custom-editar' onclick='editarProfesional(" . json_encode($row) . ")'><i class='fas fa-pencil-alt'></i></button>
+                        </td>
+                    </tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='10'>No se encontraron resultados</td></tr>";
+                    echo "<tr><td colspan='12'>No se encontraron resultados</td></tr>";
                 }
 
                 // Cerrar conexión
@@ -148,7 +163,6 @@ $result = $conn->query($sql);
                 ?>
             </tbody>
         </table>
-
     </div>
 
     <!-- Modal para agregar/editar profesional -->
@@ -260,6 +274,21 @@ $result = $conn->query($sql);
     </footer>
 
     <script>
+
+        // Filtrar tabla de profesionales
+        document.getElementById('buscarProfesional').addEventListener('keyup', function () {
+            let input = this.value.toLowerCase();
+            let filas = document.querySelectorAll('#tablaProfesionales tr');
+
+            filas.forEach(fila => {
+                let textoFila = fila.textContent.toLowerCase();
+                if (textoFila.includes(input)) {
+                    fila.style.display = '';
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+        });
 
 
         <?php

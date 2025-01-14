@@ -614,6 +614,7 @@ $conn->close();
 
     <!-- Modal de PRACTICAS -->
     <div class="modal fade" id="pracModal" tabindex="-1" aria-labelledby="pracModalLabel" aria-hidden="true">
+
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -626,6 +627,9 @@ $conn->close();
                 <div class="modal-body" id="addPracModalBody">
                     <!-- Aquí se cargará el contenido del formulario de agregar práctica -->
                 </div>
+                <!-- Contenedor para el título rojo -->
+                <h5 id="noResultadosTitulo" class="text-danger text-center d-none">Paciente sin afiliacion en pami</h5>
+                <!-- Aquí se cargará el contenido del formulario -->
                 <div class="modal-body" id="pracModalBody">
                     <!-- Aquí se cargará el contenido del formulario -->
                 </div>
