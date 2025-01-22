@@ -530,7 +530,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para limpiar el formulario de creación de turno
     function clearCreateForm(intervalo, selectedDate) {
-
         // Limpiar campos del formulario según sea necesario
         document.getElementById('id_prof_input').value = profesionalSelect.value;
         document.getElementById('fechas_input').value = formatDate(selectedDate);
@@ -539,13 +538,17 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('paciente_edit').value = '';
         document.getElementById('paciente_id_edit').value = '';
         document.getElementById('paciente_id').value = '';
-        document.getElementById('motivo').value = '';
         document.getElementById('llego_input').value = 'NO';
         document.getElementById('atendido_input').value = 'NO';
         document.getElementById('observaciones').value = '';
         document.getElementById('id_paciente_turno_edit').value = '';
         document.getElementById('id_paciente_turno').value = '';
+
+        // Ocultar el botón "Agregar"
+        const addButton = document.getElementById('add_modalidad_button');
+        addButton.style.display = 'none';
     }
+
 
     $(document).ready(function () {
         $('#fechas_input').datepicker({
@@ -751,27 +754,119 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+$(document).ready(function () {
+
+    $('#modalidad_act_turno').on('change', function () {
+        const modalidadValue = $(this).val();
+        if (modalidadValue) {
+            $('#add_modalidad_button').show(); // Mostrar el botón
+        } else {
+            $('#add_modalidad_button').hide(); // Ocultar el botón
+        }
+    });
+
+    // Acción al hacer clic en el botón
+    $('#add_modalidad_button').on('click', function () {
+        const modalidadValue = $('#modalidad_act_turno').val();
+        const pacienteId = $('#paciente_id').val();
+
+        if (modalidadValue && pacienteId) {
+            // Llamar a PHP con AJAX
+            $.ajax({
+                url: './ABM/agregar_modaliad_paci.php',
+                type: 'POST',
+                data: { modalidad: modalidadValue, paciente_id: pacienteId },
+                success: function (response) {
+                    try {
+                        const result = JSON.parse(response);
+                        if (result.success) {
+                            alert('Modalidad agregada con éxito');
+
+                            // Recargar el select `motivo`
+                            $.ajax({
+                                url: './gets/get_todas_las_practicas.php',
+                                type: 'GET',
+                                dataType: 'json',
+                                data: { paciente_id: pacienteId },
+                                success: function (data) {
+                                    $('#motivo').empty();
+                                    $('#motivo_input').empty();
+
+                                    data.forEach(function (item) {
+                                        const optionText = item.codigo + ' - ' + item.descripcion;
+                                        $('#motivo').append(new Option(optionText, item.id));
+                                        $('#motivo_input').append(new Option(optionText, item.id));
+                                    });
+                                },
+                                error: function (error) {
+                                    console.error('Error al recargar los motivos:', error);
+                                }
+                            });
+                        } else {
+                            alert('Hubo un error al agregar la modalidad.');
+                        }
+                    } catch (e) {
+                        console.error('Error en la respuesta del servidor:', response);
+                        alert('Respuesta inesperada del servidor.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error en la solicitud:', error);
+                }
+            });
+        } else {
+            alert('Por favor, seleccione una modalidad válida.');
+        }
+    });
+});
 
 
 
 
 
 
-$.ajax({
-    url: './gets/get_todas_las_practicas.php',
-    type: 'GET',
-    dataType: 'json',
-    success: function (data) {
-        data.forEach(function (item) {
-            var optionText = item.codigo + ' - ' + item.descripcion;
-            $('#motivo').append(new Option(optionText, item.id));
-            $('#motivo_input').append(new Option(optionText, item.id));
+$(document).on('click', '.list-group-item', function () {
+    var pacienteNombre = $(this).text(); // Obtener el texto seleccionado
+    var pacienteId = $(this).data('id'); // Obtener el ID del atributo data-id
+
+
+    if (pacienteId) {
+        // Asignar los valores al input visible y al oculto
+        $('#paciente_input').val(pacienteNombre);
+        $('#paciente_id').val(pacienteId).trigger('change'); // Trigger para otros eventos dependientes
+
+        // Limpiar la lista de sugerencias
+        $('#pacientes_list').empty();
+
+        // Realizar la llamada AJAX
+        $.ajax({
+            url: './gets/get_todas_las_practicas.php',
+            type: 'GET',
+            dataType: 'json',
+            data: { paciente_id: pacienteId }, // Pasar el paciente_id al PHP
+            success: function (data) {
+                $('#motivo').empty(); // Limpiar opciones anteriores
+                $('#motivo_input').empty(); // Limpiar opciones anteriores
+
+                data.forEach(function (item) {
+                    var optionText = item.codigo + ' - ' + item.descripcion;
+                    $('#motivo').append(new Option(optionText, item.id));
+                    $('#motivo_input').append(new Option(optionText, item.id));
+                });
+            },
+            error: function (error) {
+                console.error("Error fetching data: ", error);
+            }
         });
-    },
-    error: function (error) {
-        console.error("Error fetching data: ", error);
+    } else {
+        console.error("El ID del paciente no es válido.");
     }
 });
+
+
+
+
+
 
 //IMPRIMIR TURNOS DE PROF
 document.addEventListener('DOMContentLoaded', function () {
@@ -815,10 +910,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     acc[nombreProfesional].push([
                         turno.hora,
                         turno.nombre_paciente,
-                        turno.motivo_full,
                         formatDate(turno.fecha),
-                        turno.llego,
-                        turno.atendido,
                         turno.observaciones
                     ]);
                     return acc;
@@ -848,20 +940,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 doc.setFontSize(12);
                 const startY = 30;
+                const marginX = 15; // Margen inicial desde la izquierda
+                const spacing = 10; // Espaciado horizontal entre textos
+
                 const param1Text = `Institución: ${param1}`;
                 const param2Text = `Localidad: ${param2}`;
                 const param3Text = `Telefono: ${param3}`;
-                doc.text(param1Text, xTitle, startY);
-                doc.text(param2Text, xTitle, startY + 10);
-                doc.text(param3Text, xTitle, startY + 20);
 
-                let currentY = startY + 35;
+                // Posiciones X para cada texto
+                let currentX = marginX;
+                doc.text(param1Text, currentX, startY); // Primer texto
+                currentX += doc.getTextWidth(param1Text) + spacing; // Suma el ancho del texto + espaciado
+                doc.text(param2Text, currentX, startY); // Segundo texto
+                currentX += doc.getTextWidth(param2Text) + spacing; // Suma el ancho del texto + espaciado
+                doc.text(param3Text, currentX, startY); // Tercer texto);
+
+                let currentY = startY + 10;
 
                 // Renderizar la tabla de turnos para cada profesional
                 Object.keys(turnosPorProfesional).forEach((profesional, index) => {
                     if (index > 0) {
                         doc.addPage();
-                        currentY = 30;
+                        currentY = 5;
                     }
 
                     // Título de profesional
@@ -870,14 +970,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     const xSubtitle = (pageWidth - subtitleWidth) / 2;
                     doc.setFontSize(12);
                     doc.text(subtitle, xSubtitle, currentY);
-                    currentY += 10;
+                    currentY += 3;
 
                     // Configuración de la tabla para los turnos del profesional actual
                     doc.autoTable({
-                        head: [['Hora', 'Paciente', 'Motivo', 'Fecha', 'Llegó', 'Atendido', 'Observaciones']],
+                        head: [['Hora', 'Paciente', 'Fecha', 'Observaciones']],
                         body: turnosPorProfesional[profesional],
-                        startY: currentY + 10,
-                        margin: { left: 15, right: 15 },
+                        startY: currentY + 4,
+                        margin: { left: 2, right: 2 },
                         theme: 'striped',
                         styles: {
                             fontSize: 10,
@@ -885,13 +985,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             overflow: 'linebreak'
                         },
                         columnStyles: {
-                            0: { cellWidth: 30 },
-                            1: { cellWidth: 70 },
-                            2: { cellWidth: 40 },
-                            3: { cellWidth: 30 },
-                            4: { cellWidth: 20 },
-                            5: { cellWidth: 50 },
-                            6: { cellWidth: 50 }
+                            0: { cellWidth: 20 },
+                            1: { cellWidth: 170 },
+                            2: { cellWidth: 25 },
+                            3: { cellWidth: 75 },
                         }
                     });
                 });
@@ -950,7 +1047,7 @@ $(document).ready(function () {
                             pacientesList.empty(); // Limpiar la lista anterior
 
                             data.forEach(function (paciente) {
-                                let pacienteOption = `<a href="#" class="list-group-item list-group-item-action" data-id="${paciente.id}" data-nombre="${paciente.nombre}">${paciente.nombre}</a>`;
+                                let pacienteOption = `<a href="#" class="list-group-item list-group-item-action" data-id="${paciente.id}" data-nombre="${paciente.nombre}" data-modalidad="${paciente.modalidad}">${paciente.nombre}</a>`;
                                 pacientesList.append(pacienteOption);
                             });
                         }
@@ -965,9 +1062,14 @@ $(document).ready(function () {
                 e.preventDefault();
                 let nombre = $(this).data('nombre');
                 let id = $(this).data('id');
+                let modalidad = $(this).data('modalidad');
 
                 $(inputSelector).val(nombre);
                 $(hiddenIdSelector).val(id);
+                // Seleccionar automáticamente la modalidad en el dropdown
+                if (modalidad) {
+                    $('#modalidad_act_turno').val(modalidad);
+                }
                 $(listSelector).empty(); // Limpiar la lista de resultados
             });
 
@@ -1063,6 +1165,7 @@ $(document).ready(function () {
             data.forEach(function (item) {
                 var optionText = item.codigo + ' - ' + item.descripcion;
                 $('#modalidad_act').append(new Option(optionText, item.id));
+                $('#modalidad_act_turno').append(new Option(optionText, item.id));
             });
         },
         error: function (error) {

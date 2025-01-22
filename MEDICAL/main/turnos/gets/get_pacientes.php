@@ -11,12 +11,22 @@ $searchQuery = isset($_GET['q']) ? $_GET['q'] : '';
 $searchQuery = $conn->real_escape_string($searchQuery);
 
 // Consulta para obtener id y nombre del paciente filtrado por término de búsqueda
-$sql = "SELECT id, CONCAT(nombre, ' - ', benef, ' / ', parentesco) AS nombre  
+$sql = "SELECT paciente.id, 
+               CONCAT(TRIM(paciente.nombre), ' - ', TRIM(paciente.benef), ' / ', TRIM(paciente.parentesco)) AS nombre,
+               m.id AS modalidad
         FROM paciente
-        WHERE nombre LIKE '%$searchQuery%' 
-        OR benef LIKE '%$searchQuery%' 
-        OR parentesco LIKE '%$searchQuery%'
-        ORDER BY nombre ASC";
+        LEFT JOIN (
+            SELECT id_paciente, modalidad, MAX(fecha) AS max_fecha
+            FROM paci_modalidad
+            GROUP BY id_paciente
+        ) pM ON paciente.id = pM.id_paciente
+        LEFT JOIN modalidad m ON pM.modalidad = m.id
+        WHERE paciente.nombre LIKE '%$searchQuery%' 
+           OR paciente.benef LIKE '%$searchQuery%' 
+           OR paciente.parentesco LIKE '%$searchQuery%'
+        ORDER BY paciente.nombre ASC";
+
+
 
 $result = $conn->query($sql);
 

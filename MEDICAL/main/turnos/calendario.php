@@ -419,6 +419,20 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                         </div>
 
                         <div class="form-group">
+                            <label for="modalidad_act_turno">Modalidad Activa:*</label>
+                            <select class="form-control" id="modalidad_act_turno" name="modalidad_act_turno" required>
+                                <option value="">Seleccionar...</option>
+                            </select>
+                            <div class="col-sm-2">
+                                <button type="button" id="add_modalidad_button" class="btn btn-primary btn-block"
+                                    style="display: none;">
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
                             <label for="motivo" class="form-label">Motivo</label>
                             <select class="form-control" name="motivo" id="motivo_input">
                                 <option value="">Seleccionar...</option>
