@@ -7,6 +7,107 @@ function formatDate(dateString) {
     return day + "/" + month + "/" + year;
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const modalElement = document.getElementById('graficoObraSocialModal');
+    modalElement.addEventListener('shown.bs.modal', function () {
+        // Llamar al endpoint para obtener los datos del gráfico
+        fetch('./gets/grafico_obra_social.php')
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si el gráfico ya existe y destruirlo
+                if (window.obraSocialChart) {
+                    window.obraSocialChart.destroy();
+                }
+
+                // Configurar los datos del gráfico
+                const labels = data.map(item => item.obra_social || 'Sin Asignar');
+                const values = data.map(item => item.total_pacientes);
+
+                // Crear el gráfico
+                const ctx = document.getElementById('chartObraSocial').getContext('2d');
+                window.obraSocialChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Cantidad de Pacientes',
+                            data: values,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error al cargar los datos:', error));
+    });
+
+    // Botón para abrir el modal del gráfico
+    const showGraficoButton = document.getElementById('showGraficoButton');
+
+    showGraficoButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Mostrar el modal
+        const graficoModal = new bootstrap.Modal(document.getElementById('graficoModal'));
+        graficoModal.show();
+
+        // Obtener los datos del gráfico desde el servidor
+        fetch('./gets/grafico_estadia.php')
+            .then(response => response.json())
+            .then(data => {
+                // Procesar los datos
+                const labels = data.map(item => item.nombre_paciente);
+                const diasEstadia = data.map(item => item.dias_estadia);
+
+                // Renderizar el gráfico
+                const ctx = document.getElementById('chartEstadia').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Días de Estadía',
+                            data: diasEstadia,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: true },
+                            tooltip: { enabled: true }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Días' }
+                            },
+                            x: {
+                                title: { display: true, text: 'Pacientes' }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error al cargar los datos:', error));
+    });
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     const openModalLink = document.getElementById('openModalLink');
@@ -3366,7 +3467,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    
+
 
     //FIN PACI SIN DIAG
 

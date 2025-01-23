@@ -5,31 +5,32 @@ $response = array('success' => false, 'message' => '');
 
 // Verifica que la solicitud sea POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = $_POST['id'];
-    $nombre = $_POST['nombre'];
-    $obra_social = $_POST['obra_social'];
-    $fecha_nac = $_POST['fecha_nac'];
-    $sexo = $_POST['sexo'];
-    $domicilio = $_POST['domicilio'];
-    $localidad = $_POST['localidad'];
-    $partido = $_POST['partido'];
-    $c_postal = $_POST['c_postal'];
-    $telefono = $_POST['telefono'];
-    $tipo_doc = $_POST['tipo_doc'];
-    $nro_doc = $_POST['nro_doc'];
-    $admision = $_POST['admision'];
-    $id_prof = $_POST['id_prof'];
-    $benef = $_POST['benef'];
-    $parentesco = $_POST['parentesco'];
-    $hijos = $_POST['hijos'];
-    $ocupacion = $_POST['ocupacion'];
-    $tipo_afiliado = $_POST['tipo_afiliado'];
-    $boca_atencion = $_POST['boca_atencion'];
-    $modalidad_act = $_POST['modalidad_act'];
-    $nro_hist_amb = $_POST['nro_hist_amb'];
-    $nro_hist_int = $_POST['nro_hist_int'];
-    $hora_admision = $_POST['hora_admision'];
-    $nro_de_tramite = $_POST['nro_de_tramite'];
+    // Asignar valores con isset() para evitar errores cuando no están definidos
+    $id = isset($_POST['id']) ? $_POST['id'] : null;
+    $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : null;
+    $obra_social = isset($_POST['obra_social']) ? $_POST['obra_social'] : null;
+    $fecha_nac = isset($_POST['fecha_nac']) ? $_POST['fecha_nac'] : null;
+    $sexo = isset($_POST['sexo']) ? $_POST['sexo'] : null;
+    $domicilio = isset($_POST['domicilio']) ? $_POST['domicilio'] : null;
+    $localidad = isset($_POST['localidad']) ? $_POST['localidad'] : null;
+    $partido = isset($_POST['partido']) ? $_POST['partido'] : null;
+    $c_postal = isset($_POST['c_postal']) ? $_POST['c_postal'] : null;
+    $telefono = isset($_POST['telefono']) ? $_POST['telefono'] : null;
+    $tipo_doc = isset($_POST['tipo_doc']) ? $_POST['tipo_doc'] : null;
+    $nro_doc = isset($_POST['nro_doc']) ? $_POST['nro_doc'] : null;
+    $admision = isset($_POST['admision']) ? $_POST['admision'] : null;
+    $id_prof = isset($_POST['id_prof']) ? $_POST['id_prof'] : null;
+    $benef = isset($_POST['benef']) ? $_POST['benef'] : null;
+    $parentesco = isset($_POST['parentesco']) ? $_POST['parentesco'] : null;
+    $hijos = isset($_POST['hijos']) ? $_POST['hijos'] : null;
+    $ocupacion = isset($_POST['ocupacion']) ? $_POST['ocupacion'] : null;
+    $tipo_afiliado = isset($_POST['tipo_afiliado']) ? $_POST['tipo_afiliado'] : null;
+    $boca_atencion = isset($_POST['boca_atencion']) ? $_POST['boca_atencion'] : null;
+    $modalidad_act = isset($_POST['modalidad_act']) ? $_POST['modalidad_act'] : null;
+    $nro_hist_amb = isset($_POST['nro_hist_amb']) ? $_POST['nro_hist_amb'] : null;
+    $nro_hist_int = isset($_POST['nro_hist_int']) ? $_POST['nro_hist_int'] : null;
+    $hora_admision = isset($_POST['hora_admision']) ? $_POST['hora_admision'] : null;
+    $nro_de_tramite = isset($_POST['nro_de_tramite']) ? $_POST['nro_de_tramite'] : null;
 
     // Verificar si existe otro paciente con el mismo benef y parentesco
     $sql_check = "SELECT id FROM paciente WHERE benef = ? AND parentesco = ? AND id != ?";

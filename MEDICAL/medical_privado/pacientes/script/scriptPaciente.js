@@ -447,8 +447,6 @@ $(document).ready(function () {
     });
 
     $('#agregarPracModal').on('shown.bs.modal', function () {
-        var pacienteId = $('#id').val();
-
         // Limpiar el select antes de agregar nuevas opciones
         var $pracActividad = $('#pracActividad');
         $pracActividad.empty(); // Elimina todas las opciones actuales
@@ -461,7 +459,6 @@ $(document).ready(function () {
             url: './dato/get_todas_las_practicas.php',
             type: 'GET',
             dataType: 'json',
-            data: { paciente_id: pacienteId },
             success: function (data) {
                 data.forEach(function (item) {
                     var optionText = item.codigo + ' - ' + item.descripcion;

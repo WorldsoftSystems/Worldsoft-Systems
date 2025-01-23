@@ -789,12 +789,10 @@ $(document).ready(function () {
                                 dataType: 'json',
                                 data: { paciente_id: pacienteId },
                                 success: function (data) {
-                                    $('#motivo').empty();
                                     $('#motivo_input').empty();
 
                                     data.forEach(function (item) {
                                         const optionText = item.codigo + ' - ' + item.descripcion;
-                                        $('#motivo').append(new Option(optionText, item.id));
                                         $('#motivo_input').append(new Option(optionText, item.id));
                                     });
                                 },
@@ -820,6 +818,40 @@ $(document).ready(function () {
     });
 });
 
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Elemento <select>
+    const motivoSelect = document.getElementById("motivo");
+
+    // Función para cargar actividades
+    function cargarActividades() {
+        fetch("./gets/get_practicas.php") // Cambia la ruta si es necesario
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error al obtener las actividades");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // Vaciar opciones previas
+                motivoSelect.innerHTML = '<option value="">Seleccionar...</option>';
+
+                // Añadir opciones al <select>
+                data.forEach((actividad) => {
+                    const option = document.createElement("option");
+                    option.value = actividad.id; // Usar el ID como valor
+                    option.textContent = `${actividad.codigo} - ${actividad.descripcion}`; // Mostrar código y descripción
+                    motivoSelect.appendChild(option);
+                });
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+    }
+
+    // Cargar actividades al cargar la página
+    cargarActividades();
+});
 
 
 

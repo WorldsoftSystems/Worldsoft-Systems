@@ -80,6 +80,9 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <script src="<?php echo htmlspecialchars($script_js); ?>"></script>
+
+  <!-- GRAFICO -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       overflow-x: hidden !important;
@@ -143,6 +146,68 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
           </div>
         </a>
       </div>
+
+      <!-- NUEVA CARD CON GRÁFICO -->
+      <div class="col d-flex justify-content-center">
+        <a href="#" id="showGraficoButton">
+          <div class="card h-100">
+            <div class="first-content">
+              <img src="../img/reportes/grafico.png" alt="Gráfico de Estadía">
+            </div>
+            <div class="third-content">
+              <h3 class="mt-3">Gráfico de Estadía</h3>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- MODAL PARA MOSTRAR EL GRÁFICO -->
+      <div class="modal fade" id="graficoModal" tabindex="-1" aria-labelledby="graficoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="graficoModalLabel">Gráfico de Estadía</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <canvas id="chartEstadia" width="800" height="400"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FIN NUEVA CARD CON GRÁFICO -->
+
+      <!-- NUEVA CARD CON GRÁFICO OBRA SOCIAL-->
+      <div class="col d-flex justify-content-center">
+        <a href="#" id="showGraficoObraSocialButton" data-bs-toggle="modal" data-bs-target="#graficoObraSocialModal">
+          <div class="card h-100">
+            <div class="first-content">
+              <img src="../img/reportes/obra_social.png" alt="Gráfico Obra Social">
+            </div>
+            <div class="third-content">
+              <h3 class="mt-3">Pacientes por Obra Social</h3>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- MODAL PARA MOSTRAR EL GRÁFICO -->
+      <div class="modal fade" id="graficoObraSocialModal" tabindex="-1" aria-labelledby="graficoObraSocialModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="graficoObraSocialModalLabel">Pacientes por Obra Social</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <canvas id="chartObraSocial" width="800" height="400"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- FIN NUEVA CARD CON GRÁFICO OBRA SOCIAL-->
 
       <div class="col d-flex justify-content-center">
         <a href="#" id="openModalLink">
