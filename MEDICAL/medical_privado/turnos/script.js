@@ -761,11 +761,6 @@ $(document).on('click', '.list-group-item', function () {
     var pacienteNombre = $(this).text(); // Obtener el texto seleccionado
     var pacienteId = $(this).data('id'); // Obtener el ID del atributo data-id
 
-    // Depuración
-    console.log("Seleccionado paciente:");
-    console.log("Nombre: ", pacienteNombre);
-    console.log("ID: ", pacienteId);
-
     if (pacienteId) {
         // Asignar los valores al input visible y al oculto
         $('#paciente_input').val(pacienteNombre);
@@ -776,7 +771,7 @@ $(document).on('click', '.list-group-item', function () {
 
         // Realizar la llamada AJAX
         $.ajax({
-            url: './gets/get_todas_las_practicas.php',
+            url: '../pacientes/dato/get_todas_las_practicas.php',
             type: 'GET',
             dataType: 'json',
             data: { paciente_id: pacienteId }, // Pasar el paciente_id al PHP
