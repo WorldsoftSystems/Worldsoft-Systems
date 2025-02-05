@@ -19,7 +19,6 @@ $sql = "WITH ValidRecords AS (
         p.nombre,
         o.siglas,
         p.benef,
-        p.parentesco,
         COALESCE(
         (
             SELECT pm.fecha
@@ -111,7 +110,6 @@ $sql = "WITH ValidRecords AS (
 SELECT
     nombre,
     benef,
-    parentesco,
     ingreso_modalidad,
     sexo,
     modalidad_full,
@@ -122,7 +120,7 @@ SELECT
     boca_de_atencion,
     SUM(cantidad) AS cantidad
 FROM ValidRecords
-GROUP BY nombre, benef, parentesco, ingreso_modalidad, sexo, modalidad_full, egreso, diag
+GROUP BY nombre, benef, ingreso_modalidad, sexo, modalidad_full, egreso, diag
 ORDER BY ult_atencion DESC;
 ";
 

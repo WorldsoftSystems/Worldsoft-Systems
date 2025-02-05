@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $admision = isset($_POST['admision']) ? $_POST['admision'] : null;
     $id_prof = isset($_POST['id_prof']) ? $_POST['id_prof'] : null;
     $benef = isset($_POST['benef']) ? $_POST['benef'] : null;
-    $parentesco = isset($_POST['parentesco']) ? $_POST['parentesco'] : null;
     $hijos = isset($_POST['hijos']) ? $_POST['hijos'] : null;
     $ocupacion = isset($_POST['ocupacion']) ? $_POST['ocupacion'] : null;
     $tipo_afiliado = isset($_POST['tipo_afiliado']) ? $_POST['tipo_afiliado'] : null;
@@ -32,17 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $hora_admision = isset($_POST['hora_admision']) ? $_POST['hora_admision'] : null;
     $nro_de_tramite = isset($_POST['nro_de_tramite']) ? $_POST['nro_de_tramite'] : null;
 
-    // Verificar si existe otro paciente con el mismo benef y parentesco
-    $sql_check = "SELECT id FROM paciente WHERE benef = ? AND parentesco = ? AND id != ?";
+    // Verificar si existe otro paciente con el mismo benef
+    $sql_check = "SELECT id FROM paciente WHERE benef = ? AND id != ?";
     $stmt_check = $conn->prepare($sql_check);
-    $stmt_check->bind_param("isi", $benef, $parentesco, $id);  // Cambié 'iii' a 'isi' porque 'parentesco' es varchar
+    $stmt_check->bind_param("ii", $benef, $id);
     $stmt_check->execute();
     $stmt_check->store_result();
 
     if ($stmt_check->num_rows > 0) {
-        // Si existe otro paciente con el mismo benef y parentesco, enviar respuesta de error
+        // Si existe otro paciente con el mismo benef, enviar respuesta de error
         $response['success'] = false;
-        $response['message'] = 'Ya existe otro paciente con el mismo beneficiario y parentesco.';
+        $response['message'] = 'Ya existe otro paciente con el mismo beneficiario.';
     } else {
         // Actualizar paciente
         $sql = "UPDATE paciente SET 
@@ -60,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     admision = ?, 
                     id_prof = ?, 
                     benef = ?, 
-                    parentesco = ?, 
                     hijos = ?, 
                     ocupacion = ?, 
                     tipo_afiliado = ?,
@@ -73,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
-            "sisssssissisiisisiiiissi",
+            "sisssssissisisssiissssi",
             $nombre,
             $obra_social,  // int
             $fecha_nac,    // date
@@ -88,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $admision,     // date
             $id_prof,      // int
             $benef,        // bigint
-            $parentesco,   // varchar
             $hijos,        // int
             $ocupacion,
             $tipo_afiliado, // int
@@ -101,36 +98,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
 
         if ($stmt->execute()) {
-            // Actualizar en la tabla paci_modalidad solo la modalidad más antigua (primera ingresada)
-            $sql_modalidad = "UPDATE paci_modalidad 
-                                SET modalidad = ?, fecha = ? 
-                                WHERE id_paciente = ? 
-                                AND fecha = (
-                                    SELECT MIN(fecha) 
-                                    FROM paci_modalidad 
-                                    WHERE id_paciente = ?) ";
+            // Verificar si el paciente tiene una modalidad registrada
+            $sql_check = "SELECT COUNT(*) FROM paci_modalidad WHERE id_paciente = ?";
+            $stmt_check = $conn->prepare($sql_check);
+            $stmt_check->bind_param("i", $id);
+            $stmt_check->execute();
+            $stmt_check->bind_result($count);
+            $stmt_check->fetch();
+            $stmt_check->close();
 
-            // Preparamos y ejecutamos la consulta
-            $stmt_modalidad = $conn->prepare($sql_modalidad);
-            $stmt_modalidad->bind_param("isii", $modalidad_act, $admision, $id, $id);
+            if ($count > 0) {
+                // Si existe, actualizar la modalidad más antigua
+                $sql_modalidad = "UPDATE paci_modalidad 
+                                    SET modalidad = ?, fecha = ? 
+                                    WHERE id_paciente = ? 
+                                    AND fecha = (
+                                        SELECT MIN(fecha) 
+                                        FROM paci_modalidad 
+                                        WHERE id_paciente = ?)";
 
+                $stmt_modalidad = $conn->prepare($sql_modalidad);
+                $stmt_modalidad->bind_param("isii", $modalidad_act, $admision, $id, $id);
+            } else {
+                // Si no existe, insertar un nuevo registro
+                $sql_modalidad = "INSERT INTO paci_modalidad (id_paciente, modalidad, fecha) VALUES (?, ?, ?)";
+                $stmt_modalidad = $conn->prepare($sql_modalidad);
+                $stmt_modalidad->bind_param("iis", $id, $modalidad_act, $admision);
+            }
+
+            // Ejecutar la consulta de actualización o inserción
             if ($stmt_modalidad->execute()) {
                 $response['success'] = true;
                 $response['message'] = 'Paciente actualizado correctamente.';
             } else {
-                $response['message'] = 'Error al actualizar la modalidad del paciente: ' . $stmt_modalidad->error;
+                $response['message'] = 'Error al actualizar o insertar la modalidad del paciente: ' . $stmt_modalidad->error;
             }
 
             $stmt_modalidad->close();
-
         } else {
             $response['message'] = 'Error al actualizar el paciente: ' . $stmt->error;
         }
 
+
         $stmt->close();
     }
-
-    $stmt_check->close();
 }
 
 // Envía la respuesta en formato JSON

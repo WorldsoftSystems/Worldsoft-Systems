@@ -477,57 +477,36 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label for="obra_social">Obra Social:*</label>
-                                <select class="form-control" id="obra_social" name="obra_social" required>
+                                <select class="form-control" id="obra_social" name="obra_social">
                                     <option value="">Seleccionar...</option>
                                 </select>
                             </div>
 
                             <div class="col-md-6 form-group mb-3">
-                                <label for="boca_atencion">Boca de atención:*</label>
-                                <select class="form-control" id="boca_atencion" name="boca_atencion" required>
+                                <label for="boca_atencion">Sucursal:*</label>
+                                <select class="form-control" id="boca_atencion" name="boca_atencion">
                                     <option value="">Seleccionar...</option>
                                 </select>
                             </div>
 
                             <div class="col-md-4 form-group">
-                                <label for="benef">Beneficiario(12):*</label>
-                                <input type="number" class="form-control" id="benef" name="benef" required>
+                                <label for="benef">Afiliado N°:*</label>
+                                <input type="number" class="form-control" id="benef" name="benef">
                             </div>
-                            <div class="col-md-4 form-group">
-                                <label for="parentesco">Parentesco(2):*</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="parentesco" name="parentesco" required>
-                                    <div class="input-group-append" id="btnBuscar">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-search"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 form-group mb-3">
-                                <label for="ugl_paciente">UGL:</label>
-                                <input type="text" class="form-control" id="ugl_paciente" name="ugl_paciente" required
-                                    readonly>
-                            </div>
-
-
                         </div>
 
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label for="nombre">Nombre Y Apellido:*</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" readonly required>
+                                <input type="text" class="form-control" id="nombre" name="nombre">
                             </div>
                             <div class="col-md-4 form-group">
                                 <label for="fecha_nac">Fecha de Nacimiento:*</label>
-                                <input type="date" class="form-control" id="fecha_nac" name="fecha_nac" required>
+                                <input type="date" class="form-control" id="fecha_nac" name="fecha_nac">
                             </div>
                             <div class="col-md-4 form-group">
                                 <label for="sexo">Sexo:*</label>
-                                <select class="form-control" id="sexo" name="sexo" required>
+                                <select class="form-control" id="sexo" name="sexo">
                                     <option value="">Seleccionar...</option>
                                     <option value="Femenino">Femenino</option>
                                     <option value="Masculino">Masculino</option>
@@ -538,13 +517,13 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label for="tipo_afiliado">Tipo de Afiliado:*</label>
-                                <select class="form-control" id="tipo_afiliado" name="tipo_afiliado" required>
+                                <select class="form-control" id="tipo_afiliado" name="tipo_afiliado">
                                     <option value="">Seleccionar...</option>
                                 </select>
                             </div>
                             <div class="col-md-4 form-group mb-3">
                                 <label for="tipo_doc">Tipo de Documento:*</label>
-                                <select class="form-control" id="tipo_doc" name="tipo_doc" required>
+                                <select class="form-control" id="tipo_doc" name="tipo_doc">
                                     <option value="">Seleccione un tipo de documento</option>
                                     <option value="DNI">DNI</option>
                                     <option value="LC">LC</option>
@@ -556,14 +535,14 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                             </div>
                             <div class="col-md-4 form-group">
                                 <label for="nro_doc">Número de Documento:*</label>
-                                <input type="number" class="form-control" id="nro_doc" name="nro_doc" required>
+                                <input type="number" class="form-control" id="nro_doc" name="nro_doc">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label for="admision">Fecha de Admisión:*</label>
-                                <input type="date" class="form-control" id="admision" name="admision" required>
+                                <input type="date" class="form-control" id="admision" name="admision">
                             </div>
                             <div class="col-md-2 form-group mb-3">
                                 <label for="hora_admision">Hora*:</label>
@@ -571,31 +550,21 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                             </div>
                             <div class="col-md-3 form-group mb-3">
                                 <label for="modalidad_act">Modalidad Activa:*</label>
-                                <select class="form-control" id="modalidad_act" name="modalidad_act" required>
+                                <select class="form-control" id="modalidad_act" name="modalidad_act">
                                     <option value="">Seleccionar...</option>
                                 </select>
                             </div>
                             <div class="col-md-4 form-group">
                                 <label for="id_prof">Profesional:*</label>
-                                <select class="form-control" id="id_prof" name="id_prof" required>
+                                <select class="form-control" id="id_prof" name="id_prof">
                                     <option value="">Seleccionar...</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-4 form-group">
-                                <label for="op">Nº de Orden de prestacion:</label>
-                                <input type="text" class="form-control" id="op" name="op">
-                            </div>
-
-                        </div>
-
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
 
-                            <button type="button" class="btn btn-warning" id="btnCompletarManualmente">Completar
-                                manualmente</button>
 
                             <button type="button" class="btn btn-primary btn-custom-save"
                                 id="guardarPacienteBtn">Guardar</button>

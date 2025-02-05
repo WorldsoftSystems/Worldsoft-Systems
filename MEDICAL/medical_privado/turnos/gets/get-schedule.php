@@ -59,7 +59,7 @@ while ($row = $disponibilidad_result->fetch_assoc()) {
 $stmt_disponibilidad->close();
 
 // Obtener turnos del día para el profesional seleccionado, incluyendo el nombre del paciente
-$turnos_sql = "SELECT t.*, CONCAT(paci.nombre, ' - ', paci.benef, '/', paci.parentesco) AS nombre_paciente, paci.id AS paciente_id , CONCAT(a.codigo, ' - ', a.descripcion) AS motivo_full, paci.telefono
+$turnos_sql = "SELECT t.*, CONCAT(paci.nombre, ' - ', paci.benef) AS nombre_paciente, paci.id AS paciente_id , CONCAT(a.codigo, ' - ', a.descripcion) AS motivo_full, paci.telefono
                FROM turnos t
                LEFT JOIN paciente paci ON paci.id = t.paciente
                LEFT JOIN actividades a ON a.id = t.motivo

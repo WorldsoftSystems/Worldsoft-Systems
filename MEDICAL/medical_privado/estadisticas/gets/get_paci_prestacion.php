@@ -16,7 +16,6 @@ if (empty($fecha_desde) || empty($fecha_hasta)) {
 $sql = "SELECT DISTINCT
     CONCAT(p.nombre,' - ', o.siglas) AS nombre,
     p.benef,
-    p.parentesco,
     CONCAT(act.codigo, ' - ', act.descripcion) AS pract_full,
     pract.fecha AS fecha_pract,
     pract.cant AS cantidad

@@ -116,74 +116,14 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
   <!-- Cards Container -->
   <div class="container my-5">
     <div class="row row-cols-1 row-cols-md-3 g-3 justify-content-center">
-      <!-- Reducir el valor de g a 2 para reducir la distancia entre las tarjetas -->
-      <!--PRIMERA CARD -->
-      <div class="col d-flex justify-content-center">
-        <a href="#" id="openOmesModalLink">
-          <div class="card h-100">
-            <div class="first-content">
-              <img src="../img/reportes/ome.png" alt="Icono Crear Profesional">
-            </div>
-            <div class="third-content">
-              <h3 class="mt-3">CONTROL OME</h3>
-            </div>
-          </div>
-        </a>
-
-      </div>
-      <!--CARD -->
-
-      <!--PRIMERA CARD -->
-      <div class="col d-flex justify-content-center">
-        <a href="#" id="openOrdenModalLink">
-          <div class="card h-100">
-            <div class="first-content">
-              <img src="../img/reportes/modalidad.png" alt="Ordenes de Prestacion">
-            </div>
-            <div class="third-content">
-              <h3 class="mt-3">Vencimiento de Ordenes de Prestacion</h3>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- NUEVA CARD CON GRÁFICO -->
-      <div class="col d-flex justify-content-center">
-        <a href="#" id="showGraficoButton">
-          <div class="card h-100">
-            <div class="first-content">
-              <img src="../img/reportes/grafico.png" alt="Gráfico de Estadía">
-            </div>
-            <div class="third-content">
-              <h3 class="mt-3">Gráfico de Estadía</h3>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- MODAL PARA MOSTRAR EL GRÁFICO -->
-      <div class="modal fade" id="graficoModal" tabindex="-1" aria-labelledby="graficoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="graficoModalLabel">Gráfico de Estadía</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <canvas id="chartEstadia" width="800" height="400"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FIN NUEVA CARD CON GRÁFICO -->
+      
 
       <!-- NUEVA CARD CON GRÁFICO OBRA SOCIAL-->
       <div class="col d-flex justify-content-center">
         <a href="#" id="showGraficoObraSocialButton" data-bs-toggle="modal" data-bs-target="#graficoObraSocialModal">
           <div class="card h-100">
             <div class="first-content">
-              <img src="../img/reportes/obra_social.png" alt="Gráfico Obra Social">
+              <img src="../img/reportes/prof.png" alt="Gráfico Obra Social">
             </div>
             <div class="third-content">
               <h3 class="mt-3">Pacientes por Obra Social</h3>
@@ -313,18 +253,7 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
         </a>
       </div>
 
-      <div class="col d-flex justify-content-center">
-        <a href="#" id="openPaciUnicosModalLink">
-          <div class="card h-100">
-            <div class="first-content">
-              <img src="../img/reportes/plan.png" alt="Ingresos">
-            </div>
-            <div class="third-content">
-              <h3 class="mt-3">Pacientes unicos</h3>
-            </div>
-          </div>
-        </a>
-      </div>
+      
 
       <div class="col d-flex justify-content-center">
         <a href="#" id="openPacientesBocaModalLink">
@@ -445,75 +374,6 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
     </div>
   </div>
   <!--PACI BOCA FIN-->
-
-
-  <!--PACI UNICOS-->
-  <div class="modal fade" id="openPaciUnicosModal" tabindex="-1" aria-labelledby="paciUnicosModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="paciUnicosModalLabel">Pacientes Unicos</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="paciUnicosForm">
-            <div class="mb-3">
-              <label for="fechaDesdePaciUnicos" class="form-label">Fecha Desde</label>
-              <input type="date" class="form-control" id="fechaDesdePaciUnicos" required>
-            </div>
-            <div class="mb-3">
-              <label for="fechaHastaPaciUnicos" class="form-label">Fecha Hasta</label>
-              <input type="date" class="form-control" id="fechaHastaPaciUnicos" required>
-            </div>
-            <div class="col-md-4 form-group">
-              <label for="obra_social_paci_unicos">Obra Social:*</label>
-              <select class="form-control" id="obra_social_paci_unicos" name="obra_social_paci_unicos" required>
-                <option value="">Seleccionar...</option>
-              </select>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary" id="generatePaciUnicosBtn">Generar PDF</button>
-          <button type="button" class="btn btn-success" id="generatePaciUnicosExcelBtn">Generar Excel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!--PACI UNICOS FIN-->
-
-  <!--OP-->
-  <div class="modal fade" id="openOrdenModal" tabindex="-1" aria-labelledby="opModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="opModalLabel">Vencimiento</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="planForm">
-            <div class="mb-3">
-              <label for="fechaDesdeOp" class="form-label">Fecha Desde</label>
-              <input type="date" class="form-control" id="fechaDesdeOp" required>
-            </div>
-            <div class="mb-3">
-              <label for="fechaHastaOp" class="form-label">Fecha Hasta</label>
-              <input type="date" class="form-control" id="fechaHastaOp" required>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary" id="generateOpBtn">Generar PDF</button>
-          <button type="button" class="btn btn-success" id="generateOpExcelBtn">Generar Excel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- FIN-->
-
 
 
   <!--PLAN MEDICACION-->
@@ -660,41 +520,7 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
   </div>
   <!--EGRESOS FIN-->
 
-  <!--OMES-->
-  <div class="modal fade" id="openOmesModal" tabindex="-1" aria-labelledby="OmesModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="OmesModalLabel">OMES</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="OmesForm">
-            <div class="mb-3">
-              <label for="fechaDesdeOmes" class="form-label">Fecha Desde</label>
-              <input type="date" class="form-control" id="fechaDesdeOmes" required>
-            </div>
-            <div class="mb-3">
-              <label for="fechaHastaOmes" class="form-label">Fecha Hasta</label>
-              <input type="date" class="form-control" id="fechaHastaOmes" required>
-            </div>
-            <div class="col-md-4 form-group">
-              <label for="obra_social_ome">Obra Social:*</label>
-              <select class="form-control" id="obra_social_ome" name="obra_social_ome" required>
-                <option value="">Seleccionar...</option>
-              </select>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary" id="generateOmesBtn">Generar PDF</button>
-          <button type="button" class="btn btn-success" id="generateOmesExcelBtn">Generar Excel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!--OMES FIN-->
+  
 
   <!--PRACTICAS-->
   <div class="modal fade" id="openPracModal" tabindex="-1" aria-labelledby="pracModalLabel" aria-hidden="true">

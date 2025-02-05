@@ -17,7 +17,6 @@ if (empty($fecha_desde) || empty($fecha_hasta)) {
 $sql = "SELECT DISTINCT
     CONCAT(p.nombre, ' - ', o.siglas) AS nombre,
     p.benef,
-    p.parentesco,
     COALESCE(
         (
             SELECT m.descripcion
@@ -61,7 +60,7 @@ if ($profesional) {
     $sql .= " AND pract.profesional = ?";
 }
 
-$sql .= " GROUP BY nombre, p.benef, p.parentesco, modalidad_full, pract_full, pract.fecha, d_id.codigo, prof.nombreYapellido";
+$sql .= " GROUP BY nombre, p.benef, modalidad_full, pract_full, pract.fecha, d_id.codigo, prof.nombreYapellido";
 
 // Preparar la consulta
 $stmt = $conn->prepare($sql);

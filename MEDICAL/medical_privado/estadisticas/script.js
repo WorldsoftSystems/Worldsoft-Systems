@@ -55,58 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error al cargar los datos:', error));
     });
 
-    // Botón para abrir el modal del gráfico
-    const showGraficoButton = document.getElementById('showGraficoButton');
-
-    showGraficoButton.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        // Mostrar el modal
-        const graficoModal = new bootstrap.Modal(document.getElementById('graficoModal'));
-        graficoModal.show();
-
-        // Obtener los datos del gráfico desde el servidor
-        fetch('./gets/grafico_estadia.php')
-            .then(response => response.json())
-            .then(data => {
-                // Procesar los datos
-                const labels = data.map(item => item.nombre_paciente);
-                const diasEstadia = data.map(item => item.dias_estadia);
-
-                // Renderizar el gráfico
-                const ctx = document.getElementById('chartEstadia').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Días de Estadía',
-                            data: diasEstadia,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { display: true },
-                            tooltip: { enabled: true }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: { display: true, text: 'Días' }
-                            },
-                            x: {
-                                title: { display: true, text: 'Pacientes' }
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(error => console.error('Error al cargar los datos:', error));
-    });
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -118,10 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const generatePatientPdfBtn = document.getElementById('generatePatientPdfBtn');
     const generatePatientExcelBtn = document.getElementById('generatePatientExcelBtn');
 
-    const openOmesLink = document.getElementById('openOmesModalLink');
-    const generateOmesBtn = document.getElementById('generateOmesBtn');
-    const generateOmesExcelBtn = document.getElementById('generateOmesExcelBtn');
-
+    
     const openProfLink = document.getElementById('openProfModalLink');
     const generateProfBtn = document.getElementById('generateProfBtn');
     const generateProfExcelBtn = document.getElementById('generateProfExcelBtn');
@@ -151,13 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const generatePacientesBocaBtn = document.getElementById('generatePacientesBocaBtn');
     const generatePacientesBocaExcelBtn = document.getElementById('generatePacientesBocaExcelBtn');
 
-    const openPaciUnicosModalLink = document.getElementById('openPaciUnicosModalLink');
-    const generatePaciUnicosBtn = document.getElementById('generatePaciUnicosBtn');
-    const generatePaciUnicosExcelBtn = document.getElementById('generatePaciUnicosExcelBtn');
-
-    const openOpModalLink = document.getElementById('openOrdenModalLink');
-    const generateOpBtn = document.getElementById('generateOpBtn');
-    const generateOpExcelBtn = document.getElementById('generateOpExcelBtn');
 
     const openPacientesPrestacionesModalLink = document.getElementById('openPacientesPrestacionesModalLink');
     const generatePacientesPrestacionesBtn = document.getElementById('generatePacientesPrestacionesBtn');
@@ -245,56 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (openPaciUnicosModalLink) {
-        openPaciUnicosModalLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            const modal = new bootstrap.Modal(document.getElementById('openPaciUnicosModal'));
-            modal.show();
-        });
-    }
-
-    if (generatePaciUnicosBtn) {
-        generatePaciUnicosBtn.addEventListener('click', function () {
-            const fechaDesde = document.getElementById('fechaDesdePaciUnicos').value;
-            const fechaHasta = document.getElementById('fechaHastaPaciUnicos').value;
-            const obraSocialId = $('#obra_social_paci_unicos').val();
-            generatePaciUnicosPDF(fechaDesde, fechaHasta, obraSocialId);
-        });
-    }
-
-    if (generatePaciUnicosExcelBtn) {
-        generatePaciUnicosExcelBtn.addEventListener('click', function () {
-            const fechaDesde = document.getElementById('fechaDesdePaciUnicos').value;
-            const fechaHasta = document.getElementById('fechaHastaPaciUnicos').value;
-            const obraSocialId = $('#obra_social_paci_unicos').val();
-            generatePaciUnicosExcel(fechaDesde, fechaHasta, obraSocialId);
-        });
-    }
-
-
-    if (openOpModalLink) {
-        openOpModalLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            const modal = new bootstrap.Modal(document.getElementById('openOrdenModal'));
-            modal.show();
-        });
-    }
-
-    if (generateOpBtn) {
-        generateOpBtn.addEventListener('click', function () {
-            const fechaDesde = document.getElementById('fechaDesdeOp').value;
-            const fechaHasta = document.getElementById('fechaHastaOp').value;
-            generateOpPdf(fechaDesde, fechaHasta);
-        });
-    }
-
-    if (generateOpExcelBtn) {
-        generateOpExcelBtn.addEventListener('click', function () {
-            const fechaDesde = document.getElementById('fechaDesdeOp').value;
-            const fechaHasta = document.getElementById('fechaHastaOp').value;
-            generateOpExcel(fechaDesde, fechaHasta);
-        });
-    }
+    
 
     if (openPlanModalLink) {
         openPlanModalLink.addEventListener('click', function (e) {
@@ -336,13 +225,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (openOmesLink) {
-        openOmesLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            const modal = new bootstrap.Modal(document.getElementById('openOmesModal'));
-            modal.show();
-        });
-    }
 
     if (openPracLink) {
         openPracLink.addEventListener('click', function (e) {
@@ -475,25 +357,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const obraSocialId = $('#obra_social_prof').val();
             const profesional = $('#profesional').val();
             generateProfExcel(fechaDesde, fechaHasta, obraSocialId, profesional);
-        });
-    }
-
-    //
-    if (generateOmesBtn) {
-        generateOmesBtn.addEventListener('click', function () {
-            const fechaDesde = document.getElementById('fechaDesdeOmes').value;
-            const fechaHasta = document.getElementById('fechaHastaOmes').value;
-            const obraSocialId = $('#obra_social_ome').val();
-            generateOmesPdf(fechaDesde, fechaHasta, obraSocialId);
-        });
-    }
-
-    if (generateOmesExcelBtn) {
-        generateOmesExcelBtn.addEventListener('click', function () {
-            const fechaDesde = document.getElementById('fechaDesdeOmes').value;
-            const fechaHasta = document.getElementById('fechaHastaOmes').value;
-            const obraSocialId = $('#obra_social_ome').val();
-            generateOmesExcel(fechaDesde, fechaHasta, obraSocialId);
         });
     }
 
@@ -813,168 +676,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    // Función para generar el PDF de OPS
-
-    function generateOpExcel(fechaDesde, fechaHasta) {
-        Promise.all([fetchOpData(fechaDesde, fechaHasta)])
-            .then(([opData]) => {
-                const wb = XLSX.utils.book_new(); // Crear un nuevo libro de trabajo
-
-                // Encabezado de la tabla
-                const headers = ['Paciente', 'Fecha', 'Op', 'Cant. Meses', 'Modalidad', 'Fecha Vencimiento'];
-
-                // Crear un array para almacenar los datos
-                const data = [];
-
-                // Iterar sobre los datos
-                for (const [modalidad, records] of Object.entries(opData)) {
-                    // Agregar una fila para la modalidad
-                    data.push([`MODALIDAD: ${modalidad}`]); // Título de modalidad
-
-                    // Asegúrate de que records sea un array
-                    if (Array.isArray(records) && records.length > 0) {
-                        records.forEach(item => {
-                            data.push([
-                                item.nombre,
-                                formatDate(item.fecha),
-                                item.op,
-                                item.cant,
-                                item.descripcion,
-                                formatDate(item.fecha_vencimiento)
-                            ]);
-                        });
-                    }
-
-                    data.push([]); // Agregar una fila vacía para separación
-                }
-
-                // Agregar encabezados y datos a la hoja
-                const wsData = [headers, ...data];
-                const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-                // Agregar la hoja al libro de trabajo
-                XLSX.utils.book_append_sheet(wb, ws, 'Operaciones');
-
-                // Generar el archivo Excel
-                XLSX.writeFile(wb, 'Listado_de_Operaciones.xlsx');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-
-    function generateOpPdf(fechaDesde, fechaHasta) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('l', 'mm', 'a4');
-
-        // Obtener los datos de operaciones
-        fetchOpData(fechaDesde, fechaHasta)
-            .then((opData) => {
-                const formattedFechaDesde = formatDate(fechaDesde);
-                const formattedFechaHasta = formatDate(fechaHasta);
-
-                // Título del PDF
-                const title = 'LISTADO DE OPERACIONES';
-                const pageWidth = doc.internal.pageSize.getWidth();
-
-                doc.setFontSize(16);
-                doc.setFont('Helvetica', 'bold');
-                doc.text(title, pageWidth / 2, 10, { align: 'center' });
-                doc.setFont('Helvetica', 'normal');
-
-                const dateRange = `DESDE: ${formattedFechaDesde} HASTA: ${formattedFechaHasta}`;
-                doc.setFontSize(14);
-                doc.text(dateRange, pageWidth / 2, 20, { align: 'center' });
-
-                doc.setFontSize(12);
-                let startY = 30;
-                const margin = { left: 15 };
-
-                // Encabezado de la tabla
-                const headers = ['Paciente', 'Fecha', 'Op', 'Cant. Meses', 'Modalidad', 'Fecha Vencimiento'];
-
-                // Iterar sobre los datos agrupados por modalidad
-                for (const [modalidad, records] of Object.entries(opData)) {
-                    // Agregar título de modalidad
-                    doc.setFontSize(14);
-                    doc.text(`MODALIDAD: ${modalidad}`, pageWidth / 2, startY, { align: 'center' });
-                    startY += 5;
-
-                    // Asegúrate de que records sea un array
-                    if (Array.isArray(records) && records.length > 0) {
-                        const data = records.map(item => [
-                            item.nombre,
-                            formatDate(item.fecha),
-                            item.op,
-                            item.cant,
-                            item.descripcion,
-                            formatDate(item.fecha_vencimiento)
-                        ]);
-
-                        // Agregar tabla al PDF
-                        doc.autoTable({
-                            head: [headers],
-                            body: data,
-                            startY: startY,
-                            margin: margin,
-                            theme: 'striped',
-                            styles: {
-                                fontSize: 10,
-                                cellPadding: 2,
-                                overflow: 'linebreak'
-                            },
-                            columnStyles: {
-                                0: { cellWidth: 50 }, // Paciente
-                                1: { cellWidth: 30 }, // Fecha
-                                2: { cellWidth: 40 }, // Op
-                                3: { cellWidth: 30 }, // Cantidad
-                                4: { cellWidth: 50 }, // Modalidad
-                                5: { cellWidth: 50 }  // Fecha Vencimiento
-                            },
-                            didDrawCell: function (data) {
-                                // Actualizar el Y para la siguiente tabla
-                                startY = data.cursor.y; // Actualiza startY al final de la tabla
-                            },
-                            pageBreak: 'auto'
-                        });
-
-                        // Agregar un espacio después de la tabla
-                        startY += 18; // Espacio adicional entre tablas
-                    } else {
-                        // Si no hay registros, aún actualizar el startY para evitar solapamientos
-                        startY += 18; // Espacio adicional para un grupo vacío
-                    }
-                }
-
-                // Agregar total de registros al final
-                const totalRegistros = Object.values(opData).reduce((acc, records) => acc + (Array.isArray(records) ? records.length : 0), 0);
-                doc.setFontSize(12);
-                doc.text(`Total Registros: ${totalRegistros}`, pageWidth / 2, startY + 10, { align: 'center' });
-
-                // Imagen de logo
-                const imgUrl = '../img/logo.png';
-                var img = new Image();
-                img.onload = function () {
-                    const imgWidth = 25;
-                    const imgHeight = 20;
-                    const xImg = (pageWidth - imgWidth) / 2;
-
-                    doc.addImage(img, 'PNG', xImg, startY + 12, imgWidth, imgHeight);
-                    window.open(doc.output('bloburl'));
-                };
-
-                img.src = imgUrl;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-
-
-
-
     // PACIENTES POR BOCA
     function generatePacientesBocaExcel(fechaDesde, fechaHasta, obraSocialId) {
         fetchPaciBoca(fechaDesde, fechaHasta, obraSocialId)
@@ -988,7 +689,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     'INGRESO',
                     'ULT. ATENCION',
                     'EGRESO',
-                    'BOCA ATENCION',
+                    'Sucursal',
                     'DIAGNOSTICO'
                 ];
 
@@ -998,7 +699,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Convertir datos en el formato que SheetJS necesita
                 const data = resumen
                     .filter(item => {
-                        const beneficio = `${item.benef}${item.parentesco}`;
+                        const beneficio = `${item.benef}`;
                         // Incluir el item si el beneficio no está en el Set
                         if (!beneficiosUnicos.has(beneficio)) {
                             beneficiosUnicos.add(beneficio);
@@ -1010,11 +711,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         const ingreso = item.admision === "0000-00-00" ? formatDate(item.ingreso_modalidad) : formatDate(item.admision);
                         return {
                             'AFILIADO': item.nombre,
-                            'BENEFICIO': `${item.benef}${item.parentesco}`,
+                            'BENEFICIO': `${item.benef}`,
                             'INGRESO': ingreso,
                             'ULT. ATENCION': formatDate(item.ult_atencion),
                             'EGRESO': formatDate(item.egreso),
-                            'BOCA ATENCION': item.boca_de_atencion,
+                            'Sucursal': item.boca_de_atencion,
                             'DIAGNOSTICO': item.diag
                         };
                     });
@@ -1055,7 +756,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const formattedFechaHasta = formatDate(fechaHasta);
 
             // Título del PDF
-            const title = 'LISTADO DE PACIENTES ATENDIDOS POR BOCA DE ATENCION';
+            const title = 'LISTADO DE PACIENTES ATENDIDOS POR Sucursal DE ATENCION';
             const pageWidth = doc.internal.pageSize.getWidth();
 
             doc.setFontSize(16);
@@ -1082,7 +783,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 const admisionFormatted = item.admision == "0000-00-00" ? formatDate(item.ingreso_modalidad) : formatDate(item.admision);
-                const beneficio = `${item.benef}${item.parentesco}`;
+                const beneficio = `${item.benef}`;
 
                 // Solo agregar el beneficio si no ha sido agregado antes
                 if (!acc[modalidad].beneficios.has(beneficio)) {
@@ -1105,7 +806,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Datos agrupados por modalidad:', groupedByModalidad); // Verifica la agrupación aquí
 
             // Encabezado de la tabla
-            const headers = ['AFILIADO', 'BENEFICIO', 'INGRESO', 'ULT. ATENCION', 'EGRESO', 'BOCA ATENCION', 'DIAGNOSTICO'];
+            const headers = ['AFILIADO', 'BENEFICIO', 'INGRESO', 'ULT. ATENCION', 'EGRESO', 'Sucursal', 'DIAGNOSTICO'];
 
             let totalRegistros = 0;
 
@@ -1140,7 +841,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             2: { cellWidth: 50 },
                             3: { cellWidth: 30 },
                             4: { cellWidth: 30 },
-                            5: { cellWidth: 30 }, // Boca de atención
+                            5: { cellWidth: 30 }, 
                             6: { cellWidth: 29 }
                         },
                         pageBreak: 'auto'
@@ -1202,7 +903,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     return [
                         item.nombre,
-                        `${item.benef}${item.parentesco}`,
+                        `${item.benef}`,
                         formatDate(item.fecha),
                         item.hora,
                         item.dosis,
@@ -1288,7 +989,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Agrupar por paciente
                     const groupedByPaci = resumen.reduce((acc, item) => {
-                        const key = `${item.benef} ${item.parentesco}`;
+                        const key = `${item.benef} `;
                         if (!acc[key]) {
                             acc[key] = [];
                         }
@@ -1302,7 +1003,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         doc.setFont('Helvetica', 'bold');
                         const firstItem = items[0];
                         const nombreBeneficiario = firstItem.nombre;
-                        const beneficios = `${firstItem.benef} ${firstItem.parentesco}`;
+                        const beneficios = `${firstItem.benef} `;
 
                         const pacienteInfo = `PACIENTE: ${nombreBeneficiario} | Beneficio: ${beneficios}`;
                         doc.text(pacienteInfo, margin.left, startY);
@@ -1399,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     return [
                         item.nombre,
-                        `${item.benef}${item.parentesco}`,
+                        `${item.benef}`,
                         formatDate(item.fecha_diag),
                         item.diag_full
                     ];
@@ -1496,7 +1197,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const headers = ['AFILIADO', 'BENEFICIO', 'FECHA'];
                     const data = items.map(item => [
                         item.nombre,
-                        `${item.benef}${item.parentesco}`,
+                        `${item.benef}`,
                         formatDate(item.fecha_diag)
                     ]);
 
@@ -1606,7 +1307,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const headers = ['AFILIADO', 'BENEFICIO', 'FECHA ADMISION', 'MODALIDAD'];
                 const data = resumen.map(item => [
                     item.nombre,
-                    `${item.benef}${item.parentesco}`,
+                    `${item.benef}`,
                     formatDate(item.admision),
                     item.modalidad_full
                 ]);
@@ -1689,7 +1390,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const data = resumen.map(item => [
                     item.nombre,
-                    `${item.benef}${item.parentesco}`,
+                    `${item.benef}`,
                     formatDate(item.admision),
                     item.motivo_egreso
                 ]);
@@ -1770,7 +1471,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const headers = ['AFILIADO', 'BENEFICIO', 'FECHA', 'MOTIVO'];
                 const data = resumen.map(item => [
                     item.nombre,
-                    `${item.benef}${item.parentesco}`,
+                    `${item.benef}`,
                     formatDate(item.fecha_egreso),
                     item.motivo_egreso
                 ]);
@@ -1852,7 +1553,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const data = resumen.map(item => [
                     item.nombre,
-                    `${item.benef}${item.parentesco}`,
+                    `${item.benef}`,
                     formatDate(item.fecha_egreso),
                     item.motivo_egreso
                 ]);
@@ -1900,7 +1601,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     return [
                         item.nombre,
-                        (`${item.benef}${item.parentesco}`),
+                        (`${item.benef}`),
                         fechaTurno || fechaPract,
                         item.turno_pract || item.pract_full,
                         item.cantidad || 1
@@ -1968,7 +1669,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     acc[practKey].data.push([
                         item.nombre,
-                        (`${item.benef}${item.parentesco}`),
+                        (`${item.benef}`),
                         formatDate(item.fecha_turno || item.fecha_pract),
                         item.cantidad || 1
                     ]);
@@ -2089,7 +1790,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     return [
                         item.nombre,
-                        (`${item.benef}${item.parentesco}`),
+                        (`${item.benef}`),
                         item.pract_full || item.turno_pract, // Preferir pract_full si existe
                         fechaPract || fechaTurno, // Mostrar fecha_pract si existe, de lo contrario mostrar fecha_turno
                         item.prof,
@@ -2159,7 +1860,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (item.pract_full) {
                         acc[item.prof][item.modalidad_full].data.push([
                             item.nombre,
-                            (`${item.benef}${item.parentesco}`),
+                            (`${item.benef}`),
                             item.pract_full,
                             formatDate(item.fecha_pract),
                             item.cantidad || 1
@@ -2170,7 +1871,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (item.turno_pract) {
                         acc[item.prof][item.modalidad_full].data.push([
                             item.nombre,
-                            (`${item.benef}${item.parentesco}`),
+                            (`${item.benef}`),
                             item.turno_pract,
                             formatDate(item.fecha_turno),
                             item.cantidad || 1
@@ -2307,7 +2008,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     return [
                         item.nombre,
-                        (`${item.benef}${item.parentesco}`),
+                        (`${item.benef}`),
                         item.pract_full || item.turno_pract, // Preferir pract_full si existe
                         fechaPract || fechaTurno, // Mostrar fecha_pract si existe, de lo contrario mostrar fecha_turno
                         item.cantidad || 1,
@@ -2377,7 +2078,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (item.pract_full) {
                     acc[item.modalidad_full].data.push([
                         item.nombre,
-                        (`${item.benef}${item.parentesco}`),
+                        (`${item.benef}`),
                         item.pract_full,
                         formatDate(item.fecha_pract),
                         item.cantidad || 1
@@ -2388,7 +2089,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (item.turno_pract) {
                     acc[item.modalidad_full].data.push([
                         item.nombre,
-                        (`${item.benef}${item.parentesco}`),
+                        (`${item.benef}`),
                         item.turno_pract,
                         formatDate(item.fecha_turno),
                         item.cantidad || 1
@@ -2557,265 +2258,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     //FIN RESUMEN ESTADISTICAS POR MODALIDAD
 
-    //PACI UNICOS
-
-    function generatePaciUnicosExcel(fechaDesde, fechaHasta, obraSocialId) {
-        Promise.all([fetchPaciUnicos(fechaDesde, fechaHasta, obraSocialId)])
-            .then(([resumen]) => {
-
-                const data = resumen.map(item => {
-                    const fechaPract = item.fecha_pract ? formatDate(item.fecha_pract) : '';
-                    const fechaTurno = item.fecha_turno ? formatDate(item.fecha_turno) : '';
-
-                    return [
-                        item.nombre,
-                        (`${item.benef}${item.parentesco}`),
-                        item.pract_full || item.turno_pract, // Preferir pract_full si existe
-                        fechaPract || fechaTurno, // Mostrar fecha_pract si existe, de lo contrario mostrar fecha_turno
-                        item.cantidad || 1
-                    ];
-                });
-
-                // Calcular la cantidad total
-                const totalQuantity = resumen.reduce((total, item) => {
-                    return total + (item.cantidad || 1); // Sumar la cantidad, o 1 si no está definida
-                }, 0);
-                // Crear un nuevo libro de trabajo
-                const wb = XLSX.utils.book_new();
-
-                // Crear una hoja de trabajo con los datos de egresos
-                const wsData = [
-                    ['AFILIADO', 'BENEFICIO', 'PRACTICA/TURNO', 'FECHA', 'CANTIDAD'], // Encabezados
-                    ...data,
-                    [], // Fila vacía para separación
-                    [`Total Cantidad: ${totalQuantity}`] // Fila de total
-                ];
-
-                const ws = XLSX.utils.aoa_to_sheet(wsData);
-                XLSX.utils.book_append_sheet(wb, ws, 'PACIENTES');
-
-                // Agregar hoja de total general
-                const grandTotalSheet = XLSX.utils.aoa_to_sheet([
-                    ['Total General', totalQuantity]
-                ]);
-                XLSX.utils.book_append_sheet(wb, grandTotalSheet, 'Total General');
-
-                // Generar el archivo Excel
-                XLSX.writeFile(wb, 'PACIENTES UNICOS.xlsx');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    function generatePaciUnicosPDF(fechaDesde, fechaHasta, obraSocialId) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('l', 'mm', 'a4');
-
-        function getMaxRowsPerPage(doc, headers, data) {
-            const pageHeight = doc.internal.pageSize.height;
-            const margins = { top: 30, bottom: 20 };
-            const rowHeight = 10;
-            const headerHeight = 10;
-
-            const availableHeight = pageHeight - margins.top - margins.bottom - headerHeight;
-            return Math.min(Math.floor(availableHeight / rowHeight), data.length);
-        }
-
-        Promise.all([fetchPaciUnicos(fechaDesde, fechaHasta, obraSocialId)]).then(([resumen]) => {
-            const groupedByModality = resumen.reduce((acc, item) => {
-                if (!item.modalidad_full) return acc;
-
-                if (!acc[item.modalidad_full]) {
-                    acc[item.modalidad_full] = { data: [], totalQuantity: 0, isInternacion: false };
-                }
-
-                // Extraer el código de modalidad desde modalidad_full
-                const codigoModalidad = item.modalidad_full.split(' - ')[0];
-                const isInternacion = ['11', '12'].includes(codigoModalidad); // Identifica internación por el código
-
-                acc[item.modalidad_full].isInternacion = isInternacion;
-
-                if (item.pract_full) {
-                    acc[item.modalidad_full].data.push([
-                        item.nombre,
-                        (`${item.benef}${item.parentesco}`),
-                        item.pract_full,
-                        formatDate(item.fecha_pract),
-                        item.cantidad || 1
-                    ]);
-                    acc[item.modalidad_full].totalQuantity += item.cantidad || 1;
-                }
-
-                if (item.turno_pract) {
-                    acc[item.modalidad_full].data.push([
-                        item.nombre,
-                        (`${item.benef}${item.parentesco}`),
-                        item.turno_pract,
-                        formatDate(item.fecha_turno),
-                        item.cantidad || 1
-                    ]);
-                    acc[item.modalidad_full].totalQuantity += item.cantidad || 1;
-                }
-
-                return acc;
-            }, {});
-
-            const formattedFechaDesde = formatDate(fechaDesde);
-            const formattedFechaHasta = formatDate(fechaHasta);
-            const title = 'PACIENTES UNICOS';
-            const pageWidth = doc.internal.pageSize.getWidth();
-
-            doc.setFontSize(16);
-            doc.setFont('Helvetica', 'bold');
-            doc.text(title, pageWidth / 2, 10, { align: 'center' });
-
-            const dateRange = `DESDE: ${formattedFechaDesde} HASTA: ${formattedFechaHasta}`;
-            doc.setFontSize(14);
-            doc.text(dateRange, pageWidth / 2, 20, { align: 'center' });
-
-            doc.setFontSize(12);
-            let startY = 30;
-            const margin = { left: 15 };
-
-            let grandTotal = 0;
-            let totalAmbulatorio = 0;
-            let totalInternacion = 0;
-
-            // Función para imprimir un grupo (Ambulatorio o Internación)
-            function printGroup(title, modalities, startY) {
-                if (modalities.length > 0) {
-                    doc.setFontSize(14);
-                    doc.text(title, margin.left, startY); // Título del grupo
-                    startY += 10;
-
-                    modalities.forEach(modality => {
-                        const { data, totalQuantity, isInternacion } = groupedByModality[modality];
-                        const modalityUpperCase = modality.toUpperCase();
-                        const subtitle = `MODALIDAD: ${modalityUpperCase}`;
-
-                        doc.setFontSize(12);
-                        doc.text(subtitle, pageWidth / 2, startY, { align: 'center' });
-                        startY += 10;
-
-                        const headers = ['AFILIADO', 'BENEFICIO', 'PRACTICA/TURNO', 'FECHA', 'CANTIDAD'];
-
-                        if (data.length) {
-                            let tableStartY = startY;
-                            const maxRowsPerPage = getMaxRowsPerPage(doc, headers, data);
-
-                            for (let i = 0; i < data.length; i += maxRowsPerPage) {
-                                const chunk = data.slice(i, i + maxRowsPerPage);
-
-                                doc.autoTable({
-                                    head: [headers],
-                                    body: chunk,
-                                    startY: tableStartY,
-                                    margin: margin,
-                                    theme: 'striped',
-                                    styles: {
-                                        fontSize: 10,
-                                        cellPadding: 2,
-                                        overflow: 'linebreak'
-                                    },
-                                    columnStyles: {
-                                        0: { cellWidth: 50 }, // Ajusta el ancho de las columnas
-                                        1: { cellWidth: 50 },
-                                        2: { cellWidth: 125 },
-                                        3: { cellWidth: 25 },
-                                        4: { cellWidth: 25 }
-                                    },
-                                    didDrawPage: function (data) {
-                                        tableStartY = data.cursor.y;
-                                    },
-                                    pageBreak: 'auto'
-                                });
-
-                                if (i + maxRowsPerPage < data.length) {
-                                    doc.addPage();
-                                    tableStartY = 30;
-                                }
-                            }
-
-                            doc.setFontSize(12);
-                            doc.text(`Total Cantidad: ${totalQuantity}`, pageWidth / 2, tableStartY + 10, { align: 'center' });
-
-                            grandTotal += totalQuantity;
-
-                            if (isInternacion) {
-                                totalInternacion += totalQuantity;
-                            } else {
-                                totalAmbulatorio += totalQuantity;
-                            }
-
-                            startY = tableStartY + 20;
-                        }
-                    });
-                }
-                return startY;
-            }
-
-            // Agrupar modalidades en ambulatorio e internación
-            const ambulatorioModalities = Object.keys(groupedByModality).filter(modality => !groupedByModality[modality].isInternacion);
-            const internacionModalities = Object.keys(groupedByModality).filter(modality => groupedByModality[modality].isInternacion);
-
-            // Imprimir grupo de Ambulatorio
-            startY = printGroup('AMBULATORIO', ambulatorioModalities, startY);
-
-            // Imprimir grupo de Internación
-            startY = printGroup('INTERNACION', internacionModalities, startY);
-
-            // Mostrar los totales generales
-            doc.setFontSize(14);
-
-            // Verificar si hay espacio suficiente para los totales y el logo
-            const pageHeight = doc.internal.pageSize.height;
-            const remainingHeight = pageHeight - startY;
-
-            const requiredHeightForTotalsAndLogo = 40; // Espacio necesario para totales y logo
-
-            if (remainingHeight < requiredHeightForTotalsAndLogo) {
-                doc.addPage(); // Añadir nueva página si no hay suficiente espacio
-                startY = 30;   // Reiniciar el Y inicial en la nueva página
-            }
-
-            // Total Ambulatorio alineado a la izquierda
-            doc.text(`Total Ambulatorio: ${totalAmbulatorio}`, margin.left, startY + 5);
-
-            // Total Internación alineado a la izquierda
-            doc.text(`Total Internación: ${totalInternacion}`, margin.left, startY + 10);
-
-            // Total General centrado, debajo de los otros dos
-            doc.text(`Total General: ${grandTotal}`, pageWidth / 2, startY + 15, { align: 'center' });
-
-            // Imagen de logo
-            const imgUrl = '../img/logo.png';
-            var img = new Image();
-            img.onload = function () {
-                const imgWidth = 25;
-                const imgHeight = 20;
-                const xImg = (pageWidth - imgWidth) / 2;
-                const yImg = startY + 25;
-
-                // Verificar si hay suficiente espacio para el logo
-                const remainingHeightForLogo = pageHeight - (startY + 25);
-                if (remainingHeightForLogo < imgHeight) {
-                    doc.addPage(); // Añadir nueva página si no hay suficiente espacio
-                    startY = 30;   // Reiniciar el Y inicial en la nueva página para el logo
-                }
-
-                doc.addImage(img, 'PNG', xImg, startY + 25, imgWidth, imgHeight);
-                window.open(doc.output('bloburl'));
-            };
-            img.src = imgUrl;
-
-
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-    }
-
-    //FIN PACI UNICOS
 
     //PACIENTES
     function generatePatientExcel(fechaDesde, fechaHasta, obraSocialId) {
@@ -2832,7 +2274,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         groupedData[benefKey] = {
                             nombre: item.nombre.trim(),
                             benef: item.benef,
-                            parentesco: item.parentesco,
                             diag: item.diag,
                             admision: item.ingreso_modalidad,
                             op: item.op,
@@ -2859,7 +2300,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     return [
                         item.nombre,
-                        `${item.benef}${item.parentesco}`,
+                        `${item.benef}`,
                         admision,
                         item.op,
                         item.diag,
@@ -2971,7 +2412,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     startY += 5;
 
-                    const headers = ['AFILIADO', 'BENEFICIO', 'INGRESO', 'OP', 'DIAG', 'EGRESO', 'Ult. ATENCION'];
+                    const headers = ['AFILIADO', 'BENEFICIO', 'INGRESO', 'DIAG', 'EGRESO', 'Ult. ATENCION'];
 
                     if (modalityData.length) {
                         let tableStartY = startY;
@@ -2983,9 +2424,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 head: [headers],
                                 body: chunk.map(item => [
                                     item.nombre,
-                                    `${item.benef}${item.parentesco}`,
+                                    `${item.benef}`,
                                     formatDate(item.ingreso_modalidad),
-                                    item.op || '',
                                     item.diag || '',
                                     item.egreso ? formatDate(item.egreso) : ' ',
                                     formatDate(item.ult_atencion)
@@ -3124,186 +2564,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-
-
-
     //FIN PACIENTES
 
-    //OME
-    function generateOmesPdf(fechaDesde, fechaHasta, obraSocialId) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('l', 'mm', 'a4');
-
-        function getMaxRowsPerPage(doc, headers, data) {
-            const pageHeight = doc.internal.pageSize.height;
-            const margins = { top: 30, bottom: 20 }; // Adjust margins if needed
-            const rowHeight = 10; // Height of each row
-            const headerHeight = 10; // Height of header row
-
-            const availableHeight = pageHeight - margins.top - margins.bottom - headerHeight;
-            const maxRows = Math.floor(availableHeight / rowHeight);
-
-            return Math.min(maxRows, data.length);
-        }
-
-        Promise.all([fetchOmesData(fechaDesde, fechaHasta, obraSocialId)])
-            .then(([resumen]) => {
-                const groupedByModality = resumen.reduce((acc, item) => {
-                    if (!acc[item.modalidad_full]) {
-                        acc[item.modalidad_full] = { data: [], totalQuantity: 0 };
-                    }
-
-                    acc[item.modalidad_full].data.push([
-                        item.nombre,
-                        `${item.benef}${item.parentesco}`,
-                        item.turno_pract,
-                        formatDate(item.fecha_turno),
-                        item.prof
-                    ]);
-
-                    acc[item.modalidad_full].totalQuantity += 1;
-
-                    return acc;
-                }, {});
-
-                const formattedFechaDesde = formatDate(fechaDesde);
-                const formattedFechaHasta = formatDate(fechaHasta);
-
-                const title = 'CONTROL DE CARGAS OME';
-                const pageWidth = doc.internal.pageSize.getWidth();
-
-                doc.setFontSize(16);
-                // Establecer la fuente en negrita
-                doc.setFont('Helvetica', 'bold');
-                doc.text(title, pageWidth / 2, 10, { align: 'center' });
-
-                // Restablecer la fuente a la predeterminada (opcional)
-                doc.setFont('Helvetica', 'normal');
-
-                const dateRange = `Desde: ${formattedFechaDesde} Hasta: ${formattedFechaHasta}`;
-                doc.setFontSize(14);
-                doc.text(dateRange, pageWidth / 2, 20, { align: 'center' });
-
-                doc.setFontSize(12);
-                let startY = 30;
-                const margin = { left: 15 };
-
-                let grandTotal = 0; // Variable to accumulate total for all modalities
-
-                Object.keys(groupedByModality).forEach(modality => {
-                    const { data, totalQuantity } = groupedByModality[modality];
-                    const modalityUpperCase = modality.toUpperCase(); // Convierte la variable a mayúsculas
-                    const subtitle = `MODALIDAD: ${modalityUpperCase}`;
-                    doc.setFontSize(12);
-                    doc.text(subtitle, pageWidth / 2, startY, { align: 'center' });
-                    startY += 5; // Move down for tables
-
-
-                    const tableWidth = pageWidth - margin.left * 2;
-                    const headers = ['AFILIADO', 'BENEFICIO', 'PRACT.', 'FECHA', 'PROF'];
-
-                    if (data.length) {
-                        let tableStartY = startY;
-                        const maxRowsPerPage = getMaxRowsPerPage(doc, headers, data);
-
-                        // Split data into chunks dynamically
-                        for (let i = 0; i < data.length; i += maxRowsPerPage) {
-                            const chunk = data.slice(i, i + maxRowsPerPage);
-
-                            doc.autoTable({
-                                head: [headers],
-                                body: chunk,
-                                startY: tableStartY,
-                                margin: margin,
-                                theme: 'striped',
-                                styles: {
-                                    fontSize: 10,
-                                    cellPadding: 2,
-                                    overflow: 'linebreak'
-                                },
-                                columnStyles: {
-                                    0: { cellWidth: 70 },
-                                    1: { cellWidth: 45 },
-                                    2: { cellWidth: 80 },
-                                    3: { cellWidth: 25 },
-                                    4: { cellWidth: 23 },
-                                    5: { cellWidth: 30 } // Adjust cell width as needed
-                                },
-                                didDrawPage: function (data) {
-                                    tableStartY = data.cursor.y;
-                                },
-                                pageBreak: 'auto'
-                            });
-
-                            if (i + maxRowsPerPage < data.length) {
-                                doc.addPage(); // Add a new page if there is more data
-                                tableStartY = 30; // Reset start position for the new page
-                            }
-                        }
-
-                        // Add total quantity for this modality
-                        doc.setFontSize(12);
-                        doc.text(`Total Cantidad: ${totalQuantity}`, pageWidth / 2, tableStartY + 10, { align: 'center' });
-
-                        grandTotal += totalQuantity; // Accumulate to grandTotal
-
-                        startY = tableStartY + 20; // Update startY after the last chunk
-                    }
-                });
-
-                // Add grand total at the end of the document
-                doc.setFontSize(14);
-                doc.text(`Total General: ${grandTotal}`, pageWidth / 2, startY + 5, { align: 'center' });
-
-                // Imagen de logo
-                const imgUrl = '../img/logo.png';
-                var img = new Image();
-                img.onload = function () {
-                    const imgWidth = 25;
-                    const imgHeight = 20;
-                    const xImg = (pageWidth - imgWidth) / 2;
-
-                    doc.addImage(img, 'PNG', xImg, startY + 6, imgWidth, imgHeight);
-                    window.open(doc.output('bloburl'));
-                };
-                img.src = imgUrl;
-
-
-            }).catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    function generateOmesExcel(fechaDesde, fechaHasta, obraSocialId) {
-        Promise.all([fetchOmesData(fechaDesde, fechaHasta, obraSocialId)])
-            .then(([resumen]) => {
-                // Crear un nuevo libro de trabajo
-                const wb = XLSX.utils.book_new();
-
-                // Crear una hoja con los datos completos
-                const wsData = [
-                    ['AFILIADO', 'BENEFICIO', 'PRACT.', 'FECHA', 'PROF', 'MODALIDAD'], // Headers
-                    ...resumen.map(item => [
-                        item.nombre,
-                        `${item.benef}${item.parentesco}`,
-                        item.turno_pract,
-                        formatDate(item.fecha_turno),
-                        item.prof,
-                        item.modalidad_full || 'Sin Modalidad' // Manejar caso de modalidad null
-                    ])
-                ];
-
-                const ws = XLSX.utils.aoa_to_sheet(wsData);
-                XLSX.utils.book_append_sheet(wb, ws, 'Datos Completo');
-
-                // Generar el archivo Excel
-                XLSX.writeFile(wb, 'Control_de_Cargas_OME.xlsx');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-    //FIN OME
 
 
     //PACI SIN DIAG
@@ -3351,13 +2613,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 let startY = 30;
                 const margin = { left: 15 };
 
-                const headers = ['NOMBRE', 'OBRA SOCIAL', 'ADMISIÓN', 'BENEFICIO', 'PARENTESCO'];
+                const headers = ['NOMBRE', 'OBRA SOCIAL', 'ADMISIÓN', 'BENEFICIO'];
                 const data = resumen.map(item => [
                     item.nombre,
                     item.obra_social,
                     formatDate(item.admision),
-                    item.benef,
-                    item.parentesco
+                    item.benef
                 ]);
 
                 // Crear la tabla en el PDF
@@ -3438,13 +2699,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 // Crear una hoja de cálculo con los datos obtenidos
-                const headers = ['NOMBRE', 'OBRA SOCIAL', 'ADMISIÓN', 'BENEFICIO', 'PARENTESCO'];
+                const headers = ['NOMBRE', 'OBRA SOCIAL', 'ADMISIÓN', 'BENEFICIO'];
                 const data = resumen.map(item => [
                     item.nombre,
                     item.obra_social,
                     formatDate(item.admision),
-                    item.benef,
-                    item.parentesco
+                    item.benef
                 ]);
 
                 // Insertar encabezados y datos

@@ -16,7 +16,6 @@ if (empty($fecha_desde) || empty($fecha_hasta)) {
 $sql = "SELECT DISTINCT
     CONCAT(p.nombre,' - ', o.siglas) AS nombre,
     p.benef,
-    p.parentesco,
     CONCAT(m.codigo,' - ',m.descripcion) AS modalidad_full,
     p.admision
 FROM paciente p

@@ -17,7 +17,6 @@ $sql = "
     SELECT 
         CONCAT(p.nombre,' - ', o.siglas) AS nombre,
         p.benef,
-        p.parentesco,
         CONCAT(medi.descripcion,'-',medi.potencia) AS medicamento,
         mP.fecha,
         mP.hora,

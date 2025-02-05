@@ -19,7 +19,6 @@ $sql = "WITH ValidRecords AS (
         p.nombre,
         o.siglas,
         p.benef,
-        p.parentesco,
         orden.op,
         orden.modalidad_op,
         COALESCE(
@@ -112,7 +111,6 @@ MatchedOps AS (
     SELECT
         nombre,
         benef,
-        parentesco,
         ingreso_modalidad,
         CASE
             WHEN modalidad_op = modalidad_codigo THEN op
@@ -131,7 +129,6 @@ MatchedOps AS (
 SELECT
     nombre,
     benef,
-    parentesco,
     ingreso_modalidad,
     op,
     modalidad_codigo,
@@ -146,7 +143,6 @@ FROM MatchedOps
 GROUP BY
     nombre,
     benef,
-    parentesco,
     ingreso_modalidad,
     modalidad_codigo,
     modalidad_full,

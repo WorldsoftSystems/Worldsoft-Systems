@@ -12,7 +12,13 @@ if ($conn->connect_error) {
 
 // Consulta SQL: incluir filtro para `id_prof` solo si no está vacío
 $sql = "SELECT t.*, 
-               CONCAT(paci.nombre, ' - Afiliado:', paci.benef, '/', paci.parentesco, ' - ', os.siglas, ' - Tel:', COALESCE(paci.telefono, 'Sin teléfono')) AS nombre_paciente,
+               CONCAT(
+               COALESCE(paci.nombre, 'Sin nombre'), 
+                ' - Afiliado:', COALESCE(paci.benef, 'N° Afiliado'),
+                ' - ', COALESCE(os.siglas, 'Sin obra social'), 
+                ' - Tel:', COALESCE(paci.telefono, 'Sin teléfono')
+            ) AS nombre_paciente
+            ,
                CONCAT(a.codigo, ' - ', a.descripcion) AS motivo_full,
                p.nombreYapellido AS nom_prof
         FROM turnos t

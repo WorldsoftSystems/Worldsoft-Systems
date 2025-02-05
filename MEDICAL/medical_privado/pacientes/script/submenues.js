@@ -25,7 +25,6 @@ function loadEgresoModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/egreso/egreso.php',
@@ -33,8 +32,7 @@ function loadEgresoModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('egresoModalBody').innerHTML = response;
@@ -309,7 +307,6 @@ function loadResponsablesModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/respon/respon.php',
@@ -317,8 +314,7 @@ function loadResponsablesModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('responModalBody').innerHTML = response;
@@ -514,7 +510,6 @@ function loadJudicialesModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/judiciales/judiciales.php',
@@ -522,8 +517,7 @@ function loadJudicialesModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('judiModalBody').innerHTML = response;
@@ -713,7 +707,6 @@ function loadSalidasModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/salida/salida.php',
@@ -721,8 +714,7 @@ function loadSalidasModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('saliModalBody').innerHTML = response;
@@ -901,7 +893,6 @@ function loadHabitacionesModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/habitacion/habitacion.php',
@@ -909,8 +900,7 @@ function loadHabitacionesModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('habiModalBody').innerHTML = response;
@@ -1097,7 +1087,6 @@ function loadVisitasModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/visita/visita.php',
@@ -1105,8 +1094,7 @@ function loadVisitasModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('visiModalBody').innerHTML = response;
@@ -1139,7 +1127,6 @@ function cargarListaVisita(idPaciente) {
             html += '<tr>';
             html += '<th>Fecha</th>';
             html += '<th>Apellido Y Nombre</th>';
-            html += '<th>Parentesco</th>';
             html += '<th>Observaciones</th>';
             html += '<th>Acciones</th>';
             html += '</tr>';
@@ -1291,7 +1278,6 @@ function loadTrasladosModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/traslados/traslados.php',
@@ -1299,8 +1285,7 @@ function loadTrasladosModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('trasModalBody').innerHTML = response;
@@ -1483,7 +1468,6 @@ function loadDiagnosticoModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/diag/diag.php',
@@ -1491,8 +1475,7 @@ function loadDiagnosticoModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('diagModalBody').innerHTML = response;
@@ -1673,7 +1656,6 @@ function loadModalidadesModal() {
     console.log(id)
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/modalidad/modalidad.php',
@@ -1681,8 +1663,7 @@ function loadModalidadesModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('modaModalBody').innerHTML = response;
@@ -1987,7 +1968,6 @@ function loadPracticasModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/practicas/practicas.php',
@@ -1995,13 +1975,10 @@ function loadPracticasModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('pracModalBody').innerHTML = response;
-            // Llamamos a la función que maneja la verificación del fetch
-            checkPacienteStatus(benef, parentesco);
             $('#pracModal').modal('show'); // Mostrar el modal de egreso
             $('#formPaciente').hide(); // Ocultar el formulario principal usando jQuery al cargar el modal
         },
@@ -2009,39 +1986,6 @@ function loadPracticasModal() {
             console.log('Error en loadPracticasModal:', textStatus, errorThrown);
         }
     });
-}
-
-// Función para verificar si el paciente está dado de baja y mostrar el título rojo
-// Función para verificar si el paciente está dado de baja y mostrar el título rojo
-async function checkPacienteStatus(benef, parentesco) {
-    const noResultadosTitulo = document.getElementById('noResultadosTitulo');
-    try {
-        // Realizar la solicitud fetch a la URL especificada
-        const response = await fetch(`https://worldsoftsystems.com.ar/buscar?beneficio=${benef}&parentesco=${parentesco}`);
-
-        if (response.ok) {
-            const data = await response.json(); // Suponiendo que la respuesta es JSON
-
-            // Verificar si la respuesta está vacía
-            if (!data.resultado || Object.keys(data.resultado).length === 0) {
-                // Mostrar el título rojo con el mensaje "Paciente dado de baja"
-                noResultadosTitulo.classList.remove('d-none');
-                noResultadosTitulo.innerText = 'Paciente sin afiliacion en pami';
-            } else {
-                // Si hay resultados, asegurarse de que el título rojo esté oculto
-                noResultadosTitulo.classList.add('d-none');
-            }
-        } else {
-            // En caso de que la respuesta no sea exitosa, mostrar el mensaje rojo
-            noResultadosTitulo.classList.remove('d-none');
-            noResultadosTitulo.innerText = 'Paciente sin afiliacion en pami';
-        }
-    } catch (error) {
-        // Si ocurre un error en la solicitud, mostrar el mensaje rojo
-        console.error('Error al verificar el estado del paciente:', error);
-        noResultadosTitulo.classList.remove('d-none');
-        noResultadosTitulo.innerText = 'Paciente sin afiliacion en pami';
-    }
 }
 
 // Función para mostrar el modal de agregar/editar paciente al hacer clic en "Volver" dentro del modal de egreso
@@ -2289,7 +2233,6 @@ function loadEvolucionModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/evoluciones/evoluciones.php',
@@ -2297,8 +2240,7 @@ function loadEvolucionModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('evoModalBody').innerHTML = response;
@@ -2573,7 +2515,6 @@ function loadEvolucionIntModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/evoluciones_int/evoluciones_int.php',
@@ -2581,8 +2522,7 @@ function loadEvolucionIntModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('evoIntModalBody').innerHTML = response;
@@ -2855,7 +2795,6 @@ function loadAdmiAmbModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/admision_amb/admision_amb.php',
@@ -2863,8 +2802,7 @@ function loadAdmiAmbModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('admiAmbModalBody').innerHTML = response;
@@ -3208,7 +3146,6 @@ function loadOrdenModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/op/op.php',
@@ -3216,8 +3153,7 @@ function loadOrdenModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('ordenModalBody').innerHTML = response;
@@ -3541,7 +3477,6 @@ function loadMedicacionModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/medicacion/medicacion.php',
@@ -3549,8 +3484,7 @@ function loadMedicacionModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('mediModalBody').innerHTML = response;
@@ -3753,7 +3687,6 @@ function loadNutriModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/nutricion/nutricion.php',
@@ -3761,8 +3694,7 @@ function loadNutriModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('nutriModalBody').innerHTML = response;
@@ -4033,7 +3965,6 @@ function loadFisicaModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/fisica/fisica.php',
@@ -4041,8 +3972,7 @@ function loadFisicaModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('fisicaModalBody').innerHTML = response;
@@ -4324,7 +4254,6 @@ function loadAdmisionDiagModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/admiDiag/admiDiag.php',
@@ -4332,8 +4261,7 @@ function loadAdmisionDiagModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('admiDiagModalBody').innerHTML = response;
@@ -4615,7 +4543,6 @@ function loadExPsiquiatricoModal() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/ex_psiquiatrico/ex_psiquiatrico.php',
@@ -4623,8 +4550,7 @@ function loadExPsiquiatricoModal() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('exPsiquiatricoModalBody').innerHTML = response;
@@ -4895,7 +4821,6 @@ function loadAntecendentesFamiliares() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/antecedenteFamiliar/antecedenteFamiliar.php',
@@ -4903,8 +4828,7 @@ function loadAntecendentesFamiliares() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('antecedentesFamiliaresModalBody').innerHTML = response;
@@ -5175,7 +5099,6 @@ function loadAntecendentesPersonales() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/antecedentePersonales/antecedentePersonales.php',
@@ -5183,8 +5106,7 @@ function loadAntecendentesPersonales() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('antecedentesPersonalesModalBody').innerHTML = response;
@@ -5484,7 +5406,6 @@ function loadPagosPaciente() {
     const id = document.getElementById('id').value;
     const nombre = document.getElementById('nombre').value;
     const benef = document.getElementById('benef').value;
-    const parentesco = document.getElementById('parentesco').value;
 
     $.ajax({
         url: './submenu/pagos_pacientes/pagos_pacientes.php',
@@ -5492,8 +5413,7 @@ function loadPagosPaciente() {
         data: {
             id: id,
             nombre: nombre,
-            benef: benef,
-            parentesco: parentesco
+            benef: benef
         },
         success: function (response) {
             document.getElementById('pagoPacienteModalBody').innerHTML = response;

@@ -152,7 +152,6 @@ function realizarBusqueda() {
                             <td>${paciente.id}</td>
                             <td>${paciente.nombre}</td>
                             <td>${paciente.benef}</td>
-                            <td>${paciente.parentesco}</td>
                              <td>${paciente.modalidad_actual}</td>
                             <td>
                                 <button class="btn btn-custom-editar" onclick='editarPaciente(${JSON.stringify(paciente)})'>
@@ -206,7 +205,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('admision').value = paciente.admision;
         document.getElementById('id_prof').value = paciente.id_prof;
         document.getElementById('benef').value = paciente.benef;
-        document.getElementById('parentesco').value = paciente.parentesco;
         document.getElementById('hijos').value = paciente.hijos;
         document.getElementById('ocupacion').value = paciente.ocupacion;
         document.getElementById('tipo_afiliado').value = paciente.tipo_afiliado;
@@ -324,7 +322,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${paciente.id}</td>
                             <td>${paciente.nombre}</td>
                             <td>${paciente.benef}</td>
-                            <td>${paciente.parentesco}</td>
                             <td>${paciente.modalidad_actual}</td>
                             <td>
                                 <button class="btn btn-custom-editar" onclick='editarPaciente(${JSON.stringify(paciente)})'>

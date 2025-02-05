@@ -232,7 +232,6 @@ $conn->close();
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Beneficio</th>
-                    <th>Parentesco</th>
                     <th>Modalidad actual</th>
                     <th>Acciones</th>
                 </tr>
@@ -407,7 +406,7 @@ $conn->close();
                                     </select>
                                 </div>
                                 <div class="col-md-6 form-group mb-3">
-                                    <label for="boca_atencion">Boca de atención:*</label>
+                                    <label for="boca_atencion">Sucursal:*</label>
                                     <select class="form-control" id="boca_atencion" name="boca_atencion">
                                         <option value="">Seleccionar...</option>
                                     </select>
@@ -416,30 +415,19 @@ $conn->close();
 
                             <div class="row">
                                 <div class="col-md-6 form-group mb-3">
-                                    <label for="benef">Beneficiario (12):*</label>
+                                    <label for="benef">Afiliado N°:*</label>
                                     <input type="number" class="form-control" id="benef" name="benef">
                                 </div>
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="parentesco">Parentesco (2):*</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="parentesco" name="parentesco">
-                                    </div>
-                                </div>
+                               
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="ugl_paciente">UGL:</label>
-                                    <input type="text" class="form-control" id="ugl_paciente" name="ugl_paciente"
-                                        readonly>
-                                </div>
-
-
+                                
                                 <div class="col-md-6 form-group mb-3">
                                     <div class="row">
 
                                         <div class="col-sm-6 form-group mb-2">
-                                            <label for="nro_de_tramite">Nro de Tramite:</label>
+                                            <label for="nro_de_tramite">Nro de Tramite D.N.I:</label>
                                             <input type="text" class="form-control form-control-sm" id="nro_de_tramite"
                                                 name="nro_de_tramite">
                                         </div>

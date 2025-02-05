@@ -17,7 +17,6 @@ $sql = "SELECT
     p.id AS paciente_id,
     CONCAT(p.nombre,' - ', o.siglas) AS nombre,
     p.benef,
-    p.parentesco,
     CONCAT(act.codigo, ' - ', act.descripcion) AS pract_full,
     pract.fecha AS fecha_pract,
     pract.cant AS cantidad

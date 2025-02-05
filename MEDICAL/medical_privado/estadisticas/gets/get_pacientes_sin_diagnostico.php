@@ -18,8 +18,7 @@ $sql = "SELECT DISTINCT
     p.nombre,
     o.siglas AS obra_social,
     p.admision,
-    p.benef,
-    p.parentesco
+    p.benef
 FROM paciente p
 LEFT JOIN obra_social o ON o.id = p.obra_social
 LEFT JOIN paci_diag pd ON pd.id_paciente = p.id

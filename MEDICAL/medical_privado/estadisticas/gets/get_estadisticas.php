@@ -16,7 +16,6 @@ if (empty($fecha_desde) || empty($fecha_hasta)) {
 $sql = "SELECT
     CONCAT(p.nombre, ' - ', o.siglas) AS nombre,
     p.benef,
-    p.parentesco,
     COALESCE(
         (
             SELECT CONCAT(m.codigo , ' - ', m.descripcion)

@@ -1,7 +1,6 @@
 <?php
 $nombre = $_GET['nombre'];
 $benef = $_GET['benef'];
-$parentesco = $_GET['parentesco'];
 $id = $_GET['id'];
 ?>
 
@@ -14,9 +13,5 @@ $id = $_GET['id'];
     <div class="col-md-4">
         <label for="evoIntBenef" class="form-label">Beneficiario</label>
         <input type="number" class="form-control" id="evoIntBenef" value="<?php echo $benef; ?>" readonly>
-    </div>
-    <div class="col-md-4">
-        <label for="evoIntParentesco" class="form-label">Parentesco</label>
-        <input type="text" class="form-control" id="evoIntParentesco" value="<?php echo $parentesco; ?>" readonly>
     </div>
 </form>

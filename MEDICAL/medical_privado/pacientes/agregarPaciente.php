@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $admision = $_POST['admision'];
     $id_prof = $_POST['id_prof'];
     $benef = $_POST['benef'];
-    $parentesco = $_POST['parentesco'];
     $hijos = $_POST['hijos'];
     $ocupacion = $_POST['ocupacion'];
     $tipo_afiliado = $_POST['tipo_afiliado'];
@@ -33,9 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
     // Verificar si el paciente ya existe
-    $sql_check = "SELECT id FROM paciente WHERE benef = ? AND parentesco = ?";
+    $sql_check = "SELECT id FROM paciente WHERE benef = ?";
     $stmt_check = $conn->prepare($sql_check);
-    $stmt_check->bind_param("ii", $benef, $parentesco);
+    $stmt_check->bind_param("i", $benef);
     $stmt_check->execute();
     $stmt_check->store_result();
 
@@ -44,12 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $response['message'] = 'El paciente ya está registrado.';
     } else {
         // Insertar el nuevo paciente
-        $sql = "INSERT INTO paciente (nombre, obra_social, fecha_nac, sexo, domicilio, localidad, partido, c_postal, telefono, tipo_doc, nro_doc, admision, id_prof, benef, parentesco, hijos, ocupacion, tipo_afiliado, boca_atencion, nro_hist_amb, nro_hist_int, hora_admision, nro_de_tramite) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+        $sql = "INSERT INTO paciente (nombre, obra_social, fecha_nac, sexo, domicilio, localidad, partido, c_postal, telefono, tipo_doc, nro_doc, admision, id_prof, benef, hijos, ocupacion, tipo_afiliado, boca_atencion, nro_hist_amb, nro_hist_int, hora_admision, nro_de_tramite) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
-            "sisssssissisiisisiiiiss",
+            "sisssssissisisssiissss",
             $nombre,
             $obra_social,
             $fecha_nac,
@@ -64,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $admision,
             $id_prof,
             $benef,
-            $parentesco,
             $hijos,
             $ocupacion,
             $tipo_afiliado,
