@@ -109,7 +109,7 @@ if ($result->num_rows > 0) {
 
     // Agregar la línea "PRESTADOR" después de todos los profesionales
     $contenido .= "PRESTADOR\n";
-    $contenido .= ";;;;0;;;2;;0;$mail;01/01/2007;;;;0;0;0;$inst;$dir;$puerta;;;;;\n";
+    $contenido .= ";$cuit;;;0;;;2;;0;$mail;01/01/2007;;;;0;0;0;$inst;$dir;$puerta;;;;;\n";
 
     $contenido .= "REL_PROFESIONALESXPRESTADOR\n";
 
