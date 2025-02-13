@@ -275,14 +275,14 @@ $result = $conn->query($sql);
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="agregarBocaModalLabel">Administrar Bocas de Atención</h5>
+                    <h5 class="modal-title" id="agregarBocaModalLabel">Administrar Sucursales</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Formulario de ABM -->
                     <form id="bocaForm">
                         <div class="mb-3">
-                            <label for="bocaInput" class="form-label">Nombre de Boca de Atención</label>
+                            <label for="bocaInput" class="form-label">Nombre de Sucursal</label>
                             <input type="text" class="form-control" id="bocaInput"
                                 placeholder="Ingrese el nombre de la boca de atención">
                         </div>
@@ -293,13 +293,13 @@ $result = $conn->query($sql);
                         </div>
 
                         <div class="mb-3">
-                            <label for="num_boca" class="form-label">Numero de boca</label>
+                            <label for="num_boca" class="form-label">Numero de Sucursal</label>
                             <input type="text" class="form-control" id="num_boca"
                                 placeholder="Ingrese el nombre de la puerta de atención">
                         </div>
 
                         <div class="mb-3">
-                            <label for="ugl_boca" class="form-label">UGL de boca</label>
+                            <label for="ugl_boca" class="form-label">UGL de Sucursal</label>
                             <input type="number" class="form-control" id="ugl_boca"
                                 placeholder="Ingrese el nombre de la puerta de atención">
                         </div>
@@ -313,10 +313,10 @@ $result = $conn->query($sql);
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Boca</th>
+                                <th>Sucursal</th>
                                 <th>Puerta</th>
-                                <th>Num. Boca</th>
-                                <th>UGL Boca</th>
+                                <th>Num. Sucursal</th>
+                                <th>UGL Sucursal</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>

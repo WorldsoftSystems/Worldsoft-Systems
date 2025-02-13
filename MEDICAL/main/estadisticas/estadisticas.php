@@ -281,7 +281,7 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
               <img src="../img/reportes/plan.png" alt="Ingresos">
             </div>
             <div class="third-content">
-              <h3 class="mt-3">Preastaciones por paciente</h3>
+              <h3 class="mt-3">Prestaciones por paciente</h3>
             </div>
           </div>
         </a>

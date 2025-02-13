@@ -486,7 +486,17 @@ ORDER BY nombre ASC;
 
     //INTERNACION
     // Consulta SQL para obtener los datos necesarios
-    $sqlInternacionPsi = "WITH ValidRecords AS (
+    $sqlInternacionPsi = "WITH UltimoDiag AS (
+    SELECT d.id_paciente, d_id.codigo AS diag
+    FROM paci_diag d
+    LEFT JOIN diag d_id ON d_id.id = d.codigo
+    WHERE d.fecha = (
+        SELECT MAX(d2.fecha)
+        FROM paci_diag d2
+        LEFT JOIN diag d_id2 ON d_id2.id = d2.codigo
+        WHERE d2.id_paciente = d.id_paciente
+    )
+    ), ValidRecords AS (
     SELECT
         p.id AS paciente_id,
         p.nombre,
@@ -587,6 +597,7 @@ ORDER BY nombre ASC;
     LEFT JOIN modalidad m ON m.id = e.modalidad
     LEFT JOIN profesional prof ON prof.id_prof = p.id_prof
     LEFT JOIN paci_diag d ON d.id_paciente = p.id
+    LEFT JOIN UltimoDiag ON UltimoDiag.id_paciente = p.id  -- Usamos la CTE para obtener el último diagnóstico
     LEFT JOIN diag d_id ON d_id.id = d.codigo
     LEFT JOIN paci_op orden ON orden.id_paciente = p.id
     LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
