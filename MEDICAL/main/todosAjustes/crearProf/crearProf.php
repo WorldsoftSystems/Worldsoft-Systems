@@ -53,7 +53,7 @@ $sql_especialidades = "SELECT id_especialidad, desc_especialidad FROM especialid
 $result_especialidades = $conn->query($sql_especialidades);
 
 // Consulta SQL
-$sql = "SELECT  p.*,e.id_especialidad, e.desc_especialidad
+$sql = "SELECT  p.*,e.id_especialidad, e.desc_especialidad,p.nombreYapellido AS nombre
         FROM profesional p
         JOIN especialidad e ON p.id_especialidad = e.id_especialidad";
 $result = $conn->query($sql);
@@ -78,6 +78,8 @@ $result = $conn->query($sql);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
@@ -108,11 +110,17 @@ $result = $conn->query($sql);
             </button>
         </div>
 
-        <!-- Barra de búsqueda -->
         <div class="mb-3">
-            <input type="text" id="buscarProfesional" class="form-control"
-                placeholder="Buscar por nombre, especialidad o cualquier campo...">
+            <select id="buscarProfesional" class="form-control">
+                <option value="">Seleccione un profesional</option>
+                <?php while ($row = $result->fetch_assoc()) { ?>
+                    <option value="<?php echo $row['id_prof']; ?>">
+                        <?php echo htmlspecialchars($row['nombre']); ?>
+                    </option>
+                <?php } ?>
+            </select>
         </div>
+        <?php $result->data_seek(0); // Restablecer puntero ?>
 
         <table class="table table-striped table-bordered">
             <thead class="table-custom">
@@ -136,7 +144,7 @@ $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                     // Mostrar datos de cada fila
                     while ($row = $result->fetch_assoc()) {
-                        echo "<tr>
+                        echo "<tr data-id='" . $row["id_prof"] . "'>
                         <td>" . $row["nombreYapellido"] . "</td>
                         <td>" . $row["desc_especialidad"] . "</td>
                         <td>" . $row["domicilio"] . "</td>
@@ -275,18 +283,19 @@ $result = $conn->query($sql);
 
     <script>
 
-        // Filtrar tabla de profesionales
-        document.getElementById('buscarProfesional').addEventListener('keyup', function () {
-            let input = this.value.toLowerCase();
-            let filas = document.querySelectorAll('#tablaProfesionales tr');
+        $(document).ready(function () {
+            $("#buscarProfesional").on("change", function () {
+                var idSeleccionado = $(this).val(); // Obtener el ID seleccionado
 
-            filas.forEach(fila => {
-                let textoFila = fila.textContent.toLowerCase();
-                if (textoFila.includes(input)) {
-                    fila.style.display = '';
-                } else {
-                    fila.style.display = 'none';
-                }
+                $("#tablaProfesionales tr").each(function () {
+                    var idFila = $(this).attr("data-id"); // Obtener ID de la fila correctamente
+
+                    if (idSeleccionado === "" || idSeleccionado == idFila) {
+                        $(this).show();  // Mostrar si coincide o si está vacío
+                    } else {
+                        $(this).hide();  // Ocultar si no coincide
+                    }
+                });
             });
         });
 

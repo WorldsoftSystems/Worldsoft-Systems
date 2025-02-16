@@ -52,7 +52,7 @@ if (isset($_GET['cerrar_sesion'])) {
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  
+  <script defer src="./asistente/index.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -196,6 +196,11 @@ if (isset($_GET['cerrar_sesion'])) {
   <div class="container my-5">
     <div class="row row-cols-1 row-cols-md-3 g-3 justify-content-center" style="margin-top:-3rem;">
       <!-- Reducir el valor de g a 2 para reducir la distancia entre las tarjetas -->
+      <h2>Reconocimiento de Voz</h2>
+      <button id="btnHablar">
+        🎤
+      </button>
+      <p id="resultado"></p>
       <!--PRIMERA CARD -->
       <div class="col d-flex justify-content-center">
         <a href="../pacientes/paciente.php">

@@ -3412,6 +3412,7 @@ $(document).ready(function () {
                 $('#obra_social_paci_unicos').append(new Option(optionText, item.id));
                 $('#obra_social_paci_boca').append(new Option(optionText, item.id));
                 $('#obra_social_paci_prestaciones').append(new Option(optionText, item.id));
+                $('#obra_social_paci_sin_diag').append(new Option(optionText, item.id));
             });
         },
         error: function (error) {

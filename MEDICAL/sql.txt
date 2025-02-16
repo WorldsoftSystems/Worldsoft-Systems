@@ -1,0 +1,8 @@
+ALTER TABLE turnos
+ADD CONSTRAINT fk_turno_paciente
+FOREIGN KEY (paciente) REFERENCES paciente(id);
+
+ALTER TABLE turnos
+ADD CONSTRAINT fk_turno_prof
+FOREIGN KEY (id_prof) REFERENCES profesional(id_prof);
+
