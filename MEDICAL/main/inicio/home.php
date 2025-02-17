@@ -171,6 +171,49 @@ if (isset($_GET['cerrar_sesion'])) {
       z-index: 800;
       /* Asegúrate de que esté por encima del botón */
     }
+
+    /* Fondo difuminado cuando aparece el contenedor */
+    .floating-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      /* Oscurece el fondo */
+      backdrop-filter: blur(8px);
+      /* Difumina el fondo */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1050;
+    }
+
+    /* Contenedor principal centrado */
+    .floating-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    /* Botón de cerrar */
+    .close-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .close-btn:hover {
+      background: darkred;
+    }
   </style>
   </style>
 </head>
@@ -195,12 +238,15 @@ if (isset($_GET['cerrar_sesion'])) {
   <!-- Cards Container -->
   <div class="container my-5">
     <div class="row row-cols-1 row-cols-md-3 g-3 justify-content-center" style="margin-top:-3rem;">
-      <!-- Reducir el valor de g a 2 para reducir la distancia entre las tarjetas -->
-      <h2>Reconocimiento de Voz</h2>
-      <button id="btnHablar">
-        🎤
-      </button>
-      <p id="resultado"></p>
+      
+      <div class="text-center">
+        <button id="btnHablar" class="btn btn-primary">
+          🎤 Hablar
+        </button>
+      </div>
+      <p id="resultado" class="mt-3 text-center"></p>
+      <div id="resultContainer" class="position-relative"></div>
+
       <!--PRIMERA CARD -->
       <div class="col d-flex justify-content-center">
         <a href="../pacientes/paciente.php">
