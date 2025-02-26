@@ -86,6 +86,51 @@ $conn->close();
             </div>
             <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
 
+        <?php elseif ($cliente === 'UP3066408967600'): ?>
+            <div class="columns-container">
+                <!-- Columna de botones INT -->
+                <div class="column">
+                    <h3>INT</h3>
+                    <button class="btn btn-primary" id="txt_pq0352_int.php">Generar TXT INT</button>
+                </div>
+
+                <!-- Columna de botones AMB -->
+                <div class="column">
+                    <h3>AMB</h3>
+                    <button class="btn btn-primary" id="txt_pq0352_amb.php">Generar TXT AMB</button>
+                </div>
+            </div>
+            <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
+
+        <?php elseif ($cliente === 'UP3060454669500'): ?>
+            <div class="columns-container">
+                <div class="column">
+                    <h3>06</h3>
+                    <button class="btn btn-primary" id="txt_pq0231_ugl_6.php">Generar TXT UGL 06</button>
+                </div>
+
+                <div class="column">
+                    <h3>37</h3>
+                    <button class="btn btn-primary" id="txt_pq0231_ugl_37.php">Generar TXT UGL 37</button>
+                </div>
+            </div>
+            <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
+
+        <?php elseif ($cliente == 'UP3069149922304'): ?>
+            <div class="columns-container">
+                <!-- Columna de botones INT -->
+                <div class="column">
+                    <h3>INT</h3>
+                    <button class="btn btn-primary" id="txt_pq0303_int.php">Generar TXT INT</button>
+                </div>
+
+                <!-- Columna de botones AMB -->
+                <div class="column">
+                    <h3>AMB</h3>
+                    <button class="btn btn-primary" id="txt_pq0303_amb.php">Generar TXT AMB</button>
+                </div>
+            </div>
+
         <?php else: ?>
             <button class="btn btn-primary" id="generate_txt.php">Generar TXT</button>
             <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
@@ -324,6 +369,114 @@ $conn->close();
                 });
             }
             //FIN PQ2041 AMB
+
+            //PQ0352
+            const txt_pq0352_amb = document.getElementById('txt_pq0352_amb.php');
+            if (txt_pq0352_amb) {
+                txt_pq0352_amb.addEventListener('click', function () {
+                    fetch('./gets/pq0352/txt_pq0352_amb.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+
+            const txt_pq0352_int = document.getElementById('txt_pq0352_int.php');
+            if (txt_pq0352_int) {
+                txt_pq0352_int.addEventListener('click', function () {
+                    fetch('./gets/pq0352/txt_pq0352_int.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            //FIN PQ0352
+
+            //PQ0231
+            const txt_pq0231_ugl_6 = document.getElementById('txt_pq0231_ugl_6.php');
+            if (txt_pq0231_ugl_6) {
+                txt_pq0231_ugl_6.addEventListener('click', function () {
+                    fetch('./gets/pq0231/txt_pq0231_ugl_6.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+
+            const txt_pq0231_ugl_37 = document.getElementById('txt_pq0231_ugl_37.php');
+            if (txt_pq0231_ugl_37) {
+                txt_pq0231_ugl_37.addEventListener('click', function () {
+                    fetch('./gets/pq0231/txt_pq0231_ugl_37.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            //FIN PQ0231
+
+            //PQ0303
+            const txt_pq0303_amb = document.getElementById('txt_pq0303_amb.php');
+            if (txt_pq0303_amb) {
+                txt_pq0303_amb.addEventListener('click', function () {
+                    fetch('./gets/pq0303/txt_pq0303_amb.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+
+            const txt_pq0303_int = document.getElementById('txt_pq0303_int.php');
+            if (txt_pq0303_int) {
+                txt_pq0303_int.addEventListener('click', function () {
+                    fetch('./gets/pq0303/txt_pq0303_int.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            //FIN PQ0303
 
         });
 

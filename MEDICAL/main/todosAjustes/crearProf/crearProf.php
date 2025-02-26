@@ -55,7 +55,8 @@ $result_especialidades = $conn->query($sql_especialidades);
 // Consulta SQL
 $sql = "SELECT  p.*,e.id_especialidad, e.desc_especialidad,p.nombreYapellido AS nombre
         FROM profesional p
-        JOIN especialidad e ON p.id_especialidad = e.id_especialidad";
+        JOIN especialidad e ON p.id_especialidad = e.id_especialidad
+        ORDER BY p.nombreYapellido ASC";
 $result = $conn->query($sql);
 
 

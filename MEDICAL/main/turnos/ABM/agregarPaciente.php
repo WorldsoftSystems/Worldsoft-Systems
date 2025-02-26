@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $modalidad_act = $_POST['modalidad_act'];
     $hora_admision = $_POST['hora_admision'];
     $ugl_id = $_POST['ugl_paciente']; // Este es el ID o la descripción seleccionada
-
+    $telefono = $_POST['telefono'];
     // Agrega un registro en el log para verificar el valor recibido
     error_log("Valor recibido en 'ugl_paciente': $ugl_id");
 
@@ -65,12 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $response['message'] = 'El paciente ya está registrado.';
     } else {
         // Insertar el nuevo paciente
-        $sql = "INSERT INTO paciente (nombre, obra_social, fecha_nac, sexo, tipo_doc, nro_doc, admision, id_prof, benef, parentesco, tipo_afiliado, boca_atencion,hora_admision, ugl_paciente) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO paciente (nombre, obra_social, fecha_nac, sexo, tipo_doc, nro_doc, admision, id_prof, benef, parentesco, tipo_afiliado, boca_atencion,hora_admision, ugl_paciente, telefono) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
-            "sisssssissiisi",
+            "sisssssissiisis",
             $nombre,
             $obra_social,
             $fecha_nac,
@@ -84,7 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $tipo_afiliado,
             $boca_atencion,
             $hora_admision,
-            $ugl_id
+            $ugl_id,
+            $telefono
         );
 
         if ($stmt->execute()) {

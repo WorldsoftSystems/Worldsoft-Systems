@@ -3,17 +3,17 @@
 session_start();
 
 // Verifica si el usuario ha iniciado sesión
-if (isset($_SESSION['usuario'])) {
-  // El usuario ha iniciado sesión, puedes mostrar contenido para usuarios autenticados o ejecutar acciones específicas
-} else {
+if (!isset($_SESSION['usuario'])) {
   header("Location: ../index.php");
+  exit;
 }
+
+// Almacena el usuario en una variable para facilitar el uso
+$usuario = strtolower($_SESSION['usuario']); // Convierte a minúsculas para evitar problemas de capitalización
 
 // Lógica para cerrar sesión
 if (isset($_GET['cerrar_sesion'])) {
-  // Destruye todas las variables de sesión
   session_destroy();
-  // Redirige al usuario a la página de inicio o a donde desees
   header("Location: ../index.php");
   exit;
 }
@@ -52,7 +52,7 @@ if (isset($_GET['cerrar_sesion'])) {
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -197,6 +197,7 @@ if (isset($_GET['cerrar_sesion'])) {
     <div class="row row-cols-1 row-cols-md-3 g-3 justify-content-center" style="margin-top:-3rem;">
       <!-- Reducir el valor de g a 2 para reducir la distancia entre las tarjetas -->
       <!--PRIMERA CARD -->
+
       <div class="col d-flex justify-content-center">
         <a href="../pacientes/paciente.php">
           <div class="card h-100">
@@ -211,83 +212,86 @@ if (isset($_GET['cerrar_sesion'])) {
       </div>
       <!--CARD -->
 
-      <!--SEGUNDA CARD -->
-      <div class="col d-flex justify-content-center">
-        <a href="../turnos/calendario.php">
-          <div class="card h-100">
-            <div class="first-content">
-              <img src="../img/home/agenda.png" class="img-fluid" alt="">
+      <?php if ($usuario !== "ivan") { ?>
+        <!--SEGUNDA CARD -->
+        <div class="col d-flex justify-content-center">
+          <a href="../turnos/calendario.php">
+            <div class="card h-100">
+              <div class="first-content">
+                <img src="../img/home/agenda.png" class="img-fluid" alt="">
+              </div>
+              <div class="third-content">
+                <h3 class="mt-3">Agenda de Turnos</h3>
+              </div>
             </div>
-            <div class="third-content">
-              <h3 class="mt-3">Agenda de Turnos</h3>
-            </div>
-          </div>
-        </a>
-      </div>
-      <!--CARD -->
+          </a>
+        </div>
+        <!--CARD -->
 
-      <!-- TERCERA CARD -->
-      <div class="col d-flex justify-content-center">
-        <a href="../estadisticas/estadisticas.php">
-          <div class="card h-100">
-            <div class="first-content">
-              <img src="../img/home/estadisticas.png" class="img-fluid" alt="">
+        <!-- TERCERA CARD -->
+        <div class="col d-flex justify-content-center">
+          <a href="../estadisticas/estadisticas.php">
+            <div class="card h-100">
+              <div class="first-content">
+                <img src="../img/home/estadisticas.png" class="img-fluid" alt="">
+              </div>
+              <div class="third-content">
+                <h3 class="mt-3">Estadisticas</h3>
+              </div>
             </div>
-            <div class="third-content">
-              <h3 class="mt-3">Estadisticas</h3>
-            </div>
-          </div>
-        </a>
-      </div>
-      <!--CARD -->
+          </a>
+        </div>
+        <!--CARD -->
 
-      <!-- CUARTA CARD -->
-      <div class="col d-flex justify-content-center">
-        <a href="../caja/caja.php">
-          <div class="card h-100">
-            <div class="first-content">
-              <img src="../img/home/caja.png" class="img-fluid" alt="">
+        <!-- CUARTA CARD -->
+        <div class="col d-flex justify-content-center">
+          <a href="../caja/caja.php">
+            <div class="card h-100">
+              <div class="first-content">
+                <img src="../img/home/caja.png" class="img-fluid" alt="">
+              </div>
+              <div class="third-content">
+                <h3 class="mt-3">Caja</h3>
+              </div>
             </div>
-            <div class="third-content">
-              <h3 class="mt-3">Caja</h3>
-            </div>
-          </div>
-        </a>
-      </div>
-      <!--CARD -->
+          </a>
+        </div>
+        <!--CARD -->
 
-      <!-- QUINTA CARD -->
-      <div class="col d-flex justify-content-center">
-        <a href="../gastos/gastos.php">
-          <div class="card h-100">
-            <div class="first-content">
-              <img src="../img/home/gastos.png" class="img-fluid" alt="">
+        <!-- QUINTA CARD -->
+        <div class="col d-flex justify-content-center">
+          <a href="../gastos/gastos.php">
+            <div class="card h-100">
+              <div class="first-content">
+                <img src="../img/home/gastos.png" class="img-fluid" alt="">
+              </div>
+              <div class="third-content">
+                <h3 class="mt-3">Gastos</h3>
+              </div>
             </div>
-            <div class="third-content">
-              <h3 class="mt-3">Gastos</h3>
-            </div>
-          </div>
-        </a>
-      </div>
-      <!--CARD -->
+          </a>
+        </div>
+        <!--CARD -->
 
-      <!-- SEXTA CARD -->
-      <div class="col d-flex justify-content-center">
-        <a href="../seccionAjustes/ajustes.php" class="card-link">
-          <div class="card h-100">
-            <div class="first-content">
-              <img src="../img/home/configuracion.png" class="img-fluid" alt="">
+        <!-- SEXTA CARD -->
+        <div class="col d-flex justify-content-center">
+          <a href="../seccionAjustes/ajustes.php" class="card-link">
+            <div class="card h-100">
+              <div class="first-content">
+                <img src="../img/home/configuracion.png" class="img-fluid" alt="">
+              </div>
+              <div class="third-content">
+                <h3 class="mt-3">Ajustes</h3>
+              </div>
             </div>
-            <div class="third-content">
-              <h3 class="mt-3">Ajustes</h3>
-            </div>
-          </div>
-        </a>
-      </div>
+          </a>
+        </div>
 
-      <!--CARD -->
-    </div>
+        <!--CARD -->
+      </div>
+    <?php } ?>
   </div>
+
 
 
   <!-- Chatbox -->

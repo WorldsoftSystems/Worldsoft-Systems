@@ -4,7 +4,9 @@ include('../../conexion.php');
 
 $sql = "SELECT p.id_prof, p.nombreYapellido, CONCAT(p.nombreYapellido, ' - ', e.desc_especialidad) AS prof_full
         FROM profesional p
-        LEFT JOIN especialidad e ON p.id_especialidad = e.id_especialidad";
+        LEFT JOIN especialidad e ON p.id_especialidad = e.id_especialidad
+        ORDER BY p.nombreYapellido ASC
+        ";
 $result = $conn->query($sql);
 
 $profesionales = array();

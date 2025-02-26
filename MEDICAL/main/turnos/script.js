@@ -1121,15 +1121,24 @@ $(document).ready(function () {
 
 //AGREGAR PACIENTE
 document.addEventListener('DOMContentLoaded', function () {
-    // Al abrir el modal "agregarPacienteModal", cerrar "createTurnoModal"
-    $('#agregarPacienteModal').on('show.bs.modal', function () {
-        $('#createTurnoModal').modal('hide'); // Oculta el modal principal
-    });
+    const agregarPacienteModal = document.getElementById('agregarPacienteModal');
+    const createTurnoModal = document.getElementById('createTurnoModal');
 
-    // Al cerrar el modal "agregarPacienteModal", volver a abrir "createTurnoModal"
-    $('#agregarPacienteModal').on('hidden.bs.modal', function () {
-        $('#createTurnoModal').modal('show'); // Vuelve a mostrar el modal principal
-    });
+    if (agregarPacienteModal) {
+        agregarPacienteModal.addEventListener('show.bs.modal', function () {
+            if (createTurnoModal) {
+                const modalInstance = bootstrap.Modal.getInstance(createTurnoModal) || new bootstrap.Modal(createTurnoModal);
+                modalInstance.hide();
+            }
+        });
+
+        agregarPacienteModal.addEventListener('hidden.bs.modal', function () {
+            if (createTurnoModal) {
+                const modalInstance = bootstrap.Modal.getInstance(createTurnoModal) || new bootstrap.Modal(createTurnoModal);
+                modalInstance.show();
+            }
+        });
+    }
 });
 
 // Función para convertir el input en un select

@@ -7,7 +7,7 @@ if ($conn->connect_error) {
 }
 
 // Ejecutar la consulta
-$sql = "SELECT id_prof, nombreYapellido FROM profesional";
+$sql = "SELECT id_prof, nombreYapellido FROM profesional ORDER BY nombreYapellido ASC";
 $result = $conn->query($sql);
 
 // Manejo de errores para la consulta

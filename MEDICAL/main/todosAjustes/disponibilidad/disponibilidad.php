@@ -148,7 +148,7 @@ $resultProfesionales = $conn->query($sqlProfesionales);
 
                                 <button class="btn btn-primary"
                                     onclick="gestionarAusencias(<?= $rowProfesional['id_prof'] ?>, '<?= $rowProfesional['nombreYapellido'] ?>')">
-                                    Gestionar Ausencias
+                                    Dias NO laborables
                                 </button>
 
 
@@ -217,7 +217,7 @@ $resultProfesionales = $conn->query($sqlProfesionales);
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Gestión de Ausencias</h5>
+                    <h5 class="modal-title" id="modalLabel">Gestión de Dias NO laborables</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -235,7 +235,7 @@ $resultProfesionales = $conn->query($sqlProfesionales);
                             <!-- Las ausencias se cargarán aquí dinámicamente -->
                         </tbody>
                     </table>
-                    <button class="btn btn-success mt-3" onclick="agregarAusencia()">Agregar Ausencia</button>
+                    <button class="btn btn-success mt-3" onclick="agregarAusencia()">Agregar Dia NO laborable</button>
                 </div>
             </div>
         </div>
@@ -247,7 +247,7 @@ $resultProfesionales = $conn->query($sqlProfesionales);
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="agregarModalLabel">Agregar Nueva Ausencia</h5>
+                    <h5 class="modal-title" id="agregarModalLabel">Agregar Dia NO laborable</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

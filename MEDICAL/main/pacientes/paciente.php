@@ -251,7 +251,7 @@ $conn->close();
 
     <!-- Modal para agregar/editar paciente -->
     <div class="modal fade" id="agregarPacienteModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-xl custom-modal-paciente">
             <div class="modal-content">
                 <div class="modal-header">
@@ -613,7 +613,7 @@ $conn->close();
 
 
     <!-- Modal de PRACTICAS -->
-    <div class="modal fade" id="pracModal" tabindex="-1" aria-labelledby="pracModalLabel" aria-hidden="true">
+    <div class="modal fade" id="pracModal" tabindex="-1" aria-labelledby="pracModalLabel">
 
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -655,7 +655,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarPracModal" tabindex="-1" aria-labelledby="agregarPracModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -712,7 +712,7 @@ $conn->close();
     <!-- FIN PRACTICAS-->
 
     <!-- Modal de MODALIDADES -->
-    <div class="modal fade" id="modaModal" tabindex="-1" aria-labelledby="modaModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modaModal" tabindex="-1" aria-labelledby="modaModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -741,7 +741,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarModaliModal" tabindex="-1" aria-labelledby="agregarModaliModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -787,7 +787,7 @@ $conn->close();
     <!-- FIN MODALIDADES -->
 
     <!-- Modal de Egreso -->
-    <div class="modal fade" id="egresoModal" tabindex="-1" aria-labelledby="egresoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="egresoModal" tabindex="-1" aria-labelledby="egresoModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -816,7 +816,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarEgresoModal" tabindex="-1" aria-labelledby="agregarEgresoModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -881,7 +881,7 @@ $conn->close();
     <!-- FIN EGRESO -->
 
     <!-- Modal de EVOLUCIONES -->
-    <div class="modal fade" id="evoModal" tabindex="-1" aria-labelledby="evoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="evoModal" tabindex="-1" aria-labelledby="evoModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -913,7 +913,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarEvoModal" tabindex="-1" aria-labelledby="agregarEvoModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -994,7 +994,7 @@ $conn->close();
     <!-- FIN EVOLUCIONES-->
 
     <!-- Modal de EVOLUCIONES INTERNACION-->
-    <div class="modal fade" id="evoIntModal" tabindex="-1" aria-labelledby="evoIntModalLabel" aria-hidden="true">
+    <div class="modal fade" id="evoIntModal" tabindex="-1" aria-labelledby="evoIntModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1026,7 +1026,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarEvoIntModal" tabindex="-1" aria-labelledby="agregarEvoIntModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1107,7 +1107,7 @@ $conn->close();
     <!-- FIN EVOLUCIONES INTERNACION-->
 
     <!--ADMISION AMBULATORIO -->
-    <div class="modal fade" id="admiAmbModal" tabindex="-1" aria-labelledby="admiAmbModalLabel" aria-hidden="true">
+    <div class="modal fade" id="admiAmbModal" tabindex="-1" aria-labelledby="admiAmbModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1139,7 +1139,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarAdmiAmbModal" tabindex="-1" aria-labelledby="agregarAdmiAmbModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1615,7 +1615,7 @@ $conn->close();
     <!--FIN ADMISION AMBULATORIO -->
 
     <!-- Modal de DIAGNOSTICOS -->
-    <div class="modal fade" id="diagModal" tabindex="-1" aria-labelledby="diagModalLabel" aria-hidden="true">
+    <div class="modal fade" id="diagModal" tabindex="-1" aria-labelledby="diagModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1646,7 +1646,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarDiagModal" tabindex="-1" aria-labelledby="agregarDiagModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1692,7 +1692,7 @@ $conn->close();
     <!-- FIN DIAGNOSTICOS -->
 
     <!-- Modal de MEDICACION -->
-    <div class="modal fade" id="mediModal" tabindex="-1" aria-labelledby="mediModalLabel" aria-hidden="true">
+    <div class="modal fade" id="mediModal" tabindex="-1" aria-labelledby="mediModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1727,7 +1727,7 @@ $conn->close();
 
     <!-- PDF -->
     <!-- Modal para seleccionar fechas -->
-    <div class="modal fade" id="modalFechas" tabindex="-1" aria-labelledby="modalFechasLabel" aria-hidden="true">
+    <div class="modal fade" id="modalFechas" tabindex="-1" aria-labelledby="modalFechasLabel" >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1754,7 +1754,7 @@ $conn->close();
 
 
     <div class="modal fade" id="agregarMediModal" tabindex="-1" aria-labelledby="agregarMediModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1829,7 +1829,7 @@ $conn->close();
     <!-- FIN MEDICACION -->
 
     <!-- Modal de Responsable -->
-    <div class="modal fade" id="responModal" tabindex="-1" aria-labelledby="responModalLabel" aria-hidden="true">
+    <div class="modal fade" id="responModal" tabindex="-1" aria-labelledby="responModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1860,7 +1860,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarResponModal" tabindex="-1" aria-labelledby="agregarResponModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1925,7 +1925,7 @@ $conn->close();
     <!-- FIN RESPONSABLES -->
 
     <!-- Modal de JUDICIALES -->
-    <div class="modal fade" id="judiModal" tabindex="-1" aria-labelledby="judiModalLabel" aria-hidden="true">
+    <div class="modal fade" id="judiModal" tabindex="-1" aria-labelledby="judiModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1956,7 +1956,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarJudiModal" tabindex="-1" aria-labelledby="agregarJudiModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2027,7 +2027,7 @@ $conn->close();
     <!-- FIN JUDICIALES -->
 
     <!-- Modal de SALIDAS -->
-    <div class="modal fade" id="saliModal" tabindex="-1" aria-labelledby="saliModalLabel" aria-hidden="true">
+    <div class="modal fade" id="saliModal" tabindex="-1" aria-labelledby="saliModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2058,7 +2058,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarSaliModal" tabindex="-1" aria-labelledby="agregarSaliModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2106,7 +2106,7 @@ $conn->close();
     <!-- FIN SALIDAS -->
 
     <!-- Modal de HABITACIONES -->
-    <div class="modal fade" id="habiModal" tabindex="-1" aria-labelledby="habiModalLabel" aria-hidden="true">
+    <div class="modal fade" id="habiModal" tabindex="-1" aria-labelledby="habiModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2146,7 +2146,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarHabiModal" tabindex="-1" aria-labelledby="agregarHabiModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2201,7 +2201,7 @@ $conn->close();
     <!-- FIN HABITACIONES -->
 
     <!-- Modal de VISITAS -->
-    <div class="modal fade" id="visiModal" tabindex="-1" aria-labelledby="visiModalLabel" aria-hidden="true">
+    <div class="modal fade" id="visiModal" tabindex="-1" aria-labelledby="visiModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2232,7 +2232,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarVisiModal" tabindex="-1" aria-labelledby="agregarVisiModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2290,7 +2290,7 @@ $conn->close();
     <!-- FIN VISITAS -->
 
     <!-- Modal de TRASLADOS -->
-    <div class="modal fade" id="trasModal" tabindex="-1" aria-labelledby="trasModalLabel" aria-hidden="true">
+    <div class="modal fade" id="trasModal" tabindex="-1" aria-labelledby="trasModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2321,7 +2321,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarTrasModal" tabindex="-1" aria-labelledby="agregarTrasModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2375,7 +2375,7 @@ $conn->close();
     <!--FIN TRASLADOS-->
 
     <!-- ORDENES DE PRESTACION -->
-    <div class="modal fade" id="ordenModal" tabindex="-1" aria-labelledby="ordenModalLabel" aria-hidden="true">
+    <div class="modal fade" id="ordenModal" tabindex="-1" aria-labelledby="ordenModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2406,7 +2406,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarOrdenModal" tabindex="-1" aria-labelledby="agregarOrdenModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2463,7 +2463,7 @@ $conn->close();
     <!-- FIN ORDENES DE PRESTACION -->
 
     <!-- Modal para generar el reporte -->
-    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2492,7 +2492,7 @@ $conn->close();
 
     <!--NUTRICION ADMISION -->
     <!-- Modal de NUTRICION -->
-    <div class="modal fade" id="nutriModal" tabindex="-1" aria-labelledby="nutriModalLabel" aria-hidden="true">
+    <div class="modal fade" id="nutriModal" tabindex="-1" aria-labelledby="nutriModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2523,7 +2523,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarNutriModal" tabindex="-1" aria-labelledby="agregarNutriModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2597,7 +2597,7 @@ $conn->close();
     <!--FIN NUTRICION ADMISION -->
 
     <!--Edu fisica ADMISION -->
-    <div class="modal fade" id="fisicaModal" tabindex="-1" aria-labelledby="fisicaModalLabel" aria-hidden="true">
+    <div class="modal fade" id="fisicaModal" tabindex="-1" aria-labelledby="fisicaModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2629,7 +2629,7 @@ $conn->close();
 
     <!-- Modal para Admision Educacion Fisica -->
     <div class="modal fade" id="agregarFisicaModal" tabindex="-1" aria-labelledby="agregarfisicaModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2747,7 +2747,7 @@ $conn->close();
 
     <!-- IMPRESION DIAGNOSTICO -->
 
-    <div class="modal fade" id="admiDiagModal" tabindex="-1" aria-labelledby="admiDiagModalLabel" aria-hidden="true">
+    <div class="modal fade" id="admiDiagModal" tabindex="-1" aria-labelledby="admiDiagModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2779,7 +2779,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarImpresionDiagnosticaModal" tabindex="-1"
-        aria-labelledby="agregarImpresionDiagnosticaModalLabel" aria-hidden="true">
+        aria-labelledby="agregarImpresionDiagnosticaModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2881,7 +2881,7 @@ $conn->close();
     <!-- EXAMEN PSIQUIATRICO -->
 
     <div class="modal fade" id="exPsiquiatricoModal" tabindex="-1" aria-labelledby="exPsiquiatricoModalLabel"
-        aria-hidden="true">
+        >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2913,7 +2913,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarExamenPsiquiatricoModal" tabindex="-1"
-        aria-labelledby="agregarExamenPsiquiatricoModalLabel" aria-hidden="true">
+        aria-labelledby="agregarExamenPsiquiatricoModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -3012,7 +3012,7 @@ $conn->close();
     <!-- ANCEDENTES FAMILIARES-->
 
     <div class="modal fade" id="antecedentesFamiliaresModal" tabindex="-1"
-        aria-labelledby="antecedentesFamiliaresModalLabel" aria-hidden="true">
+        aria-labelledby="antecedentesFamiliaresModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -3044,7 +3044,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregarAntecedentesFamiliaresModal" tabindex="-1"
-        aria-labelledby="agregarAntecedentesFamiliaresModalLabel" aria-hidden="true">
+        aria-labelledby="agregarAntecedentesFamiliaresModalLabel" >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -3123,7 +3123,7 @@ $conn->close();
 
     <!--ANTECENDESTER PERSONALES -->
     <div class="modal fade" id="antecedentesPersonalesModal" tabindex="-1"
-        aria-labelledby="antecedentesPersonalesModalLabel" aria-hidden="true">
+        aria-labelledby="antecedentesPersonalesModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -3155,7 +3155,7 @@ $conn->close();
     </div>
 
     <div class="modal fade" id="agregar_antecedentes_modal" tabindex="-1"
-        aria-labelledby="agregar_antecedentes_modal_label" aria-hidden="true">
+        aria-labelledby="agregar_antecedentes_modal_label" >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
