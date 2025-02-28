@@ -106,7 +106,42 @@ $resultProfesionales = $conn->query($sqlProfesionales);
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../../estilos/styleGeneral.css">
     <link rel="stylesheet" href="../../estilos/styleBotones.css">
+
+    <!-- Bootstrap Datepicker -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.es.min.js"></script>
+
+
+    <style>
+        .datepicker {
+            font-size: 1.2rem;
+            /* Aumenta el tamaño del texto */
+            padding: 10px;
+        }
+
+        .datepicker td,
+        .datepicker th {
+            width: 30px;
+            /* Hace que las celdas sean más grandes */
+            height: 30px;
+            text-align: center;
+        }
+
+        .datepicker table {
+            width: 100%;
+        }
+
+        .btn-feriado {
+            background-color: #ff0080 !important;
+            border-color: #ff0080 !important;
+
+        }
+    </style>
 </head>
+
 
 <body>
     <button class="button" style="vertical-align:middle; margin-left:7rem"
@@ -119,9 +154,17 @@ $resultProfesionales = $conn->query($sqlProfesionales);
     </div>
 
     <div class="container">
-        <div class="title-container">
-            <h2>Disponibilidad</h2>
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Días y horarios de atención</h2>
+
+                <h2>Agregar para todas las agendas:</h2>
+                <button class="btn btn-primary btn-feriado" data-bs-toggle="modal"
+                    data-bs-target="#feriadosModal">Feriados</button>
+            </div>
+
         </div>
+
         <!-- Campo de búsqueda -->
         <input type="text" id="searchInput" class="form-control mb-3"
             placeholder="Buscar por profesional o especialidad" onkeyup="filtrarTabla()">
@@ -303,6 +346,33 @@ $resultProfesionales = $conn->query($sqlProfesionales);
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="feriadosModal" tabindex="-1" aria-labelledby="feriadosModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feriadosModalLabel">Seleccionar Feriados</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="fechaFeriado">Seleccionar fechas:</label>
+                    <input type="text" id="fechaFeriado" class="form-control"
+                        placeholder="Seleccione una o varias fechas">
+
+                    <div class="mb-3">
+                        <label for="motivoFeriado" class="form-label">Motivo</label>
+                        <textarea class="form-control" id="motivoFeriado" name="motivoFeriado"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarFeriados">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 
 
@@ -322,6 +392,56 @@ $resultProfesionales = $conn->query($sqlProfesionales);
     </footer>
 
     <script>
+
+        $(document).ready(function () {
+
+            let selectedDates = []; // Array para almacenar las fechas seleccionadas
+
+            $('#fechaFeriado').datepicker({
+                format: 'dd/mm/yyyy',
+                multidate: true,
+                language: 'es',
+                todayHighlight: true,
+                beforeShowDay: function (date) {
+                    let formattedDate = $.fn.datepicker.DPGlobal.formatDate(date, 'dd/mm/yyyy', 'es');
+                    if (selectedDates.includes(formattedDate)) {
+                        return {
+                            classes: 'highlight-day',
+                            tooltip: 'Feriado seleccionado'
+                        };
+                    }
+                    return {}; // Sin modificaciones para días normales
+                }
+            }).on('changeDate', function (e) {
+                selectedDates = e.dates.map(date =>
+                    $.fn.datepicker.DPGlobal.formatDate(date, 'dd/mm/yyyy', 'es')
+                );
+                console.log("Fechas seleccionadas:", selectedDates);
+                $('#fechaFeriado').datepicker('update'); // Forzar actualización de estilos
+            });
+
+            $('#guardarFeriados').click(function () {
+                let fechas = $('#fechaFeriado').val();
+                let m = document.getElementById('motivoFeriado').value;
+                console.log("Fechas seleccionadas:", fechas);
+                if (fechas) {
+                    $.ajax({
+                        url: './ausencias/guardar_feriados.php',
+                        type: 'POST',
+                        data: { fechas: fechas, motivoFeriado: m },
+                        success: function (response) {
+                            alert('Feriados guardados correctamente.');
+                            $('#feriadosModal').modal('hide');
+                        },
+                        error: function () {
+                            alert('Hubo un error al guardar los feriados.');
+                        }
+                    });
+                } else {
+                    alert('Por favor, seleccione al menos una fecha.');
+                }
+            });
+        });
 
         function formatDate(dateString) {
             var parts = dateString.split('-');

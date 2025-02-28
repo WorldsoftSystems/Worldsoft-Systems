@@ -5,7 +5,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "worldsof_gestion_prestacional_peni";
+$dbname = "test_dankvel";
 
 
 

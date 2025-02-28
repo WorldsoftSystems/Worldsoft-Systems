@@ -17,6 +17,7 @@ $motivo = $_POST['motivo'];
 $llego = $_POST['llego'];
 $atendido = $_POST['atendido'];
 $observaciones = $_POST['observaciones'];
+$token = isset($_POST['token']) ? trim($_POST['token']) : null;
 
 // Convertir la fecha al formato YYYY-MM-DD
 $date = DateTime::createFromFormat('d/m/Y', $fecha);
@@ -36,6 +37,20 @@ $stmt->bind_param("ssiiisssi", $fechaFormateada, $hora, $paciente, $id_prof, $mo
 
 if ($stmt->execute()) {
     echo "Turno actualizado exitosamente";
+
+    // Si el usuario es 304 y el token no está vacío, actualizar el campo token en la tabla paciente
+    if (isset($_SESSION['up']) && $_SESSION['up'] == 'UP3069149922304' && !empty($token)) {
+        $update_token_stmt = $conn->prepare("UPDATE paciente SET token = ? WHERE id = ?");
+        $update_token_stmt->bind_param("si", $token, $paciente);
+
+        if ($update_token_stmt->execute()) {
+            echo " - Token actualizado correctamente.";
+        } else {
+            echo "Error al actualizar el token: " . $update_token_stmt->error;
+        }
+
+        $update_token_stmt->close();
+    }
 
     // Insertar en la tabla practicas si llego y atendido son ambos "SI"
     if ($llego === 'SI' && $atendido === 'SI' && $codigo_motivo !== '521001' && $codigo_motivo !== '520101') {

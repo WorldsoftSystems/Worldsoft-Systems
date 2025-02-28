@@ -18,11 +18,11 @@ $config_comun = [
 
 // Bases de datos específicas por cliente
 $config_bases_datos = [
-    'prueba' => 'prueba'
+    'prueba' => 'medica_pq0241_test_amb',
     //'UP3063207857500'=> 'worldsof_medical_pq0241',
     //'UP30684529249' => 'worldsof_medical_pq2002',
     //'UP3068452924900' => 'worldsof_medical_pq2001',
-    //'UP3069149922304' => 'worldsof_medical_pq0303',
+    'UP3069149922304' => 'medical_pq0303amb',
     //'UP3070014059400' => 'worldsof_medica_pq1605',
     //'UP3070779334800' => 'worldsof_medical_pq0328'
 ];

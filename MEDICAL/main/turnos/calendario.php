@@ -275,8 +275,7 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
     </div>
 
     <!-- Modal para editar información del turno -->
-    <div class="modal fade" id="editTurnoModal" tabindex="-1" role="dialog" aria-labelledby="editTurnoModalLabel"
-        >
+    <div class="modal fade" id="editTurnoModal" tabindex="-1" role="dialog" aria-labelledby="editTurnoModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -354,6 +353,14 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                             <input type="text" class="form-control" id="id_paciente_turno_edit" name="id_paciente_turno"
                                 readonly>
                         </div>
+
+                        <?php if (isset($_SESSION['up']) && $_SESSION['up'] == 'UP3069149922304'): ?>
+                            <div class="form-group">
+                                <label for="token">Token</label>
+                                <textarea class="form-control" id="token" name="token"></textarea>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-custom">Guardar Cambios</button>
                             <button type="button" class="btn btn-danger" id="btnEliminar">Eliminar</button>
@@ -363,7 +370,7 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                 </div>
 
                 <!-- Modal anidado para mostrar el QR -->
-                <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" >
+                <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -384,9 +391,33 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
         </div>
     </div>
 
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportModalLabel">Generar Reporte De Turnos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="fechaDesde_paci_turno" class="form-label">Fecha Desde</label>
+                        <input type="date" class="form-control" id="fechaDesde_paci_turno">
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaHasta_paci_turno" class="form-label">Fecha Hasta</label>
+                        <input type="date" class="form-control" id="fechaHasta_paci_turno">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="generatePdf()">Generar PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para crear nuevo turno -->
-    <div class="modal fade" id="createTurnoModal" tabindex="-1" role="dialog" aria-labelledby="createTurnoModalLabel"
-        >
+    <div class="modal fade" id="createTurnoModal" tabindex="-1" role="dialog" aria-labelledby="createTurnoModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -481,7 +512,7 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
 
     <!-- MODAL PACIENTE -->
     <div class="modal fade" id="agregarPacienteModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-         data-bs-backdrop="static">
+        data-bs-backdrop="static">
 
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -591,9 +622,9 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                                 </select>
                             </div>
                             <div class="col-md-4 form-group mb-3">
-                                    <label for="telefono">Teléfono:</label>
-                                    <input type="text" class="form-control" id="telefono" name="telefono">
-                                </div>
+                                <label for="telefono">Teléfono:</label>
+                                <input type="text" class="form-control" id="telefono" name="telefono">
+                            </div>
                             <div class="col-md-4 form-group">
                                 <label for="id_prof">Profesional:*</label>
                                 <select class="form-control" id="id_prof" name="id_prof" required>

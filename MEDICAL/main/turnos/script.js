@@ -1403,10 +1403,158 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error("El botón con id 'qrPaciente' no se encuentra en el DOM.");
     }
+
+    document.getElementById('pdfTurnos').addEventListener('click', function () {
+        var myModal = new bootstrap.Modal(document.getElementById('reportModal'));
+        myModal.show();
+    });
+    
 });
 
 
 
+function generatePdf() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('l', 'mm', 'a4');
+
+    const pacienteId = document.getElementById('paciente_id_edit').value;
+    const fechaDesde = document.getElementById('fechaDesde_paci_turno').value;
+    const fechaHasta = document.getElementById('fechaHasta_paci_turno').value;
+
+    function fetchDataPaci(pacienteId, fechaDesde, fechaHasta) {
+        return new Promise((resolve, reject) => {
+            fetch(`../pacientes/dato/get_turno_de_paciente.php?id_paci=${pacienteId}&fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}`)
+                .then(response => response.json())
+                .then(data => resolve(data))
+                .catch(error => reject(error));
+        });
+    }
+
+    function fetchParametros() {
+        return new Promise((resolve, reject) => {
+            fetch('./gets/get_parametros.php')
+                .then(response => response.json())
+                .then(data => resolve(data))
+                .catch(error => reject(error));
+        });
+    }
+
+    Promise.all([fetchDataPaci(pacienteId, fechaDesde, fechaHasta), fetchParametros()])
+        .then(([dataTurnos, dataParametros]) => {
+            const rows = dataTurnos.map(turnos => [
+                (`${formatDate(turnos.fecha)} ${turnos.hora}`),
+                turnos.nom_prof,
+                turnos.motivo_full,
+                turnos.llego,
+                turnos.atendido,
+                turnos.observaciones
+            ]);
+
+            const nombrePaciente = dataTurnos.length > 0 ? dataTurnos[0].nombre_paciente : 'Desconocido';
+            const formattedFechaDesde = formatDate(fechaDesde);
+            const formattedFechaHasta = formatDate(fechaHasta);
+
+            const parametros = dataParametros[0] || {};
+            const param1 = parametros.inst || 'No disponible';
+            const param2 = parametros.localidad || 'No disponible';
+            const param3 = parametros.tel || 'No disponible';
+
+            // Título centrado
+            const title = 'Historial de Paciente';
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const titleWidth = doc.getTextWidth(title);
+            const xTitle = (pageWidth - titleWidth) / 2;
+            doc.setFontSize(16);
+            doc.text(title, xTitle, 10);
+
+            // Fechas centradas
+            const dateRange = `Desde: ${formattedFechaDesde} Hasta: ${formattedFechaHasta}`;
+            const dateRangeWidth = doc.getTextWidth(dateRange);
+            const xDateRange = (pageWidth - dateRangeWidth) / 2;
+            doc.setFontSize(14);
+            doc.text(dateRange, xDateRange, 20);
+
+            // Parámetros centrados
+            doc.setFontSize(12);
+            const startY = 30;
+
+            const param1Text = `Institución: ${param1}`;
+            const param2Text = `Localidad: ${param2}`;
+            const param3Text = `Teléfono: ${param3}`;
+
+            const param1Width = doc.getTextWidth(param1Text);
+            const param1X = (pageWidth - param1Width) / 2;
+            const param2Width = doc.getTextWidth(param2Text);
+            const param2X = (pageWidth - param2Width) / 2;
+            const param3Width = doc.getTextWidth(param3Text);
+            const param3X = (pageWidth - param3Width) / 2;
+
+            doc.text(param1Text, param1X, startY);
+            doc.text(param2Text, param2X, startY + 10);
+            doc.text(param3Text, param3X, startY + 20);
+
+            // Subtítulo centrado
+            const subtitle = `Paciente: ${nombrePaciente}`;
+            const subtitleWidth = doc.getTextWidth(subtitle);
+            const xSubtitle = (pageWidth - subtitleWidth) / 2;
+            doc.setFontSize(12);
+            doc.text(subtitle, xSubtitle, startY + 35);
+
+            // Tabla
+            const tableWidth = 200;
+            let marginLeft = (pageWidth - tableWidth) / 2;
+            marginLeft -= 15;
+
+            const headers = ['Fecha y Hora', 'Profesional', 'Motivo', 'Llegó', 'Atendido', 'Observaciones'];
+
+            let tableY;
+
+            doc.autoTable({
+                head: [headers],
+                body: rows,
+                startY: startY + 50,
+                margin: { left: marginLeft, top: startY + 50 },
+                theme: 'striped',
+                styles: {
+                    fontSize: 10, // Fuente más pequeña
+                    cellPadding: 2,
+                    overflow: 'linebreak'
+                },
+                columnStyles: {
+                    0: { cellWidth: 30 },
+                    1: { cellWidth: 70 },
+                    2: { cellWidth: 40 },
+                    3: { cellWidth: 20 },
+                    4: { cellWidth: 20 },
+                    5: { cellWidth: 50 }
+                },
+                didDrawPage: function (data) {
+                    tableY = data.cursor.y;
+                },
+                didDrawCell: function (data) {
+                    if (data.column.index === 0) {
+                        tableY = data.cursor.y;
+                    }
+                }
+            });
+
+            const imgUrl = '../img/logo.png';
+            var img = new Image();
+            img.onload = function () {
+                const imgWidth = 29;
+                const imgHeight = 25;
+                const xImg = (pageWidth - imgWidth) / 2;
+                const yImg = tableY + 10;
+
+                doc.addImage(img, 'PNG', xImg, yImg, imgWidth, imgHeight);
+                window.open(doc.output('bloburl'))
+            };
+            img.src = imgUrl;
+
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+}
 
 
 

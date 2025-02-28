@@ -2508,7 +2508,7 @@ $(document).on('click', '.btn-pdf-evolucion', function () {
 
             // Crear el documento PDF
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF('landscape');
 
             // Título del documento
             doc.setFontSize(16);
@@ -2791,7 +2791,7 @@ $(document).on('click', '.btn-pdf-evolucion', function () {
 
             // Crear el documento PDF
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF('landscape');
 
             // Título del documento
             doc.setFontSize(16);

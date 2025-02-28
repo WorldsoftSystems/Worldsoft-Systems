@@ -49,7 +49,7 @@ FROM paciente p
 LEFT JOIN obra_social o ON o.id = p.obra_social
 LEFT JOIN practicas pract ON pract.id_paciente = p.id
 LEFT JOIN actividades act ON act.id = pract.actividad
-WHERE (pract.fecha BETWEEN ? AND ?)
+WHERE (pract.fecha BETWEEN ? AND ?) OR pract.actividad = 497 
 AND p.obra_social = ?
 GROUP BY p.id,pract.fecha,pract.hora";
 

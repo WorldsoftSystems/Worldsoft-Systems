@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function editarPaciente(paciente) {
         // Configura el formulario para la edición
         var form = document.getElementById('formPaciente');
-        form.action = './editarPaciente.php';
+        form.action = './agregarPaciToken/editarPaciPq0303.php';
         form.dataset.mode = 'edit'; // Agrega un atributo de datos para identificar el modo
         document.getElementById('id').value = paciente.id;
         document.getElementById('nombre').value = paciente.nombre;
@@ -216,6 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('hora_admision').value = paciente.hora_admision;
         document.getElementById('ugl_paciente').value = paciente.ugl_descripcion;
         document.getElementById('nro_de_tramite').value = paciente.nro_de_tramite || '';
+        document.getElementById('token').value = paciente.token || '';
         
         // Primero, carga las modalidades
         $.ajax({
@@ -280,7 +281,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function limpiarFormulario() {
         var form = document.getElementById('formPaciente');
         form.reset();
-        form.action = './agregarPaciente.php'; // Restablece la acción del formulario
+        form.action = './agregarPaciToken/agregarPaciPq0303.php'; // Restablece la acción del formulario
         form.dataset.mode = 'add'; // Restablece el modo
         // Limpiar o vaciar el div de bajaMensaje
         var bajaMensaje = document.getElementById('bajaMensaje');
