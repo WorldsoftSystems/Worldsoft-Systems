@@ -337,13 +337,7 @@ $conn->close();
                         <a href="#" class="btn btn-link" title="evoluciones" data-bs-toggle="modal"
                             data-bs-target="#evoModal" onclick="loadEvolucionModal()">
                             <i class="fa-solid fa-laptop-medical custom-icon"></i>
-                            <span class="icon-text">Evoluciones Amb.</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="evoluciones Int" data-bs-toggle="modal"
-                            data-bs-target="#evoIntModal" onclick="loadEvolucionIntModal()">
-                            <i class="fa-solid fa-laptop-medical custom-icon"></i>
-                            <span class="icon-text">Evoluciones Int.</span>
+                            <span class="icon-text">Evoluciones HC</span>
                         </a>
 
                         <a href="#" class="btn btn-link" title="admision Amb" data-bs-toggle="modal"
@@ -881,7 +875,7 @@ $conn->close();
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="evoModalLabel">Evoluciones Amb.</h5>
+                    <h5 class="modal-title" id="evoModalLabel">Evoluciones Historia Clinica</h5>
                     <div class="modal-header-center">
                         <img src="../img/logo.png" alt="Logo" class="modal-logo">
                     </div>
@@ -928,46 +922,21 @@ $conn->close();
                             <input type="text" class="form-control" id="evoNombreCarga" name="nombre" readonly>
                         </div>
 
-                        <div class="col-md-4">
-                            <label for="antecedentes">Antecedentes:</label>
-                            <input type="text" class="form-control" id="antecedentes" name="antecedentes">
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="motivo_evo">Motivo de consulta:</label>
-                            <input type="text" class="form-control" id="motivo_evo" name="motivo_evo">
-                        </div>
-
-
-                        <div class="col-md-4">
-                            <label for="estado_actual">Estado Actual:</label>
-                            <input type="text" class="form-control" id="estado_actual" name="estado_actual">
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="familia">Familia:</label>
-                            <input type="text" class="form-control" id="familia" name="familia">
-                        </div>
-
                         <div class="col-md-4 form-group">
-                            <label for="evo_diag">Diagnostico:*</label>
-                            <select class="form-control" id="evo_diag" name="evo_diag" required>
+                            <label for="evoProf">Profesional:*</label>
+                            <select class="form-control" id="evoProf" name="evoProf" required>
                                 <option value="">Seleccionar...</option>
                             </select>
                         </div>
 
                         <div class="col-md-4">
-                            <label for="objetivo">Objetivo del tratamiento:</label>
-                            <input type="text" class="form-control" id="objetivo" name="objetivo">
+                            <label for="evoDiag">Diagnostico:</label>
+                            <input type="text" class="form-control" id="evoDiag" name="evoDiag" readonly>
                         </div>
 
-                        <div class="col-md-4">
-                            <label for="duracion">Duracion estimada del tratamiento:</label>
-                            <input type="text" class="form-control" id="duracion" name="duracion">
-                        </div>
 
                         <div class="col-12">
-                            <label for="frecuencia">Frecuencia de entrevista:</label>
+                            <label for="frecuencia">Evolucion Historia Clinica:</label>
                             <textarea class="form-control" id="frecuencia" name="frecuencia" rows="5"
                                 style="resize: vertical;"></textarea>
                         </div>

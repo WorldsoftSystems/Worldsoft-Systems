@@ -607,6 +607,7 @@ $(document).ready(function () {
                 $('#pracProfesional').append(new Option(item.nombreYapellido, item.id_prof));
                 $('#hc_prof').append(new Option(item.nombreYapellido, item.id_prof));
                 $('#medico_tratante').append(new Option(item.nombreYapellido, item.id_prof));
+                $('#evoProf').append(new Option(item.nombreYapellido, item.id_prof));
             });
         },
         error: function (error) {

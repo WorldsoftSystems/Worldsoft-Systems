@@ -10,10 +10,10 @@ if ($conn->connect_error) {
 }
 
 // Preparar la consulta para obtener los egresos del paciente específico
-$sql = "SELECT e.*,CONCAT(d.codigo, ' - ', d.descripcion) AS diag_full
+$sql = "SELECT e.*,prof.nombreYapellido AS profesional
         FROM evoluciones_amb e 
-        JOIN paciente p ON e.id_paciente=p.id 
-        LEFT JOIN diag d ON e.diag = d.id
+        JOIN paciente p ON e.id_paciente=p.id
+        JOIN profesional prof ON prof.id_prof = e.id_prof
         WHERE e.id_paciente = $idPaciente";
 $result = $conn->query($sql);
 
