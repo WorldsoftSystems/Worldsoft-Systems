@@ -473,8 +473,8 @@ function eliminarPaciente($id) {
     // Sanitizar el ID
     $id = intval($id);
 
-    // Preparar y ejecutar la consulta de eliminación
-    $stmt = $conn->prepare("DELETE FROM paciente WHERE cod_paci = ?");
+    // Preparar y ejecutar la consulta de eliminación BORRADO LOGICO
+    $stmt = $conn->prepare("UPDATE `paciente` SET `activo` = 0 WHERE cod_paci = ?");
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
@@ -514,7 +514,7 @@ function obtenerPacientesPorProfesional($cod_prof, $limite, $offset)
     $sql = "SELECT p.*, pr.apellido AS nom_prof 
         FROM paciente p 
         LEFT JOIN prof pr ON pr.cod_prof = p.cod_prof  
-        WHERE p.cod_prof = ? 
+        WHERE p.cod_prof = ? AND p.activo = 1
         ORDER BY p.fecha DESC 
         LIMIT ? OFFSET ?";
 

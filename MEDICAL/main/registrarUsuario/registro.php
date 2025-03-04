@@ -131,6 +131,21 @@ $conn->close();
                 </div>
             </div>
 
+        <?php elseif ($cliente == 'UP3058060423000'): ?>
+            <div class="columns-container">
+                <!-- Columna de botones INT -->
+                <div class="column">
+                    <h3>UGL 06</h3>
+                    <button class="btn btn-primary" id="pq0236_ugl_6.php">Generar TXT UGL_06</button>
+                </div>
+
+                <!-- Columna de botones AMB -->
+                <div class="column">
+                    <h3>UGL 10</h3>
+                    <button class="btn btn-primary" id="pq0236_ugl_10.php">Generar TXT UGL_10</button>
+                </div>
+            </div>
+
         <?php else: ?>
             <button class="btn btn-primary" id="generate_txt.php">Generar TXT</button>
             <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
@@ -477,6 +492,42 @@ $conn->close();
                 });
             }
             //FIN PQ0303
+
+            //PQ0236
+            const pq0236_ugl_6 = document.getElementById('pq0236_ugl_6.php');
+            if (pq0236_ugl_6) {
+                pq0236_ugl_6.addEventListener('click', function () {
+                    fetch('./gets/pq0236/pq0236_ugl_6.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+
+            const pq0236_ugl_10 = document.getElementById('pq0236_ugl_10.php');
+            if (pq0236_ugl_10) {
+                pq0236_ugl_10.addEventListener('click', function () {
+                    fetch('./gets/pq0236/pq0236_ugl_10.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            //FIN PQ0236
 
         });
 

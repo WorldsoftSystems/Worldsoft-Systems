@@ -31,14 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ugl_id = $_POST['ugl_paciente']; // Este es el ID o la descripción seleccionada
     $nro_de_tramite = $_POST['nro_de_tramite'];
 
-    // Agrega un registro en el log para verificar el valor recibido
-    error_log("Valor recibido en 'ugl_paciente': $ugl_id");
 
     // Verifica si el valor recibido es un número (ID) o una descripción (texto)
     if (is_numeric($ugl_id)) {
         // Si es numérico, asumimos que es el ID
         $ugl_id = (int) $ugl_id;
-        error_log("Interpretado como ID: $ugl_id");
     } else {
         // Si no es numérico, asumimos que es una descripción y hacemos la consulta para obtener el ID
         $sql_ugl = "SELECT id FROM codigo_ugl WHERE descripcion LIKE ?";
@@ -49,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_ugl->fetch();
         $stmt_ugl->close();
 
-        error_log("ID obtenido para la descripción '$ugl_id': " . ($ugl_id ? $ugl_id : 'No encontrado'));
     }
 
     // Verifica si se obtuvo el ID correctamente

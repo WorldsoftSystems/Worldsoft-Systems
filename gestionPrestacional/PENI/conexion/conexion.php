@@ -5,7 +5,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "test_dankvel";
+$dbname = "gestion_prestacional";
 
 
 
