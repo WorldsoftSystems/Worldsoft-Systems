@@ -238,7 +238,8 @@ if (isset($_GET['cerrar_sesion'])) {
   <!-- Cards Container -->
   <div class="container my-5">
     <div class="row row-cols-1 row-cols-md-3 g-3 justify-content-center" style="margin-top:-3rem;">
-      
+
+      <!-- 
       <div class="text-center">
         <button id="btnHablar" class="btn btn-primary">
           🎤 Hablar
@@ -246,7 +247,7 @@ if (isset($_GET['cerrar_sesion'])) {
       </div>
       <p id="resultado" class="mt-3 text-center"></p>
       <div id="resultContainer" class="position-relative"></div>
-
+      -->
       <!--PRIMERA CARD -->
       <div class="col d-flex justify-content-center">
         <a href="../pacientes/paciente.php">

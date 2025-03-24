@@ -567,7 +567,6 @@ $(document).ready(function () {
         success: function (data) {
             data.forEach(function (item) {
                 var optionText = item.codigo + ' - ' + item.descripcion;
-                $('#egreso_diag').append(new Option(optionText, item.id));
                 $('#evo_diag').append(new Option(optionText, item.id));
                 $('#evo_diag_int').append(new Option(optionText, item.id));
                 $('#paci_diag').append(new Option(optionText, item.id));
@@ -608,6 +607,7 @@ $(document).ready(function () {
                 $('#pracProfesional').append(new Option(item.nombreYapellido, item.id_prof));
                 $('#hc_prof').append(new Option(item.nombreYapellido, item.id_prof));
                 $('#medico_tratante').append(new Option(item.nombreYapellido, item.id_prof));
+                $('#evoProf').append(new Option(item.nombreYapellido, item.id_prof));
             });
         },
         error: function (error) {

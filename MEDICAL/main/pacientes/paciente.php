@@ -621,7 +621,8 @@ $conn->close();
                     <!-- Aquí se cargará el contenido del formulario de agregar práctica -->
                 </div>
                 <!-- Contenedor para el título rojo -->
-                <h5 id="noResultadosTitulo" class="text-danger text-center d-none">Paciente sin afiliacion en pami</h5>
+                <h5 id="avisoPaciente" class="text-danger text-center d-none">Paciente sin afiliacion en pami</h5>
+
                 <!-- Aquí se cargará el contenido del formulario -->
                 <div class="modal-body" id="pracModalBody">
                     <!-- Aquí se cargará el contenido del formulario -->

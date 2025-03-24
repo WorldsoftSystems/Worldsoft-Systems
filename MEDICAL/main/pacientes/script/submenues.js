@@ -19,6 +19,59 @@ function formatDate(dateString) {
 
 
 //EGRESO
+$(document).ready(function () {
+    $('#agregarEgresoModal').on('shown.bs.modal', function () {
+        var idPaciente = $('#egresoIdPaciente').val(); // Asegúrate de usar el campo correcto
+
+
+        var maxDiagId = null; // Variable para almacenar el diagnóstico más reciente
+
+        // 1️⃣ Obtener el diagnóstico más reciente
+        $.ajax({
+            url: './dato/get_max_diag.php',
+            type: 'GET',
+            data: { id_paciente: idPaciente },
+            dataType: 'json',
+            success: function (response) {
+                if (response && response.codigo) {  // Asegurar que estamos obteniendo el ID correcto
+
+                    maxDiagId = response.codigo; // Guardamos el ID del diagnóstico más reciente
+                }
+
+                // 2️⃣ Cargar todos los diagnósticos
+                $.ajax({
+                    url: './dato/get_diags.php',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        var select = $('#egreso_diag');
+                        select.empty(); // Vaciar opciones previas
+                        select.append(new Option("Seleccionar...", "")); // Opción por defecto
+
+                        data.forEach(function (item) {
+                            var optionText = item.codigo + ' - ' + item.descripcion;
+                            var newOption = new Option(optionText, item.id);
+
+                            // Si este diagnóstico es el más reciente, lo seleccionamos
+                            if (maxDiagId !== null && item.id == maxDiagId) {
+                                $(newOption).attr("selected", "selected");
+                            }
+
+                            select.append(newOption);
+                        });
+                    },
+                    error: function (error) {
+                        console.error("Error al obtener diagnósticos: ", error);
+                    }
+                });
+            },
+            error: function (error) {
+                console.error("Error al obtener diagnóstico más reciente: ", error);
+            }
+        });
+    });
+});
+
 
 // Función para cargar el modal de egreso y ocultar el formulario principal
 function loadEgresoModal() {
@@ -1982,6 +2035,79 @@ function actualizarFechaAdmision(idPaciente) {
 
 
 //PRACTICA
+document.getElementById('pracModal').addEventListener('show.bs.modal', function (event) {
+    // Obtener el ID del paciente
+    const idPaciente = document.getElementById('id').value;
+
+    // Realizar la consulta SQL mediante AJAX
+    fetch(`./dato/obtener_datos_api.php?id=${idPaciente}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Obra social recibida:", data.obra_social); // Verificar el valor en la consola
+
+            // Convertir obra_social a número
+            const obraSocial = Number(data.obra_social);
+
+            // Mantener parentesco como cadena para conservar el formato "00"
+            const parentesco = data.parentesco; // No usar Number aquí
+
+            // Verificar si el paciente tiene obra social 4
+            if (obraSocial === 4) {
+                const beneficio = data.benef;
+
+                // Realizar la solicitud fetch
+                fetch(`https://worldsoftsystems.com.ar/buscar?beneficio=${beneficio}&parentesco=${parentesco}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            // Si la respuesta no es exitosa, lanzar un error
+                            throw new Error(`Error ${response.status}: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const avisoPaciente = document.getElementById('avisoPaciente');
+                        if (avisoPaciente) {
+                            // Mostrar el mensaje si la API devuelve un error
+                            if (data.error) {
+                                avisoPaciente.classList.remove('d-none'); // Mostrar el mensaje
+                            } else {
+                                avisoPaciente.classList.add('d-none'); // Ocultar el mensaje
+                            }
+                        } else {
+                            console.error("Elemento avisoPaciente NO encontrado");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error en la solicitud fetch:", error);
+                        const avisoPaciente = document.getElementById('avisoPaciente');
+                        if (avisoPaciente) {
+                            avisoPaciente.classList.remove('d-none'); // Mostrar el mensaje en caso de error
+                        }
+                    });
+            } else {
+                const avisoPaciente = document.getElementById('avisoPaciente');
+                if (avisoPaciente) {
+                    avisoPaciente.classList.add('d-none'); // Ocultar el mensaje si la obra social no es 4
+                } else {
+                    console.error("Elemento avisoPaciente NO encontrado");
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+});
+
 // Función para cargar el modal de prácticas
 function loadPracticasModal() {
     const id = document.getElementById('id').value;
@@ -2500,9 +2626,9 @@ $(document).on('click', '.btn-pdf-evolucion', function () {
             // Tabla de datos
             doc.autoTable({
                 startY: 50,
-                head: [['Profesional','Frecuencia']],
+                head: [['Profesional', 'Frecuencia']],
                 body: [
-                    [   
+                    [
                         evo.profesional,
                         evo.frecuencia
                     ]
@@ -5167,3 +5293,6 @@ $(document).ready(function () {
 });
 
 //FIN ANTEDENTES PERSONALES
+
+
+

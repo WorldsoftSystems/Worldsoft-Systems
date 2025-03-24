@@ -212,7 +212,7 @@ if (isset($_GET['cerrar_sesion'])) {
       </div>
       <!--CARD -->
 
-      <?php if ($usuario !== "ivan") { ?>
+      <?php if ($usuario !== "profesionales") { ?>
         <!--SEGUNDA CARD -->
         <div class="col d-flex justify-content-center">
           <a href="../turnos/calendario.php">

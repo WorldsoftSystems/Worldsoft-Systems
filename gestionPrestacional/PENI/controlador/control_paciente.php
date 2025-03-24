@@ -99,7 +99,7 @@ function obtenerPacientesConFiltro($fecha_desde, $fecha_hasta, $profesional)
     global $conn;
 
     // Preparar la consulta SQL base para obtener pacientes
-    $sql = "SELECT * FROM paciente WHERE 1";
+    $sql = "SELECT * FROM paciente WHERE 1 AND activo = 1";
 
     // Aplicar filtro por fecha desde
     if (!empty($fecha_desde)) {
@@ -145,7 +145,7 @@ function obtenerPacientesConFiltroEstadisticas($fecha_desde, $fecha_hasta, $prof
     global $conn;
 
     // Preparar la consulta SQL base para obtener pacientes
-    $sql = "SELECT * FROM paciente WHERE 1";
+    $sql = "SELECT * FROM paciente WHERE 1 AND activo = 1";
 
     // Aplicar filtro por fecha desde
     if (!empty($fecha_desde)) {
@@ -196,7 +196,7 @@ function obtenerPacientesConFiltroParaPDF($fecha_desde, $fecha_hasta, $profesion
     global $conn;
 
     // Preparar la consulta SQL base para obtener pacientes
-    $sql = "SELECT * FROM paciente WHERE 1";
+    $sql = "SELECT * FROM paciente WHERE 1 AND activo = 1";
 
     // Aplicar filtro por fecha desde
     if (!empty($fecha_desde)) {
@@ -243,7 +243,7 @@ function obtenerTotalPacientesParaProfesional($profesional, $fecha_desde, $fecha
     global $conn;
 
     // Preparar la consulta SQL para obtener el total de pacientes para un profesional específico dentro del rango de fechas
-    $sql = "SELECT COUNT(*) AS total FROM paciente WHERE cod_prof = ?";
+    $sql = "SELECT COUNT(*) AS total FROM paciente WHERE cod_prof = ? AND activo = 1";
 
     // Agregar condiciones para el rango de fechas si están proporcionadas
     if (!empty($fecha_desde)) {

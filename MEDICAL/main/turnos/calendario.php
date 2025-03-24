@@ -290,6 +290,8 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                         Turnos
                     </button>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <!-- Contenedor para el título rojo -->
+                    <h5 id="avisoPaciente" class="text-danger text-center d-none">Paciente sin afiliacion en pami</h5>
                 </div>
                 <div class="modal-body">
                     <form id="editTurnoForm">

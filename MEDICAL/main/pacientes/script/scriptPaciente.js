@@ -566,7 +566,6 @@ $(document).ready(function () {
         success: function (data) {
             data.forEach(function (item) {
                 var optionText = item.codigo + ' - ' + item.descripcion;
-                $('#egreso_diag').append(new Option(optionText, item.id));
                 $('#evo_diag').append(new Option(optionText, item.id));
                 $('#evo_diag_int').append(new Option(optionText, item.id));
                 $('#paci_diag').append(new Option(optionText, item.id));

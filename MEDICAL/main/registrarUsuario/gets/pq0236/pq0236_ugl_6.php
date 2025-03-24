@@ -247,8 +247,6 @@ if ($result->num_rows > 0) {
         o.siglas,
         p.benef,
         p.parentesco,
-        orden.op,
-        orden.modalidad_op,
         boca.num_boca AS boca_atencion,
         prof.matricula_n,
         p.tipo_afiliado,
@@ -324,49 +322,39 @@ if ($result->num_rows > 0) {
     LEFT JOIN profesional prof ON prof.id_prof = p.id_prof 
     LEFT JOIN paci_diag d ON d.id_paciente = p.id
     LEFT JOIN diag d_id ON d_id.id = d.codigo
-    LEFT JOIN paci_op orden ON orden.id_paciente = p.id
     LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
     WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
-      AND p.obra_social = 4  AND p.ugl_paciente = 6
+      AND p.obra_social = 4 AND p.ugl_paciente = 6 
 )
 
-SELECT DISTINCT
-    nombre,
-    benef,
-    paciente_id,
-    tipo_afiliado,
-    matricula_n,
-    boca_atencion,
-    codigo,
-    fecha_pract,
-    fecha_egreso,
-    motivo_egreso,
-    hora_pract,
-    parentesco,
-    ingreso_modalidad,
-    -- Asignamos el op correctamente dependiendo de la modalidad
-    CASE
-        WHEN modalidad_op = modalidad_full THEN op
-        WHEN modalidad_op IS NOT NULL THEN 
-            -- Si modalidad_op tiene un valor, asignamos el op relacionado
-            (SELECT op 
-             FROM paci_op 
-             WHERE id_paciente = paciente_id 
-               AND modalidad_op = modalidad_full 
-             LIMIT 1)
-        ELSE NULL
-    END AS op
-    ,
-    modalidad_op,
-    sexo,
-    modalidad_full,
-    MAX(valid_date) AS ult_atencion,
-    diag,
-    cantidad
-FROM ValidRecords
-WHERE (modalidad_full != '11' AND modalidad_full != '12' AND modalidad_full != '13')
-GROUP BY nombre, benef, paciente_id, tipo_afiliado, matricula_n, boca_atencion, codigo, fecha_pract, fecha_egreso, motivo_egreso, hora_pract, parentesco, ingreso_modalidad, sexo, modalidad_full, diag
-ORDER BY nombre ASC;
+SELECT 
+    VR.nombre,
+    VR.benef,
+    VR.paciente_id,
+    VR.tipo_afiliado,
+    VR.matricula_n,
+    VR.boca_atencion,
+    VR.codigo,
+    VR.fecha_pract,
+    VR.fecha_egreso,
+    VR.motivo_egreso,
+    VR.hora_pract,
+    VR.parentesco,
+    VR.ingreso_modalidad,
+    pop.op,  -- Múltiples filas por cada OP
+    pop.modalidad_op,
+    VR.sexo,
+    VR.modalidad_full,
+    VR.valid_date AS ult_atencion,
+    VR.diag,
+    VR.cantidad
+FROM ValidRecords VR
+LEFT JOIN paci_op pop 
+    ON VR.paciente_id = pop.id_paciente 
+    AND VR.modalidad_full = pop.modalidad_op  
+    AND VR.fecha_pract BETWEEN pop.fecha AND pop.fecha_vencimiento
+WHERE (VR.modalidad_full != '11' AND VR.modalidad_full != '12' AND VR.modalidad_full != '13')
+ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC, VR.fecha_pract;  -- Ordenamos para ver las OP más recientes arriba
 ";
 
     $resultPaciAmbulatorioPsi = $conn->query($sqlAmbulatorioPsi);
@@ -486,30 +474,18 @@ ORDER BY nombre ASC;
 
     //INTERNACION
     // Consulta SQL para obtener los datos necesarios
-    $sqlInternacionPsi = "WITH UltimoDiag AS (
-    SELECT d.id_paciente, d_id.codigo AS diag
-    FROM paci_diag d
-    LEFT JOIN diag d_id ON d_id.id = d.codigo
-    WHERE d.fecha = (
-        SELECT MAX(d2.fecha)
-        FROM paci_diag d2
-        LEFT JOIN diag d_id2 ON d_id2.id = d2.codigo
-        WHERE d2.id_paciente = d.id_paciente
-    )
-    ), ValidRecords AS (
+    $sqlInternacionPsi = "WITH ValidRecords AS (
     SELECT
         p.id AS paciente_id,
         p.nombre,
         o.siglas,
         p.benef,
-        p.hora_admision,
         p.parentesco,
-        orden.op,
-        orden.modalidad_op,
         boca.num_boca AS boca_atencion,
-        p.nro_hist_int,
         prof.matricula_n,
         p.tipo_afiliado,
+        p.hora_admision,
+        p.nro_hist_int,
         (SELECT pm.fecha
                 FROM paci_modalidad pm
                 JOIN modalidad m ON m.id = pm.modalidad
@@ -534,9 +510,8 @@ ORDER BY nombre ASC;
         ) AS modalidad_full,
         pract.fecha AS fecha_pract,
         pract.hora AS hora_pract,
-        pract.profesional AS matricula_practica,
         act_pract.codigo,
-        (
+         (
             SELECT e.hora_egreso
             FROM egresos e
             WHERE e.id_paciente = p.id
@@ -576,10 +551,10 @@ ORDER BY nombre ASC;
                 SELECT pm.modalidad
                 FROM paci_modalidad pm
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha
+                AND pm.fecha <= pract.fecha 
                 ORDER BY pm.fecha DESC
                 LIMIT 1
-            ) 
+            )
             ORDER BY e.fecha_egreso DESC
             LIMIT 1
         ) AS motivo_egreso,
@@ -595,72 +570,45 @@ ORDER BY nombre ASC;
     LEFT JOIN obra_social o ON o.id = p.obra_social
     LEFT JOIN egresos e ON e.id_paciente = p.id
     LEFT JOIN modalidad m ON m.id = e.modalidad
-    LEFT JOIN profesional prof ON prof.id_prof = p.id_prof
+    LEFT JOIN profesional prof ON prof.id_prof = p.id_prof 
     LEFT JOIN paci_diag d ON d.id_paciente = p.id
-    LEFT JOIN UltimoDiag ON UltimoDiag.id_paciente = p.id  -- Usamos la CTE para obtener el último diagnóstico
     LEFT JOIN diag d_id ON d_id.id = d.codigo
-    LEFT JOIN paci_op orden ON orden.id_paciente = p.id
     LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
     WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
       AND p.obra_social = 4  AND p.ugl_paciente = 6
 )
 
-SELECT DISTINCT
-    nombre,
-    benef,
-    paciente_id,
-    tipo_afiliado,
-    hora_egreso,
-    hora_admision,
-    matricula_n,
-    boca_atencion,
-    codigo,
-    nro_hist_int,
-    fecha_pract,
-    matricula_practica,
-    fecha_egreso,
-    motivo_egreso,
-    hora_pract,
-    parentesco,
-    ingreso_modalidad,
-    -- Asignamos el op correctamente dependiendo de la modalidad
-    CASE
-        WHEN modalidad_op = modalidad_full THEN op
-        WHEN modalidad_op IS NOT NULL THEN 
-            -- Si modalidad_op tiene un valor, asignamos el op relacionado
-            (SELECT op 
-             FROM paci_op 
-             WHERE id_paciente = paciente_id 
-               AND modalidad_op = modalidad_full 
-             LIMIT 1)
-        ELSE NULL
-    END AS op,
-    modalidad_op,
-    sexo,
-    modalidad_full,
-    MAX(valid_date) AS ult_atencion,
-    diag,
-    cantidad
-FROM ValidRecords
-WHERE (modalidad_full = '11' OR modalidad_full = '12') 
-GROUP BY 
-    nombre, 
-    benef, 
-    paciente_id, 
-    tipo_afiliado, 
-    matricula_n, 
-    boca_atencion, 
-    codigo, 
-    fecha_pract, 
-    fecha_egreso, 
-    motivo_egreso, 
-    hora_pract, 
-    parentesco, 
-    ingreso_modalidad, 
-    sexo, 
-    modalidad_full, 
-    diag
-ORDER BY nombre ASC;
+SELECT 
+    VR.nombre,
+    VR.benef,
+    VR.paciente_id,
+    VR.tipo_afiliado,
+    VR.matricula_n,
+    VR.boca_atencion,
+    VR.hora_egreso,
+    VR.codigo,
+    VR.fecha_pract,
+    VR.fecha_egreso,
+    VR.motivo_egreso,
+    VR.hora_pract,
+    VR.parentesco,
+    VR.hora_admision,
+    VR.nro_hist_int,
+    VR.ingreso_modalidad,
+    pop.op,  -- Múltiples filas por cada OP
+    pop.modalidad_op,
+    VR.sexo,
+    VR.modalidad_full,
+    VR.valid_date AS ult_atencion,
+    VR.diag,
+    VR.cantidad
+FROM ValidRecords VR
+LEFT JOIN paci_op pop 
+    ON VR.paciente_id = pop.id_paciente 
+    AND VR.modalidad_full = pop.modalidad_op  
+    AND VR.fecha_pract BETWEEN pop.fecha AND pop.fecha_vencimiento
+WHERE (VR.modalidad_full = '11' OR VR.modalidad_full = '12')
+ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC, VR.fecha_pract;  -- Ordenamos para ver las OP más recientes arriba
 
 
 ";

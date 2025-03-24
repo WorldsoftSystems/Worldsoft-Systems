@@ -15,33 +15,54 @@ $actividad = $_POST['actividad'];
 $cant = $_POST['cant'];
 $fechas = json_decode($_POST['fechas'], true); // Decodificar el array JSON de fechas
 
-// Obtener la fecha de admisión del paciente
-$sqlAdmision = "SELECT admision FROM paciente WHERE id = ?";
+// Obtener la hora de admisión del paciente
+$sqlAdmision = "SELECT hora_admision FROM paciente WHERE id = ?";
 $stmtAdmision = $conn->prepare($sqlAdmision);
 $stmtAdmision->bind_param('i', $idPaciente);
 $stmtAdmision->execute();
-$stmtAdmision->bind_result($fechaAdmision);
+$stmtAdmision->bind_result($horaAdmision);
 $stmtAdmision->fetch();
 $stmtAdmision->close();
 
-// Formatear la fecha de admisión al formato argentino
-$fechaAdmisionArg = formatDateToArg($fechaAdmision);
+// Obtener la fecha más alta de `paci_modalidad`
+$sqlModalidad = "SELECT MAX(fecha) FROM paci_modalidad WHERE id_paciente = ?";
+$stmtModalidad = $conn->prepare($sqlModalidad);
+$stmtModalidad->bind_param('i', $idPaciente);
+$stmtModalidad->execute();
+$stmtModalidad->bind_result($fechaModalidad);
+$stmtModalidad->fetch();
+$stmtModalidad->close();
 
-$error = false; // Variable para controlar si hay un error
+// Formatear la fecha para mostrarla en mensajes
+$fechaModalidadArg = formatDateToArg($fechaModalidad);
+$error = false;
 
 foreach ($fechas as $fecha) {
-    if ($fecha < $fechaAdmision) {
+    // Validar que la fecha no sea anterior a la última fecha de `paci_modalidad`
+    if ($fecha < $fechaModalidad) {
         $error = true;
-        // Formatear las fechas al formato argentino
         $fechaPracticaArg = formatDateToArg($fecha);
         $response = array(
             'status' => 'error',
-            'message' => "La fecha de práctica ($fechaPracticaArg) no puede ser anterior a la fecha de admisión ($fechaAdmisionArg)."
+            'message' => "La fecha de práctica ($fechaPracticaArg) no puede ser anterior a la última fecha de modalidad registrada ($fechaModalidadArg)."
         );
         echo json_encode($response);
-        exit; // Salir del script si hay un error
+        exit;
+    }
+
+    // Si la práctica es el mismo día de la fecha de modalidad, validar la hora
+    if ($fecha == $fechaModalidad && $hora < $horaAdmision) {
+        $error = true;
+        $fechaPracticaArg = formatDateToArg($fecha);
+        $response = array(
+            'status' => 'error',
+            'message' => "La práctica en la fecha ($fechaPracticaArg) no puede ser antes de la hora de admisión ($horaAdmision)."
+        );
+        echo json_encode($response);
+        exit;
     }
 }
+
 
 if (!$error) {
     // Insertar prácticas si no hubo errores

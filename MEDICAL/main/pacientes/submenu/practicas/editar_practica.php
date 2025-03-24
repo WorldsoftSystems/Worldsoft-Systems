@@ -25,14 +25,66 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $actividad = $_POST['actividad'];
     $cant = $_POST['cant'];
 
-    $sql = "UPDATE practicas SET fecha = ?, hora = ?, profesional = ?, actividad = ?, cant = ? WHERE id = ?";
+    // Obtener id_paciente de la práctica que se está editando
+    $sqlGetPaciente = "SELECT id_paciente FROM practicas WHERE id = ?";
+    $stmtPaciente = $conn->prepare($sqlGetPaciente);
+    $stmtPaciente->bind_param("i", $id);
+    $stmtPaciente->execute();
+    $stmtPaciente->bind_result($idPaciente);
+    $stmtPaciente->fetch();
+    $stmtPaciente->close();
 
+    // Obtener la hora de admisión del paciente
+    $sqlAdmision = "SELECT hora_admision FROM paciente WHERE id = ?";
+    $stmtAdmision = $conn->prepare($sqlAdmision);
+    $stmtAdmision->bind_param("i", $idPaciente);
+    $stmtAdmision->execute();
+    $stmtAdmision->bind_result($horaAdmision);
+    $stmtAdmision->fetch();
+    $stmtAdmision->close();
+
+    // Obtener la última fecha de `paci_modalidad`
+    $sqlModalidad = "SELECT MAX(fecha) FROM paci_modalidad WHERE id_paciente = ?";
+    $stmtModalidad = $conn->prepare($sqlModalidad);
+    $stmtModalidad->bind_param("i", $idPaciente);
+    $stmtModalidad->execute();
+    $stmtModalidad->bind_result($fechaModalidad);
+    $stmtModalidad->fetch();
+    $stmtModalidad->close();
+
+    // Formatear la fecha para mostrarla en los mensajes
+    function formatDateToArg($date)
+    {
+        $dateObj = DateTime::createFromFormat('Y-m-d', $date);
+        return $dateObj ? $dateObj->format('d/m/Y') : $date;
+    }
+
+    $fechaModalidadArg = formatDateToArg($fecha);
+
+    // Validar que la nueva fecha no sea anterior a la última fecha de modalidad
+    if ($fecha < $fechaModalidad) {
+        $response['status'] = 'error';
+        $response['message'] = "La fecha de la práctica ($fechaModalidadArg) no puede ser anterior a la última fecha de modalidad registrada.";
+        echo json_encode($response);
+        exit;
+    }
+
+    // Si la nueva fecha es igual a la última fecha de modalidad, validar la hora
+    if ($fecha == $fechaModalidad && $hora < $horaAdmision) {
+        $response['status'] = 'error';
+        $response['message'] = "La hora de la práctica ($hora) no puede ser anterior a la hora de admisión ($horaAdmision) en la fecha seleccionada.";
+        echo json_encode($response);
+        exit;
+    }
+
+    // Si pasa las validaciones, actualizar la práctica
+    $sql = "UPDATE practicas SET fecha = ?, hora = ?, profesional = ?, actividad = ?, cant = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssiisi", $fecha, $hora, $profesional, $actividad, $cant, $id);
 
     if ($stmt->execute()) {
         $response['status'] = 'success';
-        $response['message'] = "Práctica actualizada correctamente";
+        $response['message'] = "Práctica actualizada correctamente.";
     } else {
         $response['status'] = 'error';
         $response['message'] = "Error al actualizar la práctica: " . $stmt->error;

@@ -613,6 +613,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+
 //completar selects de modal agregar paciente
 $(document).ready(function () {
 
@@ -1408,7 +1409,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var myModal = new bootstrap.Modal(document.getElementById('reportModal'));
         myModal.show();
     });
-    
+
 });
 
 
@@ -1556,7 +1557,80 @@ function generatePdf() {
         });
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('editTurnoModal').addEventListener('show.bs.modal', function (event) {
+        // Obtener el ID del paciente
+        const idPaciente = document.getElementById('paciente_id_edit').value;
+        
+        // Realizar la consulta SQL mediante AJAX
+        fetch(`../pacientes/dato/obtener_datos_api.php?id=${idPaciente}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Obra social recibida:", data.obra_social); // Verificar el valor en la consola
 
+                // Convertir obra_social a número
+                const obraSocial = Number(data.obra_social);
+
+                // Mantener parentesco como cadena para conservar el formato "00"
+                const parentesco = data.parentesco; // No usar Number aquí
+
+                // Verificar si el paciente tiene obra social 4
+                if (obraSocial === 4) {
+                    const beneficio = data.benef;
+
+                    // Realizar la solicitud fetch
+                    fetch(`https://worldsoftsystems.com.ar/buscar?beneficio=${beneficio}&parentesco=${parentesco}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                // Si la respuesta no es exitosa, lanzar un error
+                                throw new Error(`Error ${response.status}: ${response.statusText}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const avisoPaciente = document.getElementById('avisoPaciente');
+                            if (avisoPaciente) {
+                                // Mostrar el mensaje si la API devuelve un error
+                                if (data.error) {
+                                    avisoPaciente.classList.remove('d-none'); // Mostrar el mensaje
+                                } else {
+                                    avisoPaciente.classList.add('d-none'); // Ocultar el mensaje
+                                }
+                            } else {
+                                console.error("Elemento avisoPaciente NO encontrado");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error en la solicitud fetch:", error);
+                            const avisoPaciente = document.getElementById('avisoPaciente');
+                            if (avisoPaciente) {
+                                avisoPaciente.classList.remove('d-none'); // Mostrar el mensaje en caso de error
+                            }
+                        });
+                } else {
+                    const avisoPaciente = document.getElementById('avisoPaciente');
+                    if (avisoPaciente) {
+                        avisoPaciente.classList.add('d-none'); // Ocultar el mensaje si la obra social no es 4
+                    } else {
+                        console.error("Elemento avisoPaciente NO encontrado");
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+})
 
 
 

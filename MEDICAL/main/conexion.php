@@ -1,7 +1,19 @@
 <?php
+// Configurar el tiempo de vida de la sesión antes de iniciarla
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.gc_maxlifetime', 86400); // 24 horas en segundos
+    ini_set('session.cookie_lifetime', 86400); // 24 horas para la cookie de sesión
     session_start();
 }
+
+// Renovar la sesión si el usuario está activo
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 86400)) {
+    session_unset(); // Eliminar variables de sesión
+    session_destroy(); // Destruir sesión
+    header("Location: ./index.php");
+    exit;
+}
+$_SESSION['LAST_ACTIVITY'] = time(); // Actualizar el tiempo de la última actividad
 
 // Obtener el 'UP' desde la sesión o la URL
 $cliente = isset($_GET['up']) ? $_GET['up'] : (isset($_SESSION['up']) ? $_SESSION['up'] : null);
@@ -18,11 +30,11 @@ $config_comun = [
 
 // Bases de datos específicas por cliente
 $config_bases_datos = [
-    'prueba' => 'medica_pq0241_test_amb',
+    'prueba' => 'pq401',
     //'UP3063207857500'=> 'worldsof_medical_pq0241',
     //'UP30684529249' => 'worldsof_medical_pq2002',
     //'UP3068452924900' => 'worldsof_medical_pq2001',
-    'UP3069149922304' => 'medical_pq0303amb',
+    'UP3069149922304' => 'pq0303',
     //'UP3070014059400' => 'worldsof_medica_pq1605',
     //'UP3070779334800' => 'worldsof_medical_pq0328'
 ];
