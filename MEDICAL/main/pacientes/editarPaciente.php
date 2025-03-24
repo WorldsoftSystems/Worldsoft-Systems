@@ -32,9 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ugl_id = $_POST['ugl_paciente']; // Este es el ID o la descripción seleccionada
     $nro_de_tramite = $_POST['nro_de_tramite'];
 
-    // Agrega un registro en el log para verificar el valor recibido
-    error_log("Valor recibido en 'ugl_paciente': $ugl_id");
-
     // Verifica si el valor recibido es un número (ID) o una descripción (texto)
     if (is_numeric($ugl_id)) {
         // Si es numérico, asumimos que es el ID

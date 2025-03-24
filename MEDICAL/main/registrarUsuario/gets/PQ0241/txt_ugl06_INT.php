@@ -340,7 +340,15 @@ if ($result->num_rows > 0) {
     LEFT JOIN egresos e ON e.id_paciente = p.id
     LEFT JOIN modalidad m ON m.id = e.modalidad
     LEFT JOIN profesional prof ON prof.id_prof = p.id_prof 
-    LEFT JOIN paci_diag d ON d.id_paciente = p.id
+    LEFT JOIN (
+    SELECT d1.*
+    FROM paci_diag d1
+    WHERE d1.fecha = (
+        SELECT MAX(d2.fecha)
+        FROM paci_diag d2
+        WHERE d2.id_paciente = d1.id_paciente
+    )
+    ) d ON d.id_paciente = p.id
     LEFT JOIN diag d_id ON d_id.id = d.codigo
     LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
     WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
