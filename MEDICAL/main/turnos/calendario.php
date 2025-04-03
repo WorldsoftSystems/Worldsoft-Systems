@@ -263,6 +263,7 @@ $cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
                                 <th class="clickable-th">Atendido</th>
                                 <th class="clickable-th">Observaciones</th>
                                 <th class="clickable-th">Teléfono</th>
+                                <th class="clickable-th">Num. HC</th>
                             </tr>
                         </thead>
                         <tbody id="schedule-body">

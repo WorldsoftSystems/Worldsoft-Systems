@@ -629,6 +629,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
         // Inicializamos la variable antes del bucle
         $current_paciente_id = null;
         $current_modalidad = null;  // Inicializar la modalidad como null
+        $current_op = null; // NUEVO
         $contenido_practicas = '';
 
         // Itera sobre cada paciente
@@ -687,7 +688,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             $hora_practica = date('H:i', strtotime($hora));
             $hora_admision = date('H:i', strtotime($hora_admision));
             // Si es un nuevo paciente, imprime los datos anteriores y comienza un nuevo bloque
-            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full']) {
+            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full'] ||  $current_op !== $row['op']) {
                 // Si ya tenemos datos de un paciente anterior, imprimimos el bloque "FIN INTERNACIONPSI"
                 if ($current_paciente_id !== null) {
                     // Añade el bloque de prácticas acumulado
@@ -734,6 +735,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
                 $contenido_practicas = '';
                 $current_paciente_id = $id_paciente;
                 $current_modalidad = $modalidad;
+                $current_op = $row['op']; // NUEVO
             }
 
             // Acumula las prácticas de este paciente

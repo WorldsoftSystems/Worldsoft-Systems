@@ -12,7 +12,14 @@ if ($conn->connect_error) {
 
 // Consulta SQL: incluir filtro para `id_prof` solo si no está vacío
 $sql = "SELECT t.*, 
-               CONCAT(paci.nombre, ' - Afiliado:', paci.benef, '/', paci.parentesco, ' - ', os.siglas, ' - Tel:', COALESCE(paci.telefono, 'Sin teléfono')) AS nombre_paciente,
+               CONCAT(
+               paci.nombre, 
+               ' - Afiliado: ', paci.benef, '/', paci.parentesco, 
+               ' - ', os.siglas, 
+               ' - Tel: ', COALESCE(paci.telefono, 'Sin teléfono'),
+               ' - HC Amb: ', COALESCE(paci.nro_hist_amb, 'N/D'),
+               ' / Int: ', COALESCE(paci.nro_hist_int, 'N/D')
+               ) AS nombre_paciente,
                CONCAT(a.codigo, ' - ', a.descripcion) AS motivo_full,
                p.nombreYapellido AS nom_prof
         FROM turnos t
@@ -20,7 +27,8 @@ $sql = "SELECT t.*,
         LEFT JOIN actividades a ON a.id = t.motivo
         LEFT JOIN profesional p ON p.id_prof = t.id_prof
         LEFT JOIN obra_social os ON os.id = paci.obra_social
-        WHERE t.fecha BETWEEN ? AND ?";
+WHERE t.fecha BETWEEN ? AND ?
+";
 
 // Agregar filtro de profesional solo si `id_prof` no está vacío
 if ($id_prof !== '') {

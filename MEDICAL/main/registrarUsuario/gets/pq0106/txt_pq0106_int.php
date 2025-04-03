@@ -60,7 +60,7 @@ if ($result->num_rows > 0) {
 
     // Primera línea dinámica
     $linea1 = "CABECERA\n";
-    $linea2 = "30-63207857-5;;$fechaActual;$periodo;$inst;2;UP30632078575N11;70723\n";
+    $linea2 = "30-60909879-8;;$fechaActual;$periodo;$inst;2;UP3060909879800;ungn3\n";
     // Tercera línea con el texto 'PROFESIONAL'
     $linea3 = "PROFESIONAL\n";
     // Contenido inicial del archivo
@@ -165,7 +165,7 @@ if ($result->num_rows > 0) {
                  FROM paciente p
                  LEFT JOIN practicas practs ON p.id = practs.id_paciente
                  LEFT JOIN actividades act ON act.id = practs.actividad
-                 WHERE  (practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin') AND p.obra_social = 4 AND p.ugl_paciente = 6 AND act.modalidad IN (11,12)
+                 WHERE  (practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin') AND p.obra_social = 4 AND act.modalidad IN (11,12)
                  ";
     $resultBenef = $conn->query($sqlBenefs);
 
@@ -203,7 +203,7 @@ if ($result->num_rows > 0) {
                  FROM paciente p
                  LEFT JOIN practicas practs ON p.id = practs.id_paciente
                  LEFT JOIN actividades act ON act.id = practs.actividad
-                 WHERE  practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin' AND p.obra_social = 4 AND p.ugl_paciente = 6 AND act.modalidad IN (11,12)
+                 WHERE  (practs.fecha BETWEEN '$fechaInicio' AND '$fechaFin') AND p.obra_social = 4 AND act.modalidad IN (11,12)
                  ";
     $resultPaci = $conn->query($sqlPacis);
 
@@ -240,6 +240,7 @@ if ($result->num_rows > 0) {
     }
 
     $contenido .= "PRESTACIONES\n";
+
 
     //INTERNACION
     // Consulta SQL para obtener los datos necesarios
@@ -352,7 +353,7 @@ if ($result->num_rows > 0) {
     LEFT JOIN diag d_id ON d_id.id = d.codigo
     LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
     WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
-      AND p.obra_social = 4  AND p.ugl_paciente = 6
+      AND p.obra_social = 4  
 )
 
 SELECT 
@@ -525,7 +526,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
 
     // Generar la respuesta JSON con el nombre del archivo y el contenido
     $response = array(
-        'filename' => $c_interno . "_06_INT_WSS.txt",  // Nombre dinámico del archivo
+        'filename' => $c_interno . "_INT_.txt",  // Nombre dinámico del archivo
         'content' => $contenido
     );
 

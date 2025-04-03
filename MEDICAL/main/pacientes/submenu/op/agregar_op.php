@@ -9,6 +9,12 @@ $op = $_POST['op'];
 $cant = $_POST['op_cant'];
 $modalidad_op = $_POST['modalidad_op'];
 
+if (!preg_match('/^\d{10}$/', $op)) {
+    echo "Error: El número de orden debe tener exactamente 10 dígitos.";
+    exit;
+}
+
+
 // Calcular la fecha de vencimiento en base a la cantidad
 if ($cant == 3) {
     $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 90 days'));
@@ -31,7 +37,7 @@ $sql = "INSERT INTO paci_op (id_paciente, fecha, op, cant, modalidad_op, fecha_v
         VALUES (?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('isiiis', $idPaciente, $fecha, $op, $cant, $modalidad_op, $fecha_vencimiento);
+$stmt->bind_param('issiis', $idPaciente, $fecha, $op, $cant, $modalidad_op, $fecha_vencimiento);
 
 if ($stmt->execute()) {
     echo "op agregada correctamente.";

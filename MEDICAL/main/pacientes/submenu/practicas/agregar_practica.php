@@ -2,7 +2,8 @@
 require_once "../../../conexion.php";
 
 // Función para formatear fechas en formato DD/MM/YYYY
-function formatDateToArg($date) {
+function formatDateToArg($date)
+{
     $dateObj = DateTime::createFromFormat('Y-m-d', $date);
     return $dateObj ? $dateObj->format('d/m/Y') : $date;
 }
@@ -15,14 +16,15 @@ $actividad = $_POST['actividad'];
 $cant = $_POST['cant'];
 $fechas = json_decode($_POST['fechas'], true); // Decodificar el array JSON de fechas
 
-// Obtener la hora de admisión del paciente
-$sqlAdmision = "SELECT hora_admision FROM paciente WHERE id = ?";
-$stmtAdmision = $conn->prepare($sqlAdmision);
-$stmtAdmision->bind_param('i', $idPaciente);
-$stmtAdmision->execute();
-$stmtAdmision->bind_result($horaAdmision);
-$stmtAdmision->fetch();
-$stmtAdmision->close();
+// Validar que la cantidad no sea 0
+if ($cant <= 0) {
+    $response = array(
+        'status' => 'error',
+        'message' => "La cantidad de prácticas debe ser mayor a 0."
+    );
+    echo json_encode($response);
+    exit; // Salir del script si la cantidad no es válida
+}
 
 // Obtener la fecha más alta de `paci_modalidad`
 $sqlModalidad = "SELECT MAX(fecha) FROM paci_modalidad WHERE id_paciente = ?";
@@ -49,18 +51,6 @@ foreach ($fechas as $fecha) {
         echo json_encode($response);
         exit;
     }
-
-    // Si la práctica es el mismo día de la fecha de modalidad, validar la hora
-    if ($fecha == $fechaModalidad && $hora < $horaAdmision) {
-        $error = true;
-        $fechaPracticaArg = formatDateToArg($fecha);
-        $response = array(
-            'status' => 'error',
-            'message' => "La práctica en la fecha ($fechaPracticaArg) no puede ser antes de la hora de admisión ($horaAdmision)."
-        );
-        echo json_encode($response);
-        exit;
-    }
 }
 
 
@@ -68,7 +58,7 @@ if (!$error) {
     // Insertar prácticas si no hubo errores
     $sql = "INSERT INTO practicas (id_paciente, fecha, hora, profesional, actividad, cant)
             VALUES (?, ?, ?, ?, ?, ?)";
-    
+
     $stmt = $conn->prepare($sql);
 
     foreach ($fechas as $fecha) {

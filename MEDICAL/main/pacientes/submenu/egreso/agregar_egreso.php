@@ -17,7 +17,11 @@ if ($conn->connect_error) {
 }
 
 // Obtener la fecha máxima de las prácticas del paciente
-$sqlMaxFecha = "SELECT MAX(fecha) AS max_fecha, hora AS max_hora FROM practicas WHERE id_paciente = ?";
+$sqlMaxFecha = "SELECT fecha AS max_fecha, hora AS max_hora 
+                FROM practicas 
+                WHERE id_paciente = ? 
+                ORDER BY fecha DESC, hora DESC 
+                LIMIT 1";
 $stmtMaxFecha = $conn->prepare($sqlMaxFecha);
 $stmtMaxFecha->bind_param('i', $idPaciente);
 $stmtMaxFecha->execute();

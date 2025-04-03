@@ -25,6 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $actividad = $_POST['actividad'];
     $cant = $_POST['cant'];
 
+    // Validar que la cantidad no sea 0
+    if ($cant <= 0) {
+        $response = array(
+            'status' => 'error',
+            'message' => "La cantidad de prácticas debe ser mayor a 0."
+        );
+        echo json_encode($response);
+        exit; // Salir del script si la cantidad no es válida
+    }
+
     // Obtener id_paciente de la práctica que se está editando
     $sqlGetPaciente = "SELECT id_paciente FROM practicas WHERE id = ?";
     $stmtPaciente = $conn->prepare($sqlGetPaciente);

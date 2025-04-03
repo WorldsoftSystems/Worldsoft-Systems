@@ -146,6 +146,21 @@ $conn->close();
                 </div>
             </div>
 
+        <?php elseif ($cliente == 'UP3060909879800'): ?>
+            <div class="columns-container">
+                <!-- Columna de botones INT -->
+                <div class="column">
+                    <h3>INT</h3>
+                    <button class="btn btn-primary" id="txt_pq0106_int.php">Generar TXT INT</button>
+                </div>
+
+                <!-- Columna de botones AMB -->
+                <div class="column">
+                    <h3>AMB</h3>
+                    <button class="btn btn-primary" id="txt_pq0106_amb.php">Generar TXT AMB</button>
+                </div>
+            </div>
+
         <?php else: ?>
             <button class="btn btn-primary" id="generate_txt.php">Generar TXT</button>
             <button class="btn btn-success" data-toggle="modal" data-target="#registroModal">Registrar Usuarios</button>
@@ -528,6 +543,42 @@ $conn->close();
                 });
             }
             //FIN PQ0236
+
+            //pq0106
+            const txt_pq0106_amb = document.getElementById('txt_pq0106_amb.php');
+            if (txt_pq0106_amb) {
+                txt_pq0106_amb.addEventListener('click', function () {
+                    fetch('./gets/pq0106/txt_pq0106_amb.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+
+            const txt_pq0106_int = document.getElementById('txt_pq0106_int.php');
+            if (txt_pq0106_int) {
+                txt_pq0106_int.addEventListener('click', function () {
+                    fetch('./gets/pq0106/txt_pq0106_int.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            const element = document.createElement('a');
+                            const file = new Blob([data.content], { type: 'text/plain' });
+                            element.href = URL.createObjectURL(file);
+                            element.download = data.filename;
+                            document.body.appendChild(element);
+                            element.click();
+                            document.body.removeChild(element);
+                        });
+                });
+            }
+            //FIN pq0106
 
         });
 

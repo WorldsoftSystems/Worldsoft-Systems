@@ -3199,11 +3199,11 @@ $(document).ready(function () {
             type: 'POST',
             data: formData,
             success: function (response) {
+                // Si la respuesta es un mensaje de éxito o error, la mostramos
+                alert(response);
                 const idPaciente = $('#id').val();
                 cargarListaOrdenes(idPaciente);
                 $('#agregarOrdenModal').modal('hide');
-
-                console.log('Respuesta del servidor:', response);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log('Error en guardar práctica:', textStatus, errorThrown);

@@ -145,6 +145,19 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
       </div>
 
       <div class="col d-flex justify-content-center">
+        <a href="#" id="openOrdenMesModalLink">
+          <div class="card h-100">
+            <div class="first-content">
+              <img src="../img/reportes/modalidad.png" alt="Ordenes de Prestacion mes">
+            </div>
+            <div class="third-content">
+              <h3 class="mt-3">Ordenes de Prestacion del Mes</h3>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col d-flex justify-content-center">
         <a href="#" id="openModalLink">
           <div class="card h-100">
             <div class="first-content">
@@ -443,6 +456,36 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
           <button type="button" class="btn btn-primary" id="generateOpBtn">Generar PDF</button>
           <button type="button" class="btn btn-success" id="generateOpExcelBtn">Generar Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- FIN-->
+
+  <!--OP-->
+  <div class="modal fade" id="openOrdenMesModal" tabindex="-1" aria-labelledby="opMesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="opMesModalLabel">Ordenes de prestacion del mes</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="planForm">
+            <div class="mb-3">
+              <label for="fechaDesdeOpMes" class="form-label">Fecha Desde</label>
+              <input type="date" class="form-control" id="fechaDesdeOpMes" required>
+            </div>
+            <div class="mb-3">
+              <label for="fechaHastaOpMes" class="form-label">Fecha Hasta</label>
+              <input type="date" class="form-control" id="fechaHastaOpMes" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" id="generateOpMesBtn">Generar PDF</button>
+          <button type="button" class="btn btn-success" id="generateOpMesExcelBtn">Generar Excel</button>
         </div>
       </div>
     </div>

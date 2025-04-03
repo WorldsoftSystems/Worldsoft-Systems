@@ -298,141 +298,76 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
 
-                // Crear un array con las horas de las ausencias y los motivos
-                const ausenciasHoras = data.ausencias.map(aus => {
-                    const ausenciaStart = new Date(aus.fecha_inicio);
+                const turnosPorHora = {};
+                const sobreturnos = [];
 
-                    // Crear un objeto Date para la fecha de fin y establecer la hora a las 23:59:59
-                    const ausenciaEnd = new Date(aus.fecha_fin);
-                    // Agregar un día a la fecha
-                    ausenciaEnd.setDate(ausenciaEnd.getDate() + 1);
-                    return {
-                        start: ausenciaStart,
-                        end: ausenciaEnd,
-                        motivo: aus.motivo // Obtener el motivo de la ausencia
-                    };
+                // Separar turnos regulares y sobreturnos
+                data.turnos.forEach(turno => {
+                    const horaClave = turno.hora.substring(0, 5);
+                    if (intervalos.includes(horaClave)) {
+                        if (!turnosPorHora[horaClave]) {
+                            turnosPorHora[horaClave] = [];
+                        }
+                        turnosPorHora[horaClave].push(turno);
+                    } else {
+                        sobreturnos.push(turno);
+                    }
                 });
 
+                let lastRowIndex = 0;
 
                 intervalos.forEach(intervalo => {
-                    const row = scheduleBody.insertRow();
+                    const row = scheduleBody.insertRow(lastRowIndex++);
                     row.insertCell(0).innerText = intervalo;
 
-                    for (let i = 1; i < 7; i++) {
+                    for (let i = 1; i < 8; i++) {
                         row.insertCell(i).innerText = '';
+                        row.cells[i].classList.add('empty-cell');
+
+                        // Se asegura que el clic en celdas vacías solo abra el modal de crear turno
+                        row.cells[i].addEventListener('click', (e) => {
+                            if (!row.cells[i].classList.contains('editable-cell')) {
+                                e.stopPropagation();
+                                openCreateModal(intervalo, selectedDate);
+                            }
+                        });
                     }
 
-                    const turno = data.turnos.find(turno => turno.hora.startsWith(intervalo));
-                    // Comprobar si el intervalo está dentro de una ausencia
-                    const isAbsent = ausenciasHoras.some(ausencia => {
-                        const intervaloHora = new Date(`${selectedDate}T${intervalo}:00`);
+                    const turnosEnIntervalo = turnosPorHora[intervalo] || [];
+                    let primeraFila = true;
 
-                        // Compara correctamente el intervalo con la ausencia
-                        // Asegúrate de que el final de la ausencia se considere hasta el último segundo del 29
-                        return intervaloHora >= ausencia.start && intervaloHora <= ausencia.end;
+                    turnosEnIntervalo.forEach(turno => {
+                        if (!primeraFila) {
+                            const extraRow = scheduleBody.insertRow(lastRowIndex++);
+                            extraRow.insertCell(0).innerText = '';
+                            for (let i = 1; i < 8; i++) {
+                                extraRow.insertCell(i).innerText = '';
+                            }
+                            fillTurnoRow(extraRow, turno);
+                        } else {
+                            fillTurnoRow(row, turno);
+                            primeraFila = false;
+                        }
                     });
 
-                    // Si es una ausencia, marcar la celda con el motivo
-                    if (isAbsent) {
-                        // Buscar el motivo de la ausencia para ese intervalo
-                        const ausencia = ausenciasHoras.find(ausencia => {
-                            const intervaloHora = new Date(`${selectedDate}T${intervalo}:00`);
+                    // Insertar sobreturnos dentro de su franja horaria
+                    const sobreturnosEnIntervalo = sobreturnos.filter(sob => sob.hora >= intervalo && (intervalos[intervalos.indexOf(intervalo) + 1] ? sob.hora < intervalos[intervalos.indexOf(intervalo) + 1] : true));
 
-                            // Compara correctamente el intervalo con la ausencia
-                            return intervaloHora >= ausencia.start && intervaloHora <= ausencia.end;
-                        });
-
-                        row.cells[1].innerText = ausencia ? ausencia.motivo : 'Motivo desconocido';
-                        row.cells[1].style.backgroundColor = '#d3d3d3'; // Gris para ausente
-                        row.cells[1].classList.add('absent-cell');
-                        for (let i = 2; i < 7; i++) {
-                            row.cells[i].style.backgroundColor = '#d3d3d3'; // Resto de las celdas también en gris
-                        }
-                    } else {
-                        if (turno) {
-                            row.cells[1].innerText = turno.nombre_paciente;
-                            row.cells[1].classList.add('editable-cell');
-                            row.cells[1].addEventListener('click', () => openEditModal(turno));
-                            row.cells[2].innerText = turno.motivo_full;
-                            row.cells[2].addEventListener('click', () => openEditModal(turno));
-                            row.cells[3].innerText = turno.llego;
-                            row.cells[3].addEventListener('click', () => openEditModal(turno));
-                            row.cells[4].innerText = turno.atendido;
-                            row.cells[4].addEventListener('click', () => openEditModal(turno));
-                            row.cells[5].innerText = turno.observaciones;
-                            row.cells[5].title = turno.observaciones;
-                            row.cells[5].addEventListener('click', () => openEditModal(turno));
-                            row.cells[6].innerText = turno.telefono || '';
-                            row.cells[6].title = turno.telefono || '';
-                            row.cells[6].addEventListener('click', () => openEditModal(turno));
-
-                            // Establecer colores en base a la llegada y atención
-                            if (turno.llego === 'SI' && turno.atendido === 'SI') {
-                                for (let i = 0; i < 7; i++) {
-                                    row.cells[i].style.backgroundColor = '#7abaf5'; // Color si llegó y fue atendido
-                                }
-                            } else if (turno.llego === 'SI') {
-                                for (let i = 0; i < 7; i++) {
-                                    row.cells[i].style.backgroundColor = '#ff8d30'; // Color si llegó pero no fue atendido
-                                }
-                            }
-                        } else {
-                            // Si no hay turno en el intervalo, marcar la celda como vacía y habilitarla para agregar turno
-                            for (let i = 1; i < 7; i++) {
-                                row.cells[i].classList.add('empty-cell');
-                                row.cells[i].addEventListener('click', () => openCreateModal(intervalo, selectedDate));
-                            }
-                        }
-                    }
-                });
-
-                // Añadir Sobreturno al Final
-                const sobreturnos = data.turnos.filter(turno => !intervalos.some(intervalo => turno.hora.startsWith(intervalo)));
-                sobreturnos.forEach(sobreturno => {
-                    const sobreturnoRow = scheduleBody.insertRow();
-                    sobreturnoRow.classList.add('sobreturno-cell'); // Estilo especial para sobreturno
-                    sobreturnoRow.insertCell(0).innerText = `Sobreturno: ${sobreturno.hora}`;
-
-                    for (let i = 1; i < 7; i++) {
-                        sobreturnoRow.insertCell(i).innerText = '';
-                    }
-
-                    sobreturnoRow.cells[1].innerText = sobreturno.nombre_paciente;
-                    sobreturnoRow.cells[1].addEventListener('click', () => openEditModal(sobreturno));
-                    sobreturnoRow.cells[2].innerText = sobreturno.motivo_full;
-                    sobreturnoRow.cells[2].addEventListener('click', () => openEditModal(sobreturno));
-                    sobreturnoRow.cells[3].innerText = sobreturno.llego;
-                    sobreturnoRow.cells[3].addEventListener('click', () => openEditModal(sobreturno));
-                    sobreturnoRow.cells[4].innerText = sobreturno.atendido;
-                    sobreturnoRow.cells[4].addEventListener('click', () => openEditModal(sobreturno));
-                    sobreturnoRow.cells[5].innerText = sobreturno.observaciones;
-                    sobreturnoRow.cells[5].title = sobreturno.observaciones;
-                    sobreturnoRow.cells[5].addEventListener('click', () => openEditModal(sobreturno));
-                    sobreturnoRow.cells[6].innerText = sobreturno.telefono;
-                    sobreturnoRow.cells[6].title = sobreturno.telefono;
-                    sobreturnoRow.cells[6].addEventListener('click', () => openEditModal(sobreturno));
-
-                    // Lógica de colores para los sobreturnos
-                    if (sobreturno.llego === 'SI' && sobreturno.atendido === 'SI') {
-                        for (let i = 0; i < 7; i++) {
-                            sobreturnoRow.cells[i].style.backgroundColor = '#7abaf5'; // Color si llegó y fue atendido
-                        }
-                    } else if (sobreturno.llego === 'SI') {
-                        for (let i = 0; i < 7; i++) {
-                            sobreturnoRow.cells[i].style.backgroundColor = '#ff8d30'; // Color si llegó pero no fue atendido
-                        }
-                    }
+                    sobreturnosEnIntervalo.forEach(sobreturno => {
+                        const sobreturnoRow = scheduleBody.insertRow(lastRowIndex++);
+                        insertSobreturnoRow(sobreturnoRow, sobreturno);
+                    });
                 });
 
                 // Crear la fila con el botón para añadir sobreturno
                 const addSobreturnoRow = scheduleBody.insertRow();
                 const addSobreturnoCell = addSobreturnoRow.insertCell(0);
-                addSobreturnoCell.colSpan = 7;
+                addSobreturnoCell.colSpan = 8;
                 addSobreturnoCell.style.textAlign = 'center';
 
                 const addSobreturnoButton = document.createElement('button');
                 addSobreturnoButton.innerText = 'Agregar Sobreturno';
-                addSobreturnoButton.classList.add('btn', 'btn-custom'); // Agregar clases de estilo
+                addSobreturnoButton.classList.add('btn', 'btn-custom');
                 addSobreturnoButton.addEventListener('click', () => openCreateModal(null, selectedDate));
 
                 addSobreturnoCell.appendChild(addSobreturnoButton);
@@ -440,6 +375,72 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error al cargar el horario:', error));
     }
 
+    function insertSobreturnoRow(row, sobreturno) {
+        row.insertCell(0).innerText = `Sobreturno: ${sobreturno.hora}`;
+        for (let j = 1; j < 8; j++) {
+            row.insertCell(j).innerText = '';
+        }
+        fillTurnoRow(row, sobreturno);
+        row.classList.add('sobreturno-cell'); // Estilo especial para sobreturno
+    }
+
+    function fillTurnoRow(row, turno) {
+        row.cells[1].innerText = turno.nombre_paciente;
+        row.cells[1].classList.add('editable-cell');
+        row.cells[1].addEventListener('click', (e) => {
+            e.stopPropagation(); // Evita abrir modal de creación al hacer clic en turno
+            openEditModal(turno);
+        });
+
+        row.cells[2].innerText = turno.motivo_full;
+        row.cells[2].addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEditModal(turno);
+        });
+
+        row.cells[3].innerText = turno.llego;
+        row.cells[3].addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEditModal(turno);
+        });
+
+        row.cells[4].innerText = turno.atendido;
+        row.cells[4].addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEditModal(turno);
+        });
+
+        row.cells[5].innerText = turno.observaciones;
+        row.cells[5].title = turno.observaciones;
+        row.cells[5].addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEditModal(turno);
+        });
+
+        row.cells[6].innerText = turno.telefono || '';
+        row.cells[6].title = turno.telefono || '';
+        row.cells[6].addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEditModal(turno);
+        });
+
+        // NUEVO CAMPO: N HC
+        row.cells[7].innerText = turno.nro_hc || '';
+        row.cells[7].addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEditModal(turno);
+        });
+
+        if (turno.llego === 'SI' && turno.atendido === 'SI') {
+            for (let i = 0; i < 8; i++) {
+                row.cells[i].style.backgroundColor = '#7abaf5';
+            }
+        } else if (turno.llego === 'SI') {
+            for (let i = 0; i < 8; i++) {
+                row.cells[i].style.backgroundColor = '#ff8d30';
+            }
+        }
+    }
 
 
     profesionalSelect.addEventListener('change', () => {
@@ -1022,7 +1023,16 @@ document.addEventListener('DOMContentLoaded', function () {
                             1: { cellWidth: 170 },
                             2: { cellWidth: 25 },
                             3: { cellWidth: 75 },
-                        }
+                        },
+                        // 👇 Agregamos esta parte
+                        foot: [[
+                            {
+                                content: `Total turnos para ${profesional}: ${turnosPorProfesional[profesional].length}`,
+                                colSpan: 4,
+                                styles: { halign: 'right', fontStyle: 'bold' }
+                            }
+                        ]]
+
                     });
                 });
 
@@ -1561,7 +1571,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('editTurnoModal').addEventListener('show.bs.modal', function (event) {
         // Obtener el ID del paciente
         const idPaciente = document.getElementById('paciente_id_edit').value;
-        
+
         // Realizar la consulta SQL mediante AJAX
         fetch(`../pacientes/dato/obtener_datos_api.php?id=${idPaciente}`, {
             method: "GET",

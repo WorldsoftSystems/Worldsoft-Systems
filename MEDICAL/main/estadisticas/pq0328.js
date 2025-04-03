@@ -58,6 +58,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const generateOpBtn = document.getElementById('generateOpBtn');
     const generateOpExcelBtn = document.getElementById('generateOpExcelBtn');
 
+    const openOpMesModalLink = document.getElementById('openOrdenMesModalLink');
+    const generateOpMesBtn = document.getElementById('generateOpMesBtn');
+    const generateOpMesExcelBtn = document.getElementById('generateOpMesExcelBtn');
+
     const openPacientesPrestacionesModalLink = document.getElementById('openPacientesPrestacionesModalLink');
     const generatePacientesPrestacionesBtn = document.getElementById('generatePacientesPrestacionesBtn');
     const generatePacientesPrestacionesExcelBtn = document.getElementById('generatePacientesPrestacionesExcelBtn');
@@ -192,6 +196,30 @@ document.addEventListener('DOMContentLoaded', function () {
             const fechaDesde = document.getElementById('fechaDesdeOp').value;
             const fechaHasta = document.getElementById('fechaHastaOp').value;
             generateOpExcel(fechaDesde, fechaHasta);
+        });
+    }
+
+    if (openOpMesModalLink) {
+        openOpMesModalLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            const modal = new bootstrap.Modal(document.getElementById('openOrdenMesModal'));
+            modal.show();
+        });
+    }
+
+    if (generateOpMesBtn) {
+        generateOpMesBtn.addEventListener('click', function () {
+            const fechaDesde = document.getElementById('fechaDesdeOpMes').value;
+            const fechaHasta = document.getElementById('fechaHastaOpMes').value;
+            generateOpMesPdf(fechaDesde, fechaHasta);
+        });
+    }
+
+    if (generateOpMesExcelBtn) {
+        generateOpMesExcelBtn.addEventListener('click', function () {
+            const fechaDesde = document.getElementById('fechaDesdeOpMes').value;
+            const fechaHasta = document.getElementById('fechaHastaOpMes').value;
+            generateOpMesExcel(fechaDesde, fechaHasta);
         });
     }
 
@@ -867,6 +895,135 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error('Error:', error);
+            });
+    }
+
+    //OP MES
+
+    function generateOpMesExcel(fechaDesde, fechaHasta) {
+        fetch(`./gets/getOpMesData.php?desde=${fechaDesde}&hasta=${fechaHasta}`)
+            .then(response => response.json())
+            .then((opData) => {
+                const wb = XLSX.utils.book_new(); // Libro de Excel
+
+                for (const [modalidad, records] of Object.entries(opData)) {
+                    if (Array.isArray(records) && records.length > 0) {
+                        // Formatear cada fila
+                        const data = records.map(item => ({
+                            'Paciente': item.nombre,
+                            'Fecha': formatDate(item.fecha),
+                            'Op': item.op,
+                            'Cant. Meses': item.cant,
+                            'Modalidad': item.modalidad_op, // Podés traducirlo si tenés descripciones
+                            'Fecha Vencimiento': formatDate(item.fecha_vencimiento)
+                        }));
+
+                        // Crear hoja
+                        const ws = XLSX.utils.json_to_sheet(data);
+                        XLSX.utils.book_append_sheet(wb, ws, `MODALIDAD ${modalidad}`);
+                    }
+                }
+
+                // Guardar el archivo Excel
+                const desdeStr = formatDate(fechaDesde).replace(/\//g, '-');
+                const hastaStr = formatDate(fechaHasta).replace(/\//g, '-');
+                const fileName = `OP_MES_${desdeStr}_AL_${hastaStr}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+            })
+            .catch(error => {
+                console.error('Error generando Excel:', error);
+                alert('Ocurrió un error al generar el Excel');
+            });
+    }
+
+    function generateOpMesPdf(fechaDesde, fechaHasta) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'mm', 'a4');
+
+        fetch(`./gets/getOpMesData.php?desde=${fechaDesde}&hasta=${fechaHasta}`)
+            .then(response => response.json())
+            .then((opData) => {
+                const formattedFechaDesde = formatDate(fechaDesde);
+                const formattedFechaHasta = formatDate(fechaHasta);
+
+                const title = 'LISTADO DE CONTROL DE OP DEL MES';
+                const pageWidth = doc.internal.pageSize.getWidth();
+
+                doc.setFontSize(16);
+                doc.setFont('Helvetica', 'bold');
+                doc.text(title, pageWidth / 2, 10, { align: 'center' });
+                doc.setFont('Helvetica', 'normal');
+
+                doc.setFontSize(14);
+                doc.text(`DESDE: ${formattedFechaDesde} HASTA: ${formattedFechaHasta}`, pageWidth / 2, 20, { align: 'center' });
+
+                doc.setFontSize(12);
+                let startY = 30;
+                const margin = { left: 15 };
+
+                const headers = ['Paciente', 'Fecha', 'Op', 'Cant. Meses', 'Modalidad', 'Fecha Vencimiento'];
+
+                for (const [modalidad, records] of Object.entries(opData)) {
+                    doc.setFontSize(14);
+                    doc.text(`MODALIDAD: ${modalidad}`, pageWidth / 2, startY, { align: 'center' });
+                    startY += 5;
+
+                    if (Array.isArray(records) && records.length > 0) {
+                        const data = records.map(item => [
+                            item.nombre,
+                            formatDate(item.fecha),
+                            item.op,
+                            item.cant,
+                            item.modalidad_op, // Podés cambiar esto por descripción si tenés otra tabla
+                            formatDate(item.fecha_vencimiento)
+                        ]);
+
+                        doc.autoTable({
+                            head: [headers],
+                            body: data,
+                            startY: startY,
+                            margin: margin,
+                            theme: 'striped',
+                            styles: { fontSize: 10, cellPadding: 2, overflow: 'linebreak' },
+                            columnStyles: {
+                                0: { cellWidth: 50 },
+                                1: { cellWidth: 30 },
+                                2: { cellWidth: 40 },
+                                3: { cellWidth: 30 },
+                                4: { cellWidth: 50 },
+                                5: { cellWidth: 50 }
+                            },
+                            didDrawCell: function (data) {
+                                startY = data.cursor.y;
+                            },
+                            pageBreak: 'auto'
+                        });
+
+                        startY += 18;
+                    } else {
+                        startY += 18;
+                    }
+                }
+
+                const totalRegistros = Object.values(opData).reduce((acc, records) => acc + (Array.isArray(records) ? records.length : 0), 0);
+                doc.setFontSize(12);
+                doc.text(`Total Registros: ${totalRegistros}`, pageWidth / 2, startY + 10, { align: 'center' });
+
+                const imgUrl = '../img/logo.png';
+                var img = new Image();
+                img.onload = function () {
+                    const imgWidth = 25;
+                    const imgHeight = 20;
+                    const xImg = (pageWidth - imgWidth) / 2;
+
+                    doc.addImage(img, 'PNG', xImg, startY + 12, imgWidth, imgHeight);
+                    window.open(doc.output('bloburl'));
+                };
+                img.src = imgUrl;
+            })
+            .catch(error => {
+                console.error('Error generando PDF:', error);
+                alert('Ocurrió un error al generar el PDF');
             });
     }
 
@@ -3212,19 +3369,19 @@ document.addEventListener('DOMContentLoaded', function () {
     function generatePaciSinDiagPDF(fechaDesde, fechaHasta, obraSocialId) {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('l', 'mm', 'a4');
-    
+
         function getMaxRowsPerPage(doc, headers, data) {
             const pageHeight = doc.internal.pageSize.height;
             const margins = { top: 30, bottom: 20 }; // Ajusta los márgenes si es necesario
             const rowHeight = 10; // Altura de cada fila
             const headerHeight = 10; // Altura de la fila del encabezado
-    
+
             const availableHeight = pageHeight - margins.top - margins.bottom - headerHeight;
             const maxRows = Math.floor(availableHeight / rowHeight);
-    
+
             return Math.min(maxRows, data.length);
         }
-    
+
         // Llamada al backend para obtener los datos
         fetch(`./gets/get_pacientes_sin_diagnostico.php?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}&obra_social=${obraSocialId}`)
             .then(response => response.json())
@@ -3233,26 +3390,26 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.error(resumen.error);
                     return;
                 }
-    
+
                 const formattedFechaDesde = formatDate(fechaDesde);
                 const formattedFechaHasta = formatDate(fechaHasta);
-    
+
                 const title = 'PACIENTES SIN DIAGNÓSTICO';
                 const pageWidth = doc.internal.pageSize.getWidth();
-    
+
                 doc.setFontSize(16);
                 doc.setFont('Helvetica', 'bold');
                 doc.text(title, pageWidth / 2, 10, { align: 'center' });
                 doc.setFont('Helvetica', 'normal');
-    
+
                 const dateRange = `DESDE: ${formattedFechaDesde} HASTA: ${formattedFechaHasta}`;
                 doc.setFontSize(14);
                 doc.text(dateRange, pageWidth / 2, 20, { align: 'center' });
-    
+
                 doc.setFontSize(12);
                 let startY = 30;
                 const margin = { left: 15 };
-    
+
                 const headers = ['NOMBRE', 'OBRA SOCIAL', 'ADMISIÓN', 'BENEFICIO', 'PARENTESCO'];
                 const data = resumen.map(item => [
                     item.nombre,
@@ -3261,17 +3418,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     item.benef,
                     item.parentesco
                 ]);
-    
+
                 // Crear la tabla en el PDF
                 const tableWidth = pageWidth - margin.left * 2;
-    
+
                 if (data.length) {
                     let tableStartY = startY;
                     const maxRowsPerPage = getMaxRowsPerPage(doc, headers, data);
-    
+
                     for (let i = 0; i < data.length; i += maxRowsPerPage) {
                         const chunk = data.slice(i, i + maxRowsPerPage);
-    
+
                         doc.autoTable({
                             head: [headers],
                             body: chunk,
@@ -3295,20 +3452,20 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             pageBreak: 'auto'
                         });
-    
+
                         if (i + maxRowsPerPage < data.length) {
                             doc.addPage();
                             tableStartY = 30;
                         }
                     }
-    
+
                     doc.setFontSize(12);
                     doc.text(`Total Pacientes Sin Diagnóstico: ${data.length}`, pageWidth / 2, tableStartY + 10, { align: 'center' });
                 } else {
                     doc.setFontSize(12);
                     doc.text('No se encontraron pacientes sin diagnóstico en el rango de fechas especificado.', pageWidth / 2, startY, { align: 'center' });
                 }
-    
+
                 // Agregar un logo si es necesario
                 const imgUrl = '../img/logo.png';
                 var img = new Image();
@@ -3317,9 +3474,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     const imgHeight = 25;
                     const xImg = (pageWidth - imgWidth) / 2;
                     const yImg = doc.internal.pageSize.height - imgHeight - 10;
-    
+
                     doc.addImage(img, 'PNG', xImg, yImg, imgWidth, imgHeight);
-    
+
                     window.open(doc.output('bloburl'));
                 };
                 img.src = imgUrl;

@@ -43,8 +43,9 @@ if ($result->num_rows > 0) {
 
 
     // Definir el rango de fechas del mes anterior
-    $fechaInicio = date('Y-m-d', strtotime("first day of -1 month"));
-    $fechaFin = date('Y-m-d', strtotime("last day of -1 month"));
+    $fechaInicio = '2025-02-01';
+    $fechaFin = '2025-02-28';
+
 
 
     // Crear la primera línea dinámica del archivo
@@ -320,7 +321,15 @@ if ($result->num_rows > 0) {
     LEFT JOIN egresos e ON e.id_paciente = p.id
     LEFT JOIN modalidad m ON m.id = e.modalidad
     LEFT JOIN profesional prof ON prof.id_prof = p.id_prof 
-    LEFT JOIN paci_diag d ON d.id_paciente = p.id
+    LEFT JOIN (
+    SELECT d1.*
+    FROM paci_diag d1
+    WHERE d1.fecha = (
+        SELECT MAX(d2.fecha)
+        FROM paci_diag d2
+        WHERE d2.id_paciente = d1.id_paciente
+    )
+    ) d ON d.id_paciente = p.id
     LEFT JOIN diag d_id ON d_id.id = d.codigo
     LEFT JOIN bocas_atencion boca ON boca.id = p.boca_atencion
     WHERE pract.fecha BETWEEN '$fechaInicio' AND '$fechaFin'
@@ -629,6 +638,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
         // Inicializamos la variable antes del bucle
         $current_paciente_id = null;
         $current_modalidad = null;  // Inicializar la modalidad como null
+        $current_op = null; // NUEVO
         $contenido_practicas = '';
 
         // Itera sobre cada paciente
@@ -649,13 +659,12 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             $benef = $row['benef'];
             $parentesco = $row['parentesco'];
             $boca_atencion = $row['boca_atencion'];
-            $op = $row['op'];
             $admision = $row['ingreso_modalidad'];
             $hora_admision = $row['hora_admision'];
             $nro_hist_int = $row['nro_hist_int'];
             $hora_egreso = $row['hora_egreso'];
 
-            $finalInternacionPsi = '';
+            //$finalInternacionPsi = '';
 
             // Si fecha_egreso está vacía, asigna fechaFin y tipo_egreso como 8
             if (empty($fecha_egreso)) {
@@ -687,7 +696,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             $hora_practica = date('H:i', strtotime($hora));
             $hora_admision = date('H:i', strtotime($hora_admision));
             // Si es un nuevo paciente, imprime los datos anteriores y comienza un nuevo bloque
-            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full']) {
+            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full'] ||  $current_op !== $row['op']) {
                 // Si ya tenemos datos de un paciente anterior, imprimimos el bloque "FIN INTERNACIONPSI"
                 if ($current_paciente_id !== null) {
                     // Añade el bloque de prácticas acumulado
@@ -734,6 +743,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
                 $contenido_practicas = '';
                 $current_paciente_id = $id_paciente;
                 $current_modalidad = $modalidad;
+                $current_op = $row['op']; // NUEVO
             }
 
             // Acumula las prácticas de este paciente
