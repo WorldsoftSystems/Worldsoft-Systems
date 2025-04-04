@@ -3042,7 +3042,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     item.nombre,
                                     `${item.benef}${item.parentesco}`,
                                     formatDate(item.ingreso_modalidad),
-                                    item.op || '',
+                                    item.ops || '',
                                     item.diag || '',
                                     item.egreso ? formatDate(item.egreso) : ' ',
                                     formatDate(item.ult_atencion)

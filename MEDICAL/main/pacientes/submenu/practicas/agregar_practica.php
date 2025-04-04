@@ -39,6 +39,19 @@ $stmtModalidad->close();
 $fechaModalidadArg = formatDateToArg($fechaModalidad);
 $error = false;
 
+// Obtener la fecha de vencimiento más alta para el paciente
+$sqlVencimiento = "SELECT MAX(fecha_vencimiento) FROM paci_op WHERE id_paciente = ?";
+$stmtVenc = $conn->prepare($sqlVencimiento);
+$stmtVenc->bind_param('i', $idPaciente);
+$stmtVenc->execute();
+$stmtVenc->bind_result($fechaVencimiento);
+$stmtVenc->fetch();
+$stmtVenc->close();
+
+// Formatear la fecha de vencimiento para mostrarla en mensajes
+$fechaVencimientoArg = formatDateToArg($fechaVencimiento);
+
+
 foreach ($fechas as $fecha) {
     // Validar que la fecha no sea anterior a la última fecha de `paci_modalidad`
     if ($fecha < $fechaModalidad) {
@@ -47,6 +60,18 @@ foreach ($fechas as $fecha) {
         $response = array(
             'status' => 'error',
             'message' => "La fecha de práctica ($fechaPracticaArg) no puede ser anterior a la última fecha de modalidad registrada ($fechaModalidadArg)."
+        );
+        echo json_encode($response);
+        exit;
+    }
+
+    // Validar que la fecha no sea posterior a la fecha de vencimiento
+    if ($fechaVencimiento && $fecha > $fechaVencimiento) {
+        $error = true;
+        $fechaPracticaArg = formatDateToArg($fecha);
+        $response = array(
+            'status' => 'error',
+            'message' => "La fecha de práctica ($fechaPracticaArg) no puede ser posterior a la fecha de vencimiento de la orden ($fechaVencimientoArg)."
         );
         echo json_encode($response);
         exit;

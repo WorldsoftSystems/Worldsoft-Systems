@@ -79,6 +79,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
+    // Obtener la fecha de vencimiento más alta para el paciente
+    $sqlVencimiento = "SELECT MAX(fecha_vencimiento) FROM paci_op WHERE id_paciente = ?";
+    $stmtVenc = $conn->prepare($sqlVencimiento);
+    $stmtVenc->bind_param("i", $idPaciente);
+    $stmtVenc->execute();
+    $stmtVenc->bind_result($fechaVencimiento);
+    $stmtVenc->fetch();
+    $stmtVenc->close();
+
+    $fechaVencimientoArg = formatDateToArg($fechaVencimiento);
+
+    // Validar que la fecha no sea posterior a la fecha de vencimiento
+    if ($fechaVencimiento && $fecha > $fechaVencimiento) {
+        $response['status'] = 'error';
+        $response['message'] = "La fecha de la práctica (" . formatDateToArg($fecha) . ") no puede ser posterior a la fecha de vencimiento de la orden ($fechaVencimientoArg).";
+        echo json_encode($response);
+        exit;
+    }
+
+
     // Si la nueva fecha es igual a la última fecha de modalidad, validar la hora
     if ($fecha == $fechaModalidad && $hora < $horaAdmision) {
         $response['status'] = 'error';

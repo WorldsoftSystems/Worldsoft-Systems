@@ -43,8 +43,8 @@ if ($result->num_rows > 0) {
 
 
     // Definir el rango de fechas del mes anterior
-    $fechaInicio = '2025-02-01';
-    $fechaFin = '2025-02-28';
+    $fechaInicio = date('Y-m-d', strtotime("first day of -1 month"));
+    $fechaFin = date('Y-m-d', strtotime("last day of -1 month"));
 
 
 
@@ -374,6 +374,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
         $current_paciente_id = null;
         $contenido_practicas = '';
         $current_modalidad = null;
+        $current_op = null; // NUEVO
 
         // Itera sobre cada paciente
         while ($row = $resultPaciAmbulatorioPsi->fetch_assoc()) {
@@ -421,7 +422,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             $hora_practica = date('H:i', strtotime($hora));
 
             // Si es un nuevo paciente, imprime los datos anteriores y comienza un nuevo bloque
-            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full']) {
+            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full'] || $current_op !== $row['op']) {
                 // Si ya tenemos datos de un paciente anterior, imprimimos el bloque "FIN AMBULATORIOPSI"
                 if ($current_paciente_id !== null) {
                     // Añade el bloque de prácticas acumulado
@@ -464,6 +465,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
                 $contenido_practicas = '';
                 $current_paciente_id = $id_paciente;
                 $current_modalidad = $modalidad;
+                $current_op = $row['op']; // NUEVO
             }
 
             // Acumula las prácticas de este paciente
@@ -696,7 +698,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             $hora_practica = date('H:i', strtotime($hora));
             $hora_admision = date('H:i', strtotime($hora_admision));
             // Si es un nuevo paciente, imprime los datos anteriores y comienza un nuevo bloque
-            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full'] ||  $current_op !== $row['op']) {
+            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full'] || $current_op !== $row['op']) {
                 // Si ya tenemos datos de un paciente anterior, imprimimos el bloque "FIN INTERNACIONPSI"
                 if ($current_paciente_id !== null) {
                     // Añade el bloque de prácticas acumulado

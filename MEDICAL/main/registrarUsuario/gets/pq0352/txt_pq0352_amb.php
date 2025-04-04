@@ -365,6 +365,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
     if ($resultPaciAmbulatorioPsi->num_rows > 0) {
         $current_paciente_id = null;
         $contenido_practicas = '';
+        $current_op = null; // NUEVO
         $current_modalidad = null;
 
         // Itera sobre cada paciente
@@ -413,7 +414,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             $hora_practica = date('H:i', strtotime($hora));
 
             // Si es un nuevo paciente, imprime los datos anteriores y comienza un nuevo bloque
-            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full']) {
+            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full'] || $current_op !== $row['op']) {
                 // Si ya tenemos datos de un paciente anterior, imprimimos el bloque "FIN AMBULATORIOPSI"
                 if ($current_paciente_id !== null) {
                     // Añade el bloque de prácticas acumulado
@@ -456,6 +457,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
                 $contenido_practicas = '';
                 $current_paciente_id = $id_paciente;
                 $current_modalidad = $modalidad;
+                $current_op = $row['op']; // NUEVO
             }
 
             // Acumula las prácticas de este paciente

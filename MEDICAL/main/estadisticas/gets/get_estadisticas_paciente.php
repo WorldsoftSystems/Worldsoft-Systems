@@ -104,7 +104,10 @@ $sql = "WITH ValidRecords AS (
     LEFT JOIN modalidad m ON m.id = e.modalidad
     LEFT JOIN paci_diag d ON d.id_paciente = p.id
     LEFT JOIN diag d_id ON d_id.id = d.codigo
-    LEFT JOIN paci_op orden ON orden.id_paciente = p.id
+    LEFT JOIN paci_op orden 
+    ON orden.id_paciente = p.id
+    AND orden.fecha <= ?
+    AND orden.fecha_vencimiento >= ?
     WHERE pract.fecha BETWEEN ? AND ?
       AND p.obra_social = ?
 ),
@@ -133,15 +136,14 @@ SELECT
     benef,
     parentesco,
     ingreso_modalidad,
-    op,
+    GROUP_CONCAT(DISTINCT op ORDER BY op SEPARATOR ', ') AS ops,
     modalidad_codigo,
     modalidad_full,
     sexo,
     MAX(ult_atencion) AS ult_atencion,
     SUM(cantidad) AS cantidad,
     MAX(egreso) AS egreso,
-    diag,
-    MAX(op) AS op -- Seleccionar la op correspondiente o NULL si no hay coincidencia
+    diag
 FROM MatchedOps
 GROUP BY
     nombre,
@@ -152,11 +154,7 @@ GROUP BY
     modalidad_full,
     sexo,
     diag
-ORDER BY
-    nombre ASC,
-    ingreso_modalidad ASC,
-    modalidad_full ASC;
-
+ORDER BY nombre ASC, ingreso_modalidad ASC, modalidad_full ASC
 
 ;
 
@@ -171,7 +169,17 @@ if ($stmt === false) {
 }
 
 // Enlazar los parámetros
-$stmt->bind_param("ssssi", $fecha_desde, $fecha_hasta,$fecha_desde, $fecha_hasta, $obra_social);
+$stmt->bind_param(
+    "ssssssi",
+    $fecha_desde,
+    $fecha_hasta, // egresos
+    $fecha_hasta,
+    $fecha_desde, // OPs
+    $fecha_desde,
+    $fecha_hasta, // prácticas
+    $obra_social
+);
+
 
 // Ejecutar la consulta
 if (!$stmt->execute()) {
