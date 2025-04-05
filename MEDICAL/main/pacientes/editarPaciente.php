@@ -46,8 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_ugl->bind_result($ugl_id);
         $stmt_ugl->fetch();
         $stmt_ugl->close();
-
-        error_log("ID obtenido para la descripción '$ugl_id': " . ($ugl_id ? $ugl_id : 'No encontrado'));
     }
 
     // Verifica si se obtuvo el ID correctamente

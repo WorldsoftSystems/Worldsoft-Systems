@@ -405,6 +405,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             } else {
                 // Si hay 'op', usa su valor
                 $op = $row['op'];
+                $tipo_afiliado = 2;
             }
 
             // Formatea la fecha en 'dd/mm/yyyy'

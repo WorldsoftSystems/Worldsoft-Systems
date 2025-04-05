@@ -403,6 +403,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC;  -- Ordenamos para ver las OP más recie
             } else {
                 // Si hay 'op', usa su valor
                 $op = $row['op'];
+                $tipo_afiliado = 2;
             }
 
             // Formatea la fecha en 'dd/mm/yyyy'
@@ -657,6 +658,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC;  -- Ordenamos para ver las OP más recie
             } else {
                 // Si hay 'op', usa su valor
                 $op = $row['op'];
+                $tipo_afiliado = 2;
             }
 
 

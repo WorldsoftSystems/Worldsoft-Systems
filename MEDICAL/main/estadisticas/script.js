@@ -967,7 +967,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 for (const [modalidad, records] of Object.entries(opData)) {
                     doc.setFontSize(14);
-                    doc.text(`MODALIDAD: ${modalidad}`, pageWidth / 2, startY, { align: 'center' });
+                    const descripcion = records[0]?.modalidad_desc ?? `Modalidad ${modalidad}`;
+
+                    doc.setFontSize(14);
+                    doc.text(`MODALIDAD: ${descripcion}`, pageWidth / 2, startY, { align: 'center' });
                     startY += 5;
 
                     if (Array.isArray(records) && records.length > 0) {
@@ -976,7 +979,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             formatDate(item.fecha),
                             item.op,
                             item.cant,
-                            item.modalidad_op, // Podés cambiar esto por descripción si tenés otra tabla
+                            item.modalidad_desc, // Podés cambiar esto por descripción si tenés otra tabla
                             formatDate(item.fecha_vencimiento)
                         ]);
 

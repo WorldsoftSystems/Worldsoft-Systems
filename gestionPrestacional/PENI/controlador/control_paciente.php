@@ -24,7 +24,12 @@ if (isset($_POST['agregar'])) {
     $beneficio_concatenado = $beneficio . $parentesco;
 
     // Verificar si ya existe un registro con el mismo cod_prof, fecha (sin hora) y beneficio
-    $sql_check = "SELECT COUNT(*) AS count FROM paciente WHERE cod_prof = '$cod_prof' AND DATE(fecha) = DATE('$fecha') AND benef = '$beneficio_concatenado'";
+    $sql_check = "SELECT COUNT(*) AS count 
+              FROM paciente 
+              WHERE cod_prof = '$cod_prof' 
+              AND DATE(fecha) = CURDATE() 
+              AND benef = '$beneficio_concatenado'";
+
     $result = $conn->query($sql_check);
     $row = $result->fetch_assoc();
 
@@ -467,7 +472,8 @@ function actualizarEstadoCargado($cod_paci, $nuevo_estado)
 }
 
 
-function eliminarPaciente($id) {
+function eliminarPaciente($id)
+{
     global $conn; // Acceder a la conexión global
 
     // Sanitizar el ID

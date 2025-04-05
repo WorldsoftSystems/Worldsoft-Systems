@@ -965,7 +965,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 for (const [modalidad, records] of Object.entries(opData)) {
                     doc.setFontSize(14);
-                    doc.text(`MODALIDAD: ${modalidad}`, pageWidth / 2, startY, { align: 'center' });
+                    const descripcion = records[0]?.modalidad_desc ?? `Modalidad ${modalidad}`;
+
+                    doc.setFontSize(14);
+                    doc.text(`MODALIDAD: ${descripcion}`, pageWidth / 2, startY, { align: 'center' });
                     startY += 5;
 
                     if (Array.isArray(records) && records.length > 0) {

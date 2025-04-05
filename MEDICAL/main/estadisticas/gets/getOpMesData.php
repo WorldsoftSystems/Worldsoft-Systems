@@ -11,9 +11,11 @@ $sql = "SELECT
             po.op,
             po.cant,
             po.modalidad_op,
-            po.fecha_vencimiento
+            po.fecha_vencimiento,
+            m.descripcion AS modalidad_desc
         FROM paci_op po
         JOIN paciente p ON p.id = po.id_paciente
+        JOIN modalidad m ON m.id = po.modalidad_op
         WHERE (po.fecha BETWEEN ? AND ?) OR (po.fecha_vencimiento BETWEEN ? AND ?)
         ORDER BY po.modalidad_op, po.fecha";
 

@@ -14,14 +14,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Calcular la fecha de vencimiento en base a la cantidad
-    if ($cant == 3) {
-        $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 90 days'));
-    } elseif ($cant == 6) {
-        $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 180 days'));
+    if ($modalidad_op == 2) {
+        $fecha_vencimiento = $fecha;
     } else {
-        $fecha_vencimiento = null; // O cualquier otro valor predeterminado si no se cumplen las condiciones
+        // Calcular vencimiento según cantidad
+        if ($cant == 3) {
+            $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 90 days'));
+        } elseif ($cant == 6) {
+            $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 180 days'));
+        } elseif ($cant == 1) {
+            $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 1 month'));
+        } else {
+            $fecha_vencimiento = '0000-00-00';
+        }
     }
-
+    
     $sql = "UPDATE paci_op SET fecha = ?, op = ?, cant = ?, modalidad_op = ?, fecha_vencimiento = ?  WHERE id = ?";
 
     $stmt = $conn->prepare($sql);
