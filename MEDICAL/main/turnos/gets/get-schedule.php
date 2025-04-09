@@ -1,5 +1,5 @@
 <?php
-include ('../../conexion.php');
+include('../../conexion.php');
 
 // Obtener parámetros
 if (!isset($_GET['date']) || !isset($_GET['prof'])) {
@@ -58,14 +58,25 @@ while ($row = $disponibilidad_result->fetch_assoc()) {
 
 $stmt_disponibilidad->close();
 
+// Verificar si la columna 'token' existe en la tabla 'paciente'
+$col_check = $conn->query("SHOW COLUMNS FROM paciente LIKE 'token'");
+$has_token = $col_check && $col_check->num_rows > 0;
+
+// Definir el fragmento del SELECT según corresponda
+$select_token = $has_token ? "paci.token," : "'' AS token,";
+
 // Obtener turnos del día para el profesional seleccionado, incluyendo el nombre del paciente
-$turnos_sql = "SELECT t.*, CONCAT(paci.nombre, ' - ', paci.benef, '/', paci.parentesco) AS nombre_paciente, paci.id AS paciente_id , CONCAT(a.codigo, ' - ', a.descripcion) AS motivo_full, paci.telefono,CONCAT('Amb: ', paci.nro_hist_amb, ' / Int: ', paci.nro_hist_int) AS nro_hc
+$turnos_sql = "SELECT t.*, CONCAT(paci.nombre, ' - ', paci.benef, '/', paci.parentesco) AS nombre_paciente,
+                      paci.id AS paciente_id , CONCAT(a.codigo, ' - ', a.descripcion) AS motivo_full,
+                      paci.telefono,CONCAT('Amb: ', paci.nro_hist_amb, ' / Int: ', paci.nro_hist_int) AS nro_hc,
+                      $select_token
+                      1 AS dummy_check -- evita coma final flotante
                FROM turnos t
                LEFT JOIN paciente paci ON paci.id = t.paciente
                LEFT JOIN actividades a ON a.id = t.motivo
                WHERE t.fecha = ? AND t.id_prof = ?
                ORDER BY t.hora ASC"; // Ordenar por hora
-               
+
 $stmt_turnos = $conn->prepare($turnos_sql);
 $stmt_turnos->bind_param("si", $date, $prof);
 $stmt_turnos->execute();

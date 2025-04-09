@@ -251,14 +251,16 @@ if ($result->num_rows > 0) {
         boca.num_boca AS boca_atencion,
         prof.matricula_n,
         p.tipo_afiliado,
-        (SELECT pm.fecha
-                FROM paci_modalidad pm
-                JOIN modalidad m ON m.id = pm.modalidad
-                LEFT JOIN actividades a ON a.id = pract.actividad
-                WHERE pm.id_paciente = p.id
-                AND pm.modalidad = a.modalidad
-                ORDER BY pm.fecha DESC
-                LIMIT 1
+        (
+            SELECT pm.fecha
+            FROM paci_modalidad pm
+            JOIN modalidad m ON m.id = pm.modalidad
+            LEFT JOIN actividades a ON a.id = pract.actividad
+            WHERE pm.id_paciente = p.id
+            AND pm.modalidad = a.modalidad
+            AND pm.fecha <= pract.fecha
+            ORDER BY pm.fecha DESC
+            LIMIT 1
         ) AS ingreso_modalidad,
         p.sexo,
         COALESCE(
@@ -280,19 +282,32 @@ if ($result->num_rows > 0) {
             SELECT e.fecha_egreso
             FROM egresos e
             WHERE e.id_paciente = p.id
-            AND e.modalidad = (
-                SELECT pm.modalidad
-                FROM paci_modalidad pm
-                JOIN modalidad m ON m.id = pm.modalidad 
-                LEFT JOIN actividades a ON a.id = pract.actividad
-                WHERE pm.id_paciente = p.id
-                AND pm.modalidad = a.modalidad
-                ORDER BY pm.fecha DESC
-                LIMIT 1
-            ) AND e.fecha_egreso BETWEEN '$fechaInicio' AND '$fechaFin' 
-            ORDER BY e.fecha_egreso DESC
+                AND e.modalidad = (
+                    SELECT pm.modalidad
+                    FROM paci_modalidad pm
+                    JOIN modalidad m ON m.id = pm.modalidad 
+                    LEFT JOIN actividades a ON a.id = pract.actividad
+                    WHERE pm.id_paciente = p.id
+                    AND pm.modalidad = a.modalidad
+                    AND pm.fecha <= pract.fecha  -- clave: ingreso antes o en la fecha de la práctica
+                    ORDER BY pm.fecha DESC
+                    LIMIT 1
+                )
+                AND e.fecha_egreso >= (
+                    SELECT pm.fecha
+                    FROM paci_modalidad pm
+                    JOIN modalidad m ON m.id = pm.modalidad 
+                    LEFT JOIN actividades a ON a.id = pract.actividad
+                    WHERE pm.id_paciente = p.id
+                    AND pm.modalidad = a.modalidad
+                    AND pm.fecha <= pract.fecha
+                    ORDER BY pm.fecha DESC
+                    LIMIT 1
+                )
+            ORDER BY e.fecha_egreso ASC
             LIMIT 1
-        ) AS fecha_egreso,
+        )
+        AS fecha_egreso,
         (
             SELECT e.motivo
             FROM egresos e
@@ -301,11 +316,19 @@ if ($result->num_rows > 0) {
                 SELECT pm.modalidad
                 FROM paci_modalidad pm
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha 
+                    AND pm.fecha <= pract.fecha 
                 ORDER BY pm.fecha DESC
                 LIMIT 1
             )
-            ORDER BY e.fecha_egreso DESC
+            AND e.fecha_egreso >= (
+                SELECT pm.fecha
+                FROM paci_modalidad pm
+                WHERE pm.id_paciente = p.id
+                    AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+            ORDER BY e.fecha_egreso ASC
             LIMIT 1
         ) AS motivo_egreso,
         d_id.codigo AS diag,
@@ -375,12 +398,14 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
         $contenido_practicas = '';
         $current_modalidad = null;
         $current_op = null; // NUEVO
+        $current_fecha_ingreso = null;
 
         // Itera sobre cada paciente
         while ($row = $resultPaciAmbulatorioPsi->fetch_assoc()) {
             $id_paciente = $row['paciente_id'];
             $matricula_prof = $row['matricula_n'];
             $fecha_modalidad = $row['ingreso_modalidad'];
+            $fecha_ingreso_raw = date('Y-m-d', strtotime($fecha_modalidad));
             $tipo_afiliado = $row['tipo_afiliado'];
             $modalidad = $row['modalidad_full'];
             $fecha_egreso = $row['fecha_egreso'];
@@ -423,7 +448,13 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             $hora_practica = date('H:i', strtotime($hora));
 
             // Si es un nuevo paciente, imprime los datos anteriores y comienza un nuevo bloque
-            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full'] || $current_op !== $row['op']) {
+
+            if (
+                $current_paciente_id !== $id_paciente ||
+                $current_modalidad !== $row['modalidad_full'] ||
+                $current_op !== $row['op'] ||
+                $current_fecha_ingreso !== $fecha_ingreso_raw
+            ) {
                 // Si ya tenemos datos de un paciente anterior, imprimimos el bloque "FIN AMBULATORIOPSI"
                 if ($current_paciente_id !== null) {
                     // Añade el bloque de prácticas acumulado
@@ -467,6 +498,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
                 $current_paciente_id = $id_paciente;
                 $current_modalidad = $modalidad;
                 $current_op = $row['op']; // NUEVO
+                $current_fecha_ingreso = $fecha_ingreso_raw;
             }
 
             // Acumula las prácticas de este paciente
@@ -499,14 +531,16 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
         p.tipo_afiliado,
         p.hora_admision,
         p.nro_hist_int,
-        (SELECT pm.fecha
-                FROM paci_modalidad pm
-                JOIN modalidad m ON m.id = pm.modalidad
-                LEFT JOIN actividades a ON a.id = pract.actividad
-                WHERE pm.id_paciente = p.id
-                AND pm.modalidad = a.modalidad
-                ORDER BY pm.fecha DESC
-                LIMIT 1
+        (
+            SELECT pm.fecha
+            FROM paci_modalidad pm
+            JOIN modalidad m ON m.id = pm.modalidad
+            LEFT JOIN actividades a ON a.id = pract.actividad
+            WHERE pm.id_paciente = p.id
+            AND pm.modalidad = a.modalidad
+            AND pm.fecha <= pract.fecha
+            ORDER BY pm.fecha DESC
+            LIMIT 1
         ) AS ingreso_modalidad,
         p.sexo,
         COALESCE(
@@ -524,7 +558,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
         pract.fecha AS fecha_pract,
         pract.hora AS hora_pract,
         act_pract.codigo,
-         (
+        (
             SELECT e.hora_egreso
             FROM egresos e
             WHERE e.id_paciente = p.id
@@ -532,30 +566,51 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
                 SELECT pm.modalidad
                 FROM paci_modalidad pm
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha 
+                    AND pm.fecha <= pract.fecha 
                 ORDER BY pm.fecha DESC
                 LIMIT 1
             )
-            ORDER BY e.fecha_egreso DESC
+            AND e.fecha_egreso >= (
+                SELECT pm.fecha
+                FROM paci_modalidad pm
+                WHERE pm.id_paciente = p.id
+                    AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+            ORDER BY e.fecha_egreso ASC
             LIMIT 1
         ) AS hora_egreso,
         (
             SELECT e.fecha_egreso
             FROM egresos e
             WHERE e.id_paciente = p.id
-            AND e.modalidad = (
-                SELECT pm.modalidad
-                FROM paci_modalidad pm
-                JOIN modalidad m ON m.id = pm.modalidad 
-                LEFT JOIN actividades a ON a.id = pract.actividad
-                WHERE pm.id_paciente = p.id
-                AND pm.modalidad = a.modalidad
-                ORDER BY pm.fecha DESC
-                LIMIT 1
-            ) AND e.fecha_egreso BETWEEN '$fechaInicio' AND '$fechaFin' 
-            ORDER BY e.fecha_egreso DESC
+                AND e.modalidad = (
+                    SELECT pm.modalidad
+                    FROM paci_modalidad pm
+                    JOIN modalidad m ON m.id = pm.modalidad 
+                    LEFT JOIN actividades a ON a.id = pract.actividad
+                    WHERE pm.id_paciente = p.id
+                    AND pm.modalidad = a.modalidad
+                    AND pm.fecha <= pract.fecha  -- clave: ingreso antes o en la fecha de la práctica
+                    ORDER BY pm.fecha DESC
+                    LIMIT 1
+                )
+                AND e.fecha_egreso >= (
+                    SELECT pm.fecha
+                    FROM paci_modalidad pm
+                    JOIN modalidad m ON m.id = pm.modalidad 
+                    LEFT JOIN actividades a ON a.id = pract.actividad
+                    WHERE pm.id_paciente = p.id
+                    AND pm.modalidad = a.modalidad
+                    AND pm.fecha <= pract.fecha
+                    ORDER BY pm.fecha DESC
+                    LIMIT 1
+                )
+            ORDER BY e.fecha_egreso ASC
             LIMIT 1
-        ) AS fecha_egreso,
+        )
+        AS fecha_egreso,
         (
             SELECT e.motivo
             FROM egresos e
@@ -564,11 +619,19 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
                 SELECT pm.modalidad
                 FROM paci_modalidad pm
                 WHERE pm.id_paciente = p.id
-                AND pm.fecha <= pract.fecha 
+                    AND pm.fecha <= pract.fecha 
                 ORDER BY pm.fecha DESC
                 LIMIT 1
             )
-            ORDER BY e.fecha_egreso DESC
+            AND e.fecha_egreso >= (
+                SELECT pm.fecha
+                FROM paci_modalidad pm
+                WHERE pm.id_paciente = p.id
+                    AND pm.fecha <= pract.fecha 
+                ORDER BY pm.fecha DESC
+                LIMIT 1
+            )
+            ORDER BY e.fecha_egreso ASC
             LIMIT 1
         ) AS motivo_egreso,
         d_id.codigo AS diag,
@@ -643,6 +706,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
         $current_modalidad = null;  // Inicializar la modalidad como null
         $current_op = null; // NUEVO
         $contenido_practicas = '';
+        $current_fecha_ingreso = null;
 
         // Itera sobre cada paciente
         while ($row = $resultPaciInternacionPsi->fetch_assoc()) {
@@ -650,6 +714,7 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             $matricula_prof = $row['matricula_n'];
             $matricula_practica = $row['matricula_n'];
             $fecha_modalidad = $row['ingreso_modalidad'];
+            $fecha_ingreso_raw = date('Y-m-d', strtotime($fecha_modalidad));
             $tipo_afiliado = $row['tipo_afiliado'];
             $modalidad = $row['modalidad_full'];
             $fecha_egreso = $row['fecha_egreso'];
@@ -700,7 +765,12 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
             $hora_practica = date('H:i', strtotime($hora));
             $hora_admision = date('H:i', strtotime($hora_admision));
             // Si es un nuevo paciente, imprime los datos anteriores y comienza un nuevo bloque
-            if ($current_paciente_id !== $id_paciente || $current_modalidad !== $row['modalidad_full'] || $current_op !== $row['op']) {
+            if (
+                $current_paciente_id !== $id_paciente ||
+                $current_modalidad !== $row['modalidad_full'] ||
+                $current_op !== $row['op'] ||
+                $current_fecha_ingreso !== $fecha_ingreso_raw
+            ) {
                 // Si ya tenemos datos de un paciente anterior, imprimimos el bloque "FIN INTERNACIONPSI"
                 if ($current_paciente_id !== null) {
                     // Añade el bloque de prácticas acumulado
@@ -748,6 +818,8 @@ ORDER BY VR.nombre ASC, pop.fecha DESC,VR.paciente_id ASC, VR.modalidad_full ASC
                 $current_paciente_id = $id_paciente;
                 $current_modalidad = $modalidad;
                 $current_op = $row['op']; // NUEVO
+                $current_fecha_ingreso = $fecha_ingreso_raw;
+
             }
 
             // Acumula las prácticas de este paciente

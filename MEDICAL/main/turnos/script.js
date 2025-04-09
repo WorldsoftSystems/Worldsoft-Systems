@@ -393,24 +393,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         row.cells[2].innerText = turno.motivo_full;
+        row.cells[2].classList.add('editable-cell');
         row.cells[2].addEventListener('click', (e) => {
             e.stopPropagation();
             openEditModal(turno);
         });
 
         row.cells[3].innerText = turno.llego;
+        row.cells[3].classList.add('editable-cell');
         row.cells[3].addEventListener('click', (e) => {
             e.stopPropagation();
             openEditModal(turno);
         });
 
         row.cells[4].innerText = turno.atendido;
+        row.cells[4].classList.add('editable-cell');
         row.cells[4].addEventListener('click', (e) => {
             e.stopPropagation();
             openEditModal(turno);
         });
 
         row.cells[5].innerText = turno.observaciones;
+        row.cells[5].classList.add('editable-cell');
         row.cells[5].title = turno.observaciones;
         row.cells[5].addEventListener('click', (e) => {
             e.stopPropagation();
@@ -418,6 +422,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         row.cells[6].innerText = turno.telefono || '';
+        row.cells[6].classList.add('editable-cell');
         row.cells[6].title = turno.telefono || '';
         row.cells[6].addEventListener('click', (e) => {
             e.stopPropagation();
@@ -426,6 +431,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // NUEVO CAMPO: N HC
         row.cells[7].innerText = turno.nro_hc || '';
+        row.cells[7].classList.add('editable-cell');
         row.cells[7].addEventListener('click', (e) => {
             e.stopPropagation();
             openEditModal(turno);
@@ -463,6 +469,12 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('llego').value = turno.llego;
         document.getElementById('atendido').value = turno.atendido;
         document.getElementById('observaciones').value = turno.observaciones;
+        const tokenField = document.getElementById('token');
+        if (tokenField) {
+            tokenField.value = (turno.token !== undefined && turno.token !== null) ? turno.token : '';
+        }
+
+
         obtenerUltimoTurno(turno.paciente_id)
 
         // Establecer el modo a 'edit'

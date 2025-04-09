@@ -35,7 +35,7 @@ $config_bases_datos = [
     //'UP3063207857500'=> 'worldsof_medical_pq0241',
     //'UP30684529249' => 'worldsof_medical_pq2002',
     //'UP3068452924900' => 'worldsof_medical_pq2001',
-    'UP3069149922304' => 'pq0303',
+    'UP3069149922304' => 'pq0303_token',
     //'UP3070014059400' => 'worldsof_medica_pq1605',
     //'UP3070779334800' => 'worldsof_medical_pq0328'
 ];
