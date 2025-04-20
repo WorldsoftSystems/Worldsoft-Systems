@@ -573,53 +573,90 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Manejar el envío del formulario de creación de turno
-    document.getElementById('createTurnoForm').addEventListener('submit', function (event) {
+    document.getElementById('createTurnoForm').addEventListener('submit', async function (event) {
         event.preventDefault();
 
         const formData = new FormData(this);
-        const fechas = document.getElementById('fechas_input').value.split(','); // Separar las fechas seleccionadas
+        const fechas = document.getElementById('fechas_input').value.split(',');
+        const pacienteId = formData.get('paciente_id');
 
-        fechas.forEach(fecha => {
-            formData.set('fecha_input', fecha.trim());  // Configurar cada fecha individualmente
+        // Consultar si el paciente está egresado antes de continuar
+        const verificarUrl = `../pacientes/dato/verificar_egreso.php?id_paciente=${pacienteId}`;
+        try {
+            const egresoResp = await fetch(verificarUrl);
+            const egresoData = await egresoResp.json();
 
-            fetch('./ABM/crearTurno.php', {
+            if (egresoData.egresado) {
+                alert('⚠️ Este paciente ya fue egresado. No se puede asignar un nuevo turno.');
+                return;
+            }
+
+            // Si no fue egresado, crear los turnos como antes
+            fechas.forEach(fecha => {
+                formData.set('fecha_input', fecha.trim());
+
+                fetch('./ABM/crearTurno.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.text())
+                    .then(result => {
+                        alert(result);
+                        $('#createTurnoModal').modal('hide');
+                        updateCalendar();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
+        } catch (error) {
+            console.error('Error al verificar egreso:', error);
+            alert('Ocurrió un error al verificar el estado del paciente.');
+        }
+    });
+
+
+
+    // Manejar el envío del formulario de editar de turno
+    document.getElementById('editTurnoForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+    
+        const formData = new FormData(this);
+        const pacienteId = formData.get('paciente_id_edit');
+    
+        // Consultar si el paciente está egresado antes de editar
+        const verificarUrl = `../pacientes/dato/verificar_egreso.php?id_paciente=${pacienteId}`;
+        try {
+            const egresoResp = await fetch(verificarUrl);
+            const egresoData = await egresoResp.json();
+    
+            if (egresoData.egresado) {
+                alert('⚠️ Este paciente ya fue egresado. No se puede modificar el turno.');
+                return;
+            }
+    
+            // Si no fue egresado, continuar con la edición del turno
+            fetch('./ABM/editarTurno.php', {
                 method: 'POST',
                 body: formData
             })
                 .then(response => response.text())
                 .then(result => {
                     alert(result);
-                    $('#createTurnoModal').modal('hide');
+                    $('#editTurnoModal').modal('hide');
                     updateCalendar();
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
-        });
+    
+        } catch (error) {
+            console.error('Error al verificar egreso:', error);
+            alert('Ocurrió un error al verificar el estado del paciente.');
+        }
     });
-
-
-    // Manejar el envío del formulario de editar de turno
-    document.getElementById('editTurnoForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const formData = new FormData(this);
-
-        fetch('./ABM/editarTurno.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.text())
-            .then(result => {
-                alert(result);
-                $('#editTurnoModal').modal('hide');
-                // Actualizar la grilla de horarios o el calendario después de editar el turno
-                updateCalendar();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    });
+    
 
 });
 

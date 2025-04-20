@@ -23,7 +23,7 @@ $sql = "SELECT
             FROM paci_modalidad pm
             JOIN modalidad m ON m.id = pm.modalidad
             WHERE pm.id_paciente = p.id
-            AND pm.fecha <= pract.fecha
+            AND pm.fecha <= pract.fecha 
             ORDER BY pm.fecha DESC
             LIMIT 1
         ),
@@ -49,9 +49,15 @@ FROM paciente p
 LEFT JOIN obra_social o ON o.id = p.obra_social
 LEFT JOIN practicas pract ON pract.id_paciente = p.id
 LEFT JOIN actividades act ON act.id = pract.actividad
-WHERE (pract.fecha BETWEEN ? AND ?) OR pract.actividad = 497 
-AND p.obra_social = ?
-GROUP BY p.id,pract.fecha,pract.hora";
+LEFT JOIN paci_op op ON op.id_paciente = p.id
+    AND op.fecha <= pract.fecha
+    AND op.fecha_vencimiento >= pract.fecha
+WHERE pract.fecha BETWEEN ? AND ?
+  AND p.obra_social = ?
+  AND act.codigo NOT IN ('520101', '521001') -- excluye códigos no válidos
+GROUP BY p.id, pract.fecha, pract.hora, act.descripcion
+ORDER BY p.nombre ASC, pract.fecha ASC
+";
 
 // Preparar la consulta
 $stmt = $conn->prepare($sql);

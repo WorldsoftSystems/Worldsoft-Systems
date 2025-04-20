@@ -18,7 +18,9 @@ $sql = "SELECT t.*,
                ' - ', os.siglas, 
                ' - Tel: ', COALESCE(paci.telefono, 'Sin teléfono'),
                ' - HC Amb: ', COALESCE(paci.nro_hist_amb, 'N/D'),
-               ' / Int: ', COALESCE(paci.nro_hist_int, 'N/D')
+               ' / Int: ', COALESCE(paci.nro_hist_int, 'N/D'),
+               ' - DNI :', COALESCE(paci.nro_doc, 'N/D'),
+               ' - Edad:', COALESCE(DATEDIFF(CURDATE(), paci.fecha_nac) DIV 365, 'N/D')
                ) AS nombre_paciente,
                CONCAT(a.codigo, ' - ', a.descripcion) AS motivo_full,
                p.nombreYapellido AS nom_prof

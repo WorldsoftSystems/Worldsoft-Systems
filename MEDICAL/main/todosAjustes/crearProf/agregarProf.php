@@ -4,27 +4,37 @@ require_once "../../conexion.php";
 
 // Verificar si se han enviado datos del formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Recibir los datos del formulario
     $nombreYapellido = $_POST["nombreYapellido"];
     $id_especialidad = $_POST["id_especialidad"];
-    $domicilio = $_POST["domicilio"];
-    $localidad = $_POST["localidad"];
-    $codigo_pos = $_POST["codigo_pos"];
     $matricula_p = $_POST["matricula_p"];
     $matricula_n = $_POST["matricula_n"];
-    $telefono = $_POST["telefono"];
-    $email = $_POST["email"];
-    $tipo_doc = $_POST['tipo_doc'];
-    $nro_doc = $_POST['nro_doc'];
 
-    // Preparar la consulta SQL para insertar un profesional
+    // Opcionales con fallback a null
+    $domicilio = empty($_POST["domicilio"]) ? null : $_POST["domicilio"];
+    $localidad = empty($_POST["localidad"]) ? null : $_POST["localidad"];
+    $codigo_pos = empty($_POST["codigo_pos"]) ? null : $_POST["codigo_pos"];
+    $telefono = empty($_POST["telefono"]) ? null : $_POST["telefono"];
+    $email = empty($_POST["email"]) ? null : $_POST["email"];
+    $tipo_doc = empty($_POST["tipo_doc"]) ? null : $_POST["tipo_doc"];
+    $nro_doc = empty($_POST["nro_doc"]) ? null : $_POST["nro_doc"];
+
     $sql = "INSERT INTO profesional (nombreYapellido, id_especialidad, domicilio, localidad, codigo_pos, matricula_p, matricula_n, telefono, email, tipo_doc, nro_doc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    // Preparar la sentencia
     $stmt = $conn->prepare($sql);
 
-    // Vincular parámetros
-    $stmt->bind_param("sssssssssss", $nombreYapellido, $id_especialidad, $domicilio, $localidad, $codigo_pos, $matricula_p, $matricula_n, $telefono, $email, $tipo_doc, $nro_doc);
+    $stmt->bind_param(
+        "sssssssssss",
+        $nombreYapellido,
+        $id_especialidad,
+        $domicilio,
+        $localidad,
+        $codigo_pos,
+        $matricula_p,
+        $matricula_n,
+        $telefono,
+        $email,
+        $tipo_doc,
+        $nro_doc
+    );
 
     // Ejecutar la sentencia
     if ($stmt->execute()) {

@@ -230,6 +230,7 @@ $resultProfesionales = $conn->query($sqlProfesionales);
                                         <th>Desde</th>
                                         <th>Hasta</th>
                                         <th>Intervalo (min)</th>
+                                        <th>Consultorio</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -670,6 +671,7 @@ $resultProfesionales = $conn->query($sqlProfesionales);
                         <td>${disponibilidad.hora_inicio}</td>
                         <td>${disponibilidad.hora_fin}</td>
                         <td>${disponibilidad.intervalo} min</td>
+                        <td>${disponibilidad.consultorio || ''}</td>
                         <td>
                             <button class="btn btn-danger btn-sm" onclick="eliminarDisponibilidad(${disponibilidad.id})">Eliminar</button>
                         </td>
@@ -719,33 +721,38 @@ $resultProfesionales = $conn->query($sqlProfesionales);
             const contenedor = document.getElementById('contenedor-horarios');
             const index = contenedor.children.length;
             const html = `
-        <div class="horario-group" style="margin-bottom: 20px;">
-            <div class="form-group">
-                <label for="dia_${index}">Día:</label>
-                <select class="form-control" id="dia_${index}" name="horarios[${index}][dia]">
-                    <option value="lunes">Lunes</option>
-                    <option value="martes">Martes</option>
-                    <option value="miercoles">Miércoles</option>
-                    <option value="jueves">Jueves</option>
-                    <option value="viernes">Viernes</option>
-                    <option value="sabado">Sábado</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="inicio_${index}">Hora Inicio:</label>
-                <input type="time" class="form-control" id="inicio_${index}" name="horarios[${index}][inicio]" required>
-            </div>
-            <div class="form-group">
-                <label for="fin_${index}">Hora Fin:</label>
-                <input type="time" class="form-control" id="fin_${index}" name="horarios[${index}][fin]" required>
-            </div>
-            <div class="form-group">
-                <label for="intervalo_${index}">Intervalo (min):</label>
-                <input type="number" class="form-control" id="intervalo_${index}" name="horarios[${index}][intervalo]" value="20" required>
-            </div>
-        </div>`;
+            <div class="horario-group" style="margin-bottom: 20px;">
+                <div class="form-group">
+                    <label for="dia_${index}">Día:</label>
+                    <select class="form-control" id="dia_${index}" name="horarios[${index}][dia]">
+                        <option value="lunes">Lunes</option>
+                        <option value="martes">Martes</option>
+                        <option value="miercoles">Miércoles</option>
+                        <option value="jueves">Jueves</option>
+                        <option value="viernes">Viernes</option>
+                        <option value="sabado">Sábado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="inicio_${index}">Hora Inicio:</label>
+                    <input type="time" class="form-control" id="inicio_${index}" name="horarios[${index}][inicio]" required>
+                </div>
+                <div class="form-group">
+                    <label for="fin_${index}">Hora Fin:</label>
+                    <input type="time" class="form-control" id="fin_${index}" name="horarios[${index}][fin]" required>
+                </div>
+                <div class="form-group">
+                    <label for="intervalo_${index}">Intervalo (min):</label>
+                    <input type="number" class="form-control" id="intervalo_${index}" name="horarios[${index}][intervalo]" value="20" required>
+                </div>
+                <div class="form-group">
+                    <label for="consultorio_${index}">Consultorio (opcional):</label>
+                    <input type="text" class="form-control" id="consultorio_${index}" name="horarios[${index}][consultorio]">
+                </div>
+            </div>`;
             contenedor.insertAdjacentHTML('beforeend', html);
         }
+
 
         function eliminarHorario(button) {
             button.parentElement.remove();

@@ -20,14 +20,20 @@ if ($modalidad_op == 2) {
     $fecha_vencimiento = $fecha;
 } else {
     // Calcular vencimiento según cantidad
+    $fecha_formateada = DateTime::createFromFormat('d/m/Y', $fecha)->format('Y-m-d');
+
     if ($cant == 3) {
         $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 90 days'));
     } elseif ($cant == 6) {
         $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 180 days'));
     } elseif ($cant == 1) {
         $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 1 month'));
-    } else {
-        $fecha_vencimiento = '0000-00-00';
+    }
+    elseif ($cant == 5) {
+        $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 152 days'));
+    }
+    else {
+        $fecha_vencimiento = date('Y-m-d', strtotime($fecha . ' + 182 days'));
     }
 }
 

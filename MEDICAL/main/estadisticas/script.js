@@ -1049,7 +1049,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     'ULT. ATENCION',
                     'EGRESO',
                     'BOCA ATENCION',
-                    'DIAGNOSTICO'
+                    'DIAGNOSTICO',
+                    'MODALIDAD'
                 ];
 
                 // Usar un Set para registrar beneficios únicos
@@ -1075,7 +1076,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             'ULT. ATENCION': formatDate(item.ult_atencion),
                             'EGRESO': formatDate(item.egreso),
                             'BOCA ATENCION': item.boca_de_atencion,
-                            'DIAGNOSTICO': item.diag
+                            'DIAGNOSTICO': item.diag,
+                            'MODALIDAD': item.modalidad_full
                         };
                     });
 
@@ -2882,72 +2884,79 @@ document.addEventListener('DOMContentLoaded', function () {
         Promise.all([fetchPatientData(fechaDesde, fechaHasta, obraSocialId)])
             .then(([resumen]) => {
                 const groupedData = {};
-
-                // Agrupar datos por 'benef'
+    
                 resumen.forEach(item => {
-                    const benefKey = item.benef; // Usar 'benef' como clave de agrupación
-
-                    if (!groupedData[benefKey]) {
-                        // Si no existe, inicializar el objeto
-                        groupedData[benefKey] = {
+                    const key = `${item.nombre}-${item.benef}-${item.parentesco}-${item.ingreso_modalidad}-${item.modalidad_full}`;
+    
+                    if (!groupedData[key]) {
+                        groupedData[key] = {
                             nombre: item.nombre.trim(),
                             benef: item.benef,
                             parentesco: item.parentesco,
                             diag: item.diag,
                             admision: item.ingreso_modalidad,
-                            op: item.op,
                             egreso: item.egreso,
-                            cantidad: 0, // Sumar cantidades
-                            ult_atencion: item.ult_atencion // Se actualiza después
+                            ult_atencion: item.ult_atencion,
+                            cantidad: parseInt(item.cantidad) || 1,
+                            ops: item.ops || ''
                         };
-                    }
-
-                    // Sumar la cantidad
-                    groupedData[benefKey].cantidad += parseInt(item.cantidad) || 1; // Sumar 1 si no hay cantidad definida
-
-                    // Comparar y actualizar 'ult_atencion' si la actual es más reciente
-                    if (!groupedData[benefKey].ult_atencion || new Date(item.ult_atencion) > new Date(groupedData[benefKey].ult_atencion)) {
-                        groupedData[benefKey].ult_atencion = item.ult_atencion;
+                    } else {
+                        // Acumular cantidad
+                        groupedData[key].cantidad += parseInt(item.cantidad) || 1;
+    
+                        // Actualizar última atención
+                        if (item.ult_atencion && new Date(item.ult_atencion) > new Date(groupedData[key].ult_atencion)) {
+                            groupedData[key].ult_atencion = item.ult_atencion;
+                        }
+    
+                        // Actualizar egreso si es más reciente
+                        if (item.egreso && (!groupedData[key].egreso || new Date(item.egreso) > new Date(groupedData[key].egreso))) {
+                            groupedData[key].egreso = item.egreso;
+                        }
+    
+                        // Unificar OPs si hay múltiples
+                        if (item.ops) {
+                            const currentOps = new Set(groupedData[key].ops.split(',').map(op => op.trim()).filter(Boolean));
+                            const newOps = item.ops.split(',').map(op => op.trim()).filter(Boolean);
+                            newOps.forEach(op => currentOps.add(op));
+                            groupedData[key].ops = Array.from(currentOps).sort().join(', ');
+                        }
                     }
                 });
-
-                // Convertir el objeto agrupado a un array
+    
                 const data = Object.values(groupedData).map(item => {
                     const admision = item.admision ? formatDate(item.admision) : '';
                     const egreso = item.egreso ? formatDate(item.egreso) : '';
                     const ult_atencion = item.ult_atencion ? formatDate(item.ult_atencion) : '';
-
+    
                     return [
                         item.nombre,
                         `${item.benef}${item.parentesco}`,
                         admision,
-                        item.op,
-                        item.diag,
+                        item.ops || '',
+                        item.diag || '',
                         egreso,
                         ult_atencion,
-                        item.cantidad // Valor total de prácticas/turnos
+                        item.cantidad
                     ];
                 });
-
-                // Crear un nuevo libro de trabajo
+    
                 const wb = XLSX.utils.book_new();
-
-                // Crear una hoja de trabajo con los datos de pacientes
                 const wsData = [
-                    ['AFILIADO', 'BENEFICIO', 'INGRESO', 'OP', 'DIAG', 'EGRESO', 'ULT. ATENCION', 'CANTIDAD'], // Encabezados
+                    ['AFILIADO', 'BENEFICIO', 'INGRESO', 'OP', 'DIAG', 'EGRESO', 'ULT. ATENCION', 'CANTIDAD'],
                     ...data
                 ];
-
+    
                 const ws = XLSX.utils.aoa_to_sheet(wsData);
                 XLSX.utils.book_append_sheet(wb, ws, 'PACIENTES');
-
-                // Generar el archivo Excel
                 XLSX.writeFile(wb, 'LISTADO_DE_PACIENTES_ATENDIDOS_POR_MODALIDAD.xlsx');
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error generando Excel:', error);
             });
     }
+    
+
 
 
 
@@ -2969,17 +2978,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
         Promise.all([fetchPatientData(fechaDesde, fechaHasta, obraSocialId)])
             .then(([resumen]) => {
-                const aggregatedData = {};
+                const groupedData = {};
 
-                // Agrupar por nombre y modalidad, solo la última atención se guarda
                 resumen.forEach(item => {
-                    const key = `${item.nombre}-${item.modalidad_full}`;
-                    if (!aggregatedData[key] || new Date(item.ult_atencion) > new Date(aggregatedData[key].ult_atencion)) {
-                        aggregatedData[key] = item;
+                    // La clave de agrupación usa: nombre, benef, parentesco, ingreso_modalidad y modalidad_full
+                    const key = `${item.nombre}-${item.benef}-${item.parentesco}-${item.ingreso_modalidad}-${item.modalidad_full}-${item.ops}`;
+
+                    if (!groupedData[key]) {
+                        // Inicializamos el grupo con los datos del primer registro
+                        groupedData[key] = {
+                            nombre: item.nombre,
+                            benef: item.benef,
+                            parentesco: item.parentesco,
+                            ugl_paciente: item.ugl_paciente,
+                            ingreso_modalidad: item.ingreso_modalidad,
+                            modalidad_codigo: item.modalidad_codigo,
+                            modalidad_full: item.modalidad_full,
+                            sexo: item.sexo,
+                            diag: item.diag || '',
+                            egreso: item.egreso,
+                            // Guardamos la op del registro actual (puede ser '' si no existe)
+                            ops: item.ops || '',
+                            ult_atencion: item.ult_atencion,
+                            cantidad: Number(item.cantidad || 0)
+                        };
+                    } else {
+                        // Si el registro actual tiene una ult_atencion posterior, actualizamos la op (y el egreso si corresponde)
+                        if (new Date(item.ult_atencion) > new Date(groupedData[key].ult_atencion)) {
+                            groupedData[key].ult_atencion = item.ult_atencion;
+                            if (item.ops) {
+                                groupedData[key].ops = item.ops;
+                            }
+                            // Actualizamos el egreso si viene y es posterior al guardado
+                            if (item.egreso && (!groupedData[key].egreso || new Date(item.egreso) > new Date(groupedData[key].egreso))) {
+                                groupedData[key].egreso = item.egreso;
+                            }
+                        }
+                        // Sumamos la cantidad de prácticas, independientemente de la OP
+                        groupedData[key].cantidad += Number(item.cantidad || 0);
                     }
                 });
 
-                const data = Object.values(aggregatedData);
+                // Convertimos el objeto agrupado a un array para usar en el PDF
+                const data = Object.values(groupedData);
+
+
                 const formattedFechaDesde = formatDate(fechaDesde);
                 const formattedFechaHasta = formatDate(fechaHasta);
                 const title = 'LISTADO DE PACIENTES ATENDIDOS POR MODALIDAD';
@@ -3031,7 +3074,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     startY += 5;
 
-                    const headers = ['AFILIADO', 'BENEFICIO', 'INGRESO', 'OP', 'DIAG', 'EGRESO', 'Ult. ATENCION'];
+                    const headers = ['AFILIADO', 'BENEFICIO', 'INGRESO', 'OP', 'DIAG', 'EGRESO', 'Ult. ATENCION', 'CANT. Pract.'];
 
                     if (modalityData.length) {
                         let tableStartY = startY;
@@ -3043,12 +3086,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                 head: [headers],
                                 body: chunk.map(item => [
                                     item.nombre,
-                                    `${item.benef}${item.parentesco}`,
+                                    `${item.benef}${item.parentesco}- UGL:${item.ugl_paciente}`,
                                     formatDate(item.ingreso_modalidad),
                                     item.ops || '',
                                     item.diag || '',
                                     item.egreso ? formatDate(item.egreso) : ' ',
-                                    formatDate(item.ult_atencion)
+                                    formatDate(item.ult_atencion),
+                                    item.cantidad || 0 // Sumar la cantidad, o 1 si no está definida
                                 ]),
                                 startY: tableStartY,
                                 margin: margin,

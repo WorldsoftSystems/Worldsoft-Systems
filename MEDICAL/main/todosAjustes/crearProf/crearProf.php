@@ -191,11 +191,11 @@ $result = $conn->query($sql);
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="nombreYapellido" class="form-label">Nombre y Apellido:</label>
-                                    <input type="text" class="form-control" id="nombreYapellido" name="nombreYapellido">
+                                    <input type="text" class="form-control" id="nombreYapellido" name="nombreYapellido" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="id_especialidad" class="form-label">Especialidad:</label>
-                                    <select class="form-control" id="id_especialidad" name="id_especialidad">
+                                    <select class="form-control" id="id_especialidad" name="id_especialidad" required>
                                         <option value="" disabled selected>Seleccionar especialidad...</option>
                                         <?php
                                         if ($result_especialidades->num_rows > 0) {
@@ -211,11 +211,11 @@ $result = $conn->query($sql);
 
                                 <div class="mb-3">
                                     <label for="matricula_p" class="form-label">Matrícula Provincial:</label>
-                                    <input type="text" class="form-control" id="matricula_p" name="matricula_p">
+                                    <input type="number" class="form-control" id="matricula_p" name="matricula_p" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="matricula_n" class="form-label">Matrícula Nacional:</label>
-                                    <input type="text" class="form-control" id="matricula_n" name="matricula_n">
+                                    <input type="number" class="form-control" id="matricula_n" name="matricula_n" required>
                                 </div>
 
                                 <div class="mb-3">
@@ -243,7 +243,7 @@ $result = $conn->query($sql);
 
                                 <div class="mb-3">
                                     <label for="tipo_doc">Tipo de Doc.:*</label>
-                                    <select class="form-control" id="tipo_doc" name="tipo_doc" required>
+                                    <select class="form-control" id="tipo_doc" name="tipo_doc">
                                         <option value="">Seleccione un tipo de documento</option>
                                         <option value="DNI">DNI (Documento Nacional de Identidad)</option>
                                         <option value="LC">LC (Libreta de Enrolamiento)</option>
@@ -255,7 +255,7 @@ $result = $conn->query($sql);
 
                                     <div class="mb-3">
                                         <label for="nro_doc">Número de Documento:*</label>
-                                        <input type="number" class="form-control" id="nro_doc" name="nro_doc" required>
+                                        <input type="number" class="form-control" id="nro_doc" name="nro_doc">
                                     </div>
                                 </div>
 

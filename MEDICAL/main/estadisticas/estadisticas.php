@@ -144,6 +144,7 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
         </a>
       </div>
 
+      <?php if ($_SESSION['usuario'] === 'test'): ?>
       <div class="col d-flex justify-content-center">
         <a href="#" id="openOrdenMesModalLink">
           <div class="card h-100">
@@ -156,6 +157,7 @@ $script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$clien
           </div>
         </a>
       </div>
+      <?php endif; ?>
 
       <div class="col d-flex justify-content-center">
         <a href="#" id="openModalLink">
