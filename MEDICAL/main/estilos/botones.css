@@ -1,0 +1,79 @@
+.btn-custom,
+.btn-custom-editar,
+.btn-custom-save,
+.button-form,
+.button-form-cancel,
+.button {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #bfe6f8;
+  transition: all 0.3s ease;
+}
+
+.btn-custom:hover,
+.btn-custom-editar:hover,
+.btn-custom-save:hover,
+.button-form:hover,
+.button:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 15px 20px rgba(94, 170, 233, 0.4);
+  background-color: var(--primary-color);
+  color: var(--bg-default);
+}
+
+.button,.button-form,.button-form-cancel,.button-form-warning,.button-form-delete,.button-form-info {
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  border-radius: 45px;
+  margin-top: 1rem;
+}
+
+.button:active,.button-form:active,.button-form-cancel:active,.button-form-warning:active,.button-form-delete:active, .button-form-info:active {
+  transform: translateY(-1px);
+}
+
+.button-form {
+  padding: 1em 1.5em;
+}
+
+.button-form-cancel{
+  padding: 1em 1.5em;
+  background-color: var(--primary-soft);
+  border-color: var(--primary-soft);
+  color: var(--primary-color);
+}
+
+.button-form-warning{
+  padding: 1em 1.5em;
+  background-color: var(--warning);
+  border-color: var(--warning);
+  color: var(--primary-color);
+}
+
+.button-form-delete{
+  padding: 1em 1.5em;
+  background-color: red;
+  border-color: red;
+  color: white;
+  margin-right: 0.4rem;
+}
+
+.button-form-info{
+  padding: 1em 1.5em;
+  background-color: var(--primary-lighter);
+  border-color: var(--primary-lighter);
+  color: white;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .button {
+    display: none;
+  }
+}
+
+.eliminar-profesional {
+  color: red;
+}

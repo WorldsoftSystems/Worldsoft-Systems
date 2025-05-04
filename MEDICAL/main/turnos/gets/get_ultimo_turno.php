@@ -10,10 +10,13 @@ if ($conn->connect_error) {
 }
 
 // Preparar la consulta para obtener los datos de la práctica específica
-$sql = "SELECT MAX(t.fecha) AS ultima_fecha, t.hora , p.nombreYapellido as nom_prof
-        FROM turnos t
-        LEFT JOIN profesional p ON p.id_prof = t.id_prof
-        WHERE t.paciente = ?";
+$sql = "SELECT t.fecha AS ultima_fecha, t.hora, p.nombreYapellido as nom_prof
+FROM turnos t
+LEFT JOIN profesional p ON p.id_prof = t.id_prof
+WHERE t.paciente = ?
+ORDER BY t.fecha DESC
+LIMIT 1
+";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 

@@ -8,39 +8,85 @@
     <!--icono pestana-->
     <link rel="icon" href="../img/logo.png" type="image/x-icon">
     <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../estilos/styleBotones.css">
+    <?php include '../componentes/head-resources.php'; ?>
 </head>
 
-<body>
-    <button class="button" style="vertical-align:middle; margin-top:1rem; margin-left:7rem"
-        onclick="window.location.href = '../index.php';">
-        <span>VOLVER</span>
-    </button>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-<!--wss1593 -->
-                    <div class="card-header">Iniciar sesión como admin</div>
-                    <div class="card-body">
-                        <form action="loginAdmin.php" method="POST">
-                            <div class="form-group">
-                                <label for="usuario">Usuario:</label>
-                                <input type="text" name="usuario" id="usuario" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="clave">Contraseña:</label>
-                                <input type="password" name="clave" id="clave" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-                        </form>
+<body class="d-flex flex-column min-vh-100 bg-info-subtle">
+
+    <!-- BOTÓN VOLVER -->
+    <div class="container mt-3">
+        <?php
+        $href = '../index.php';
+        $texto = 'VOLVER';
+        include '../componentes/boton-volver.php';
+        ?>
+    </div>
+
+    <!-- CONTENIDO CENTRADO -->
+    <main class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <div class="shadow-lg border-0 rounded-4 p-3"
+            style="max-width: 420px; width: 100%; background-color: var(--primary-color); color: var(--text-light);">
+            <div class="card-header text-center bg-transparent border-0">
+                <h4 class="mb-0">Iniciar sesión como admin</h4>
+            </div>
+            <div class="card-body">
+                <form action="login_admin.php" method="POST">
+                    <div class="mb-3">
+                        <label for="usuario" class="form-label fw-semibold">Usuario</label>
+                        <input type="text" name="usuario" id="usuario" class="form-control rounded-3" required
+                            autocomplete="username">
                     </div>
-                </div>
+                    <div class="mb-4">
+                        <label for="clave" class="form-label fw-semibold">Contraseña</label>
+                        <input type="password" name="clave" id="clave" class="form-control rounded-3" required
+                            autocomplete="current-password">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-light text-primary fw-bold rounded-3">Iniciar
+                            sesión</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
+    </main>
+
+    <!-- FOOTER -->
+    <?php include '../componentes/footer.php'; ?>
+
+    <script>
+        const loginError = "<?= isset($_GET['error']) ? htmlspecialchars($_GET['error']) : '' ?>";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (loginError) {
+                const message = loginError === 'credenciales'
+                    ? 'Contraseña incorrecta.'
+                    : loginError === 'usuario'
+                        ? 'Usuario no encontrado.'
+                        : '';
+
+                if (message) {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+                    alertDiv.style.zIndex = '1055'; // encima de todo
+                    alertDiv.role = 'alert';
+                    alertDiv.innerHTML = `
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        `;
+
+                    document.body.appendChild(alertDiv);
+
+                    // Auto-cerrar después de 5s
+                    setTimeout(() => {
+                        alertDiv.classList.remove('show');
+                        alertDiv.classList.add('fade');
+                        setTimeout(() => alertDiv.remove(), 500);
+                    }, 5000);
+                }
+            }
+        });
+    </script>
+
 </body>
 
 </html>

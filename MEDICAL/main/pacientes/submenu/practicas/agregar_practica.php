@@ -1,6 +1,8 @@
 <?php
 require_once "../../../conexion.php";
 
+header('Content-Type: application/json'); // 🔥 AGREGAR ESTO AL PRINCIPIO
+
 // Función para formatear fechas en formato DD/MM/YYYY
 function formatDateToArg($date)
 {

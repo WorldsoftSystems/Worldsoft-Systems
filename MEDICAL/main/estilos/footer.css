@@ -1,0 +1,15 @@
+footer.bg-dark {
+  background-color: transparent !important;
+  /* Cambiar el fondo del footer a blanco */
+  color: #000;
+  /* Texto en color negro */
+  padding: 1rem 0;
+  /* Reducir el padding */
+  margin-top: -1rem;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer-logo-text img {
+  margin-right: 0.5rem;
+}

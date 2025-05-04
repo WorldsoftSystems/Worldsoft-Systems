@@ -1,17 +1,6 @@
 <?php
-require_once "../conexion.php";
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Verifica si el usuario ha iniciado sesión
-if (isset($_SESSION['up'])) {
-    // El usuario ha iniciado sesión, puedes mostrar contenido para usuarios autenticados o ejecutar acciones específicas
-} else {
-    header("Location: ../index.php");
-}
-
+require_once "../componentes/auth.php";
+require_once "../componentes/init.php";
 
 // Verificar si se ha enviado el parámetro "eliminar"
 if (isset($_GET['eliminar'])) {
@@ -53,38 +42,7 @@ if (isset($_GET['eliminar'])) {
     // Cerrar la sentencia
     $stmt->close();
 }
-
-// Obtener todos los pacientes
-$sql = "SELECT p.*
-        FROM paciente p 
-        ORDER BY p.nombre ASC
-        LIMIT 30";
-$result = $conn->query($sql);
-
-// Consultar el valor de 'inst'
-$sqlTitle = "SELECT inst FROM parametro_sistema LIMIT 1";
-$resultTitle = $conn->query($sqlTitle);
-
-// Obtener el valor
-$title = "Iniciar sesión"; // Valor por defecto
-if ($resultTitle && $resultTitle->num_rows > 0) {
-    $row = $resultTitle->fetch_assoc();
-    $title = $row['inst'];
-}
-
-// Determinar cliente desde la sesión
-$cliente = isset($_SESSION['up']) ? $_SESSION['up'] : null;
-
-// Archivos de script específicos para ciertos clientes
-$scripts_especificos = [
-    'UP3069149922304' => './script/pq0303.js'
-];
-// Determinar el script a cargar
-$script_js = isset($scripts_especificos[$cliente]) ? $scripts_especificos[$cliente] : './script/scriptPaciente.js';
-
 $conn->close();
-
-
 ?>
 
 <!DOCTYPE html>
@@ -97,612 +55,149 @@ $conn->close();
     <link rel="icon" href="../img/logo.png" type="image/x-icon">
     <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <?php include "../componentes/head-resources.php"; ?>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Bootstrap Datepicker CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
-        rel="stylesheet">
-
-
-    <link rel="stylesheet" href="../estilos/styleBotones.css">
-    <link rel="stylesheet" href="../estilos/styleGeneral.css">
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-
-    <!-- Bootstrap Datepicker JS -->
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-
-
-
-    <!-- Reportes JS -->
+    <!-- Scripts adicionales de la vista paciente.php -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
-    <!-- Scripts personalizados -->
-    <script src="<?php echo htmlspecialchars($script_js); ?>" defer></script>
-    <script src="./script/submenues.js" defer></script>
+    <!--<script src="./script/scriptPaciente.js" defer></script>-->
+    <!-- Cargar solo el JS modularizado -->
+    <script type="module" src="./script/pacientes/init.js"></script>
 
+    <?php include './modals/practicas/crear-modal-practica.php'; ?>
 
+    <script type="module" src="../componentes/formatDate.js" defer></script>
 
-
-    <style>
-        .modal-xl {
-            max-width: 89%;
-
-        }
-
-        .custom-icon {
-            color: var(--primary-color);
-        }
-
-        .icon-text {
-            color: var(--primary-color) !important;
-        }
-
-
-
-        .scrollable-content {
-            max-height: 400px;
-            /* Ajusta según sea necesario */
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-
-        .modal-header-center {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .modal-title {
-            margin: 0;
-            flex: 1;
-            text-align: start;
-        }
-
-        .modal-logo {
-            max-height: 4rem;
-            margin-top: 1rem;
-            /* Ajusta según sea necesario */
-        }
-
-        .btn-custom-add {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .custom-modal-paciente {
-            margin-top: 1rem;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--primary-color);
-            /* Color de fondo del elemento activo */
-            color: white;
-            /* Color del texto del elemento activo */
-        }
-    </style>
+    <script type="module" src="./modals/practicas/practicas.js"></script>
 </head>
 
 <body>
-    <button class="button" style="vertical-align:middle; margin-left:7rem"
-        onclick="window.location.href = '../inicio/home.php';">
-        <span>VOLVER</span>
-    </button>
+    <!-- NAVBAR -->
+    <?php
+    include '../componentes/navbar.php';
+    ?>
+    <!-- FIN NAVBAR -->
 
-    <div class="text-center my-4">
-        <img src="../img/logo.png" alt="Logo MEDICAL" class="img-fluid" style="max-width: 15rem;">
-    </div>
+    <!-- TOOL BAR -->
+    <div class="container-fluid my-4">
+        <h2 class="m-0 text-truncate" style="max-width: 600px;">
+            Pacientes | <?= htmlspecialchars($title) ?>
+        </h2>
+        <div class="d-flex align-items-center justify-content-between position-relative mb-3">
 
-    <div class="container">
-        <div class="title-container d-flex flex-wrap align-items-center mb-3">
-            <h2 class="me-3">Pacientes | <?php echo htmlspecialchars($title); ?></h2>
-            <input type="text" id="searchInput" class="form-control me-2" placeholder="Buscar por nombre o beneficio"
-                style="width: 300px;">
-            <button type="button" id="searchButton" class="btn btn-primary me-2">
-                Buscar
-            </button>
+            <div class="d-flex align-items-center flex-nowrap gap-3">
+                <?php
+                $href = '../inicio/home.php';
+                $icon = 'fas fa-arrow-left';
+                include '../componentes/boton-volver.php';
+                ?>
+            </div>
+            <!-- Bloque central (BUSCADOR + BOTONES) -->
+            <div class="d-flex align-items-center flex-nowrap gap-2 position-absolute start-50 translate-middle-x">
+                <input type="text" id="searchInput" class="form-control form-control-lg rounded-pill"
+                    placeholder="Buscar por nombre o beneficio" style="max-width: 360px; min-width: 300px;">
 
-            <button type="button" id="reloadButton" class="btn btn-secondary me-2">
-                Recargar Pacientes
-            </button>
-            <button type="button" class="btn btn-custom btn-lg" data-bs-toggle="modal"
+                <button type="button" id="searchButton" class="button">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button type="button" id="reloadButton" class="btn btn-outline-secondary">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <!-- Bloque derecho (AGREGAR) -->
+            <button type="button" class="button btn-primary d-flex align-items-center gap-2" data-bs-toggle="modal"
                 data-bs-target="#agregarPacienteModal">
-                Agregar Paciente <img src="../img/home/pacientes.png" alt="Icono agregar paciente"
-                    style="width: 50px; height: 50px; margin-left: 8px;">
+                <span>Agregar</span>
+                <img src="../img/home/pacientes.png" alt="Icono agregar paciente" style="width: 24px; height: 24px;">
             </button>
+
         </div>
-
-        <table class="table table-striped table-bordered " id="pacientesTable">
-            <thead class="table-custom">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Beneficio</th>
-                    <th>Parentesco</th>
-                    <th>Modalidad actual</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Llenado dinamico de pacientes -->
-            </tbody>
-        </table>
     </div>
+    <!-- FIN TOOL BAR -->
 
-    <!-- Modal para agregar/editar paciente -->
+    <!-- TABLA PACIENTE -->
+    <div class="container-fluid my-4 px-4">
+        <div id="pacientesTable"></div> <!-- 👈 Aquí se inyecta todo dinámicamente -->
+    </div>
+    <!-- FIN TABLA PACIENTE -->
+
+
+    <!-- tools-modal -->
     <div class="modal fade" id="agregarPacienteModal" tabindex="-1" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog modal-xl custom-modal-paciente">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Paciente</h5>
                     <!-- Icons for different sections -->
                     <div class="d-flex flex-wrap align-items-center">
+                        <?php require_once 'tools-modal.php'; ?>
 
-                        <a href="#" class="btn btn-link" title="Practicas" data-bs-toggle="modal"
-                            data-bs-target="#pracModal" onclick="loadPracticasModal()">
-                            <i class="fas fa-comment-medical custom-icon"></i>
-                            <span class="icon-text">Practicas</span>
-                        </a>
+                        <div class="d-flex flex-wrap align-items-center">
+                            <?php foreach ($botonesModal as $btn): ?>
+                                <a href="#" class="btn btn-link text-decoration-none fw-semibold"
+                                    title="<?= htmlspecialchars($btn['title']) ?>" data-bs-toggle="modal"
+                                    data-bs-target="<?= htmlspecialchars($btn['target']) ?>"
+                                    onclick="<?= htmlspecialchars($btn['onclick']) ?>">
 
-                        <!-- Enlace para abrir el modal de Egresos -->
-                        <a href="#" class="btn btn-link" title="Modalidades" data-bs-toggle="modal"
-                            data-bs-target="#modaModal" onclick="loadModalidadesModal()">
-                            <i class="fas fa-sliders-h custom-icon"></i>
-                            <span class="icon-text">Modalidades</span>
-                        </a>
-
-                        <!-- Enlace para abrir el modal de Egresos -->
-                        <a href="#" class="btn btn-link" title="Egresos" data-bs-toggle="modal"
-                            data-bs-target="#egresoModal" onclick="loadEgresoModal()">
-                            <i class="fas fa-sign-out-alt custom-icon"></i>
-                            <span class="icon-text">Egresos</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="diagnosticos" data-bs-toggle="modal"
-                            data-bs-target="#diagModal" onclick="loadDiagnosticoModal()">
-                            <i class="fas fa-notes-medical custom-icon"></i>
-                            <span class="icon-text">Diagnosticos</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="Medicacion" data-bs-toggle="modal"
-                            data-bs-target="#mediModal" onclick="loadMedicacionModal()">
-                            <i class="fas fa-pills custom-icon"></i>
-                            <span class="icon-text">Medicacion</span>
-                        </a>
-
-                        <!-- Enlace para abrir el modal de Responsables -->
-                        <a href="#" class="btn btn-link" title="responsables" data-bs-toggle="modal"
-                            data-bs-target="#responModal" onclick="loadResponsablesModal()">
-                            <i class="fas fa-users custom-icon"></i>
-                            <span class="icon-text">Responsable</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="judiciales" data-bs-toggle="modal"
-                            data-bs-target="#judiModal" onclick="loadJudicialesModal()">
-                            <i class="fas fa-gavel custom-icon"></i>
-                            <span class="icon-text">Judiciales</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="salidas" data-bs-toggle="modal"
-                            data-bs-target="#saliModal" onclick="loadSalidasModal()">
-                            <i class="fas fa-door-open custom-icon"></i>
-                            <span class="icon-text">Salidas</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="habitaciones" data-bs-toggle="modal"
-                            data-bs-target="#habiModal" onclick="loadHabitacionesModal()">
-                            <i class="fas fa-bed custom-icon"></i>
-                            <span class="icon-text">Habitaciones</span>
-
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="visitas" data-bs-toggle="modal"
-                            data-bs-target="#visiModal" onclick="loadVisitasModal()">
-                            <i class="fas fa-user-friends custom-icon"></i>
-                            <span class="icon-text">Visitas</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="visitas" data-bs-toggle="modal"
-                            data-bs-target="#trasModal" onclick="loadTrasladosModal()">
-                            <i class="fas fa-user-friends custom-icon"></i>
-                            <span class="icon-text">Traslados</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="visitas" data-bs-toggle="modal"
-                            data-bs-target="#ordenModal" onclick="loadOrdenModal()">
-                            <i class="fas fa-list-alt custom-icon"></i>
-                            <span class="icon-text">Ordenes de prestacion</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="evoluciones" data-bs-toggle="modal"
-                            data-bs-target="#evoModal" onclick="loadEvolucionModal()">
-                            <i class="fa-solid fa-laptop-medical custom-icon"></i>
-                            <span class="icon-text">Evoluciones HC</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="admision Amb" data-bs-toggle="modal"
-                            data-bs-target="#admiAmbModal" onclick="loadAdmiAmbModal()">
-                            <i class="fa-solid fa-hospital-user custom-icon"></i>
-                            <span class="icon-text">Admision</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="admision nutricion" data-bs-toggle="modal"
-                            data-bs-target="#nutriModal" onclick="loadNutriModal()">
-                            <i class="fa-solid fa-hospital-user custom-icon"></i>
-                            <span class="icon-text">Admision Nutricion.</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="admision fisica" data-bs-toggle="modal"
-                            data-bs-target="#fisicaModal" onclick="loadFisicaModal()">
-                            <i class="fa-solid fa-hospital-user custom-icon"></i>
-                            <span class="icon-text">Admision Fisica</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="Impresion diagnostica" data-bs-toggle="modal"
-                            data-bs-target="#admiDiagModal" onclick="loadAdmisionDiagModal()">
-                            <i class="fa-solid fa-hospital-user custom-icon"></i>
-                            <span class="icon-text">Impresion diagnostica</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="Impresion diagnostica" data-bs-toggle="modal"
-                            data-bs-target="#exPsiquiatricoModal" onclick="loadExPsiquiatricoModal()">
-                            <i class="fa-solid fa-hospital-user custom-icon"></i>
-                            <span class="icon-text">Examen Psiquiatrico</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="Impresion diagnostica" data-bs-toggle="modal"
-                            data-bs-target="#antecedentesFamiliaresModal" onclick="loadAntecendentesFamiliares()">
-                            <i class="fa-solid fa-hospital-user custom-icon"></i>
-                            <span class="icon-text">Antecentes Familiares</span>
-                        </a>
-
-                        <a href="#" class="btn btn-link" title="Impresion diagnostica" data-bs-toggle="modal"
-                            data-bs-target="#antecedentesPersonalesModal" onclick="loadAntecendentesPersonales()">
-                            <i class="fa-solid fa-hospital-user custom-icon"></i>
-                            <span class="icon-text">Antecentes Personales</span>
-                        </a>
-
+                                    <i class="<?= htmlspecialchars($btn['icon']) ?> custom-icon"></i>
+                                    <span class="icon-text"><?= htmlspecialchars($btn['texto']) ?></span>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                        
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="bajaMensaje"></div> <!-- Aquí se insertará el mensaje de BAJA -->
-                    <form id="formPaciente" action="./agregarPaciente.php" method="POST">
-                        <input type="hidden" id="id" name="id">
-
-                        <div class="container">
-                            <h5>Datos del Beneficiario</h5>
-                            <div class="row">
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="obra_social">Obra Social:*</label>
-                                    <select class="form-control" id="obra_social" name="obra_social" required>
-                                        <option value="">Seleccionar...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="boca_atencion">Boca de atención:*</label>
-                                    <select class="form-control" id="boca_atencion" name="boca_atencion" required>
-                                        <option value="">Seleccionar...</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="benef">Beneficiario (12):*</label>
-                                    <input type="number" class="form-control" id="benef" name="benef" required>
-                                </div>
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="parentesco">Parentesco (2):*</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="parentesco" name="parentesco"
-                                            required maxlength="2">
-                                        <div class="input-group-append" id="btnBuscar">
-                                            <span class="input-group-text">
-                                                <i class="fas fa-search"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="ugl_paciente">UGL:</label>
-                                    <input type="text" class="form-control" id="ugl_paciente" name="ugl_paciente"
-                                        required readonly>
-                                </div>
-
-
-                                <div class="col-md-6 form-group mb-3">
-                                    <div class="row">
-
-                                        <?php if ($cliente === 'UP3069149922304'): ?>
-                                            <div class="col-sm-6 form-group mb-2">
-                                                <label for="token">Token:</label>
-                                                <input type="text" class="form-control form-control-sm" id="token"
-                                                    name="token">
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <div class="col-sm-6 form-group mb-2">
-                                            <label for="nro_de_tramite">Nro de Tramite:</label>
-                                            <input type="text" class="form-control form-control-sm" id="nro_de_tramite"
-                                                name="nro_de_tramite">
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="nro_hist_amb">Nro. Historia Ambulatoria*:</label>
-                                    <input type="text" class="form-control" id="nro_hist_amb" name="nro_hist_amb">
-                                </div>
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="nro_hist_int">Nro. Historia Internacion*:</label>
-                                    <input type="text" class="form-control" id="nro_hist_int" name="nro_hist_int">
-                                </div>
-                            </div>
-
-
-
-                            <h5>Información Personal</h5>
-                            <div class="row">
-                                <div class="col-md-4 form-group mb-3">
-                                    <label for="nombre">Nombre y Apellido:*</label>
-                                    <input type="text" class="form-control" id="nombre" name="nombre" readonly required>
-                                </div>
-                                <div class="col-md-4 form-group mb-3">
-                                    <label for="fecha_nac">Fecha de Nacimiento:*</label>
-                                    <input type="date" class="form-control" id="fecha_nac" name="fecha_nac" readonly
-                                        required>
-                                </div>
-                                <div class="col-md-4 form-group mb-3">
-                                    <label for="sexo">Sexo:*</label>
-                                    <select class="form-control" id="sexo" name="sexo" required>
-                                        <option value="">Seleccionar...</option>
-                                        <option value="F">Femenino</option>
-                                        <option value="M">Masculino</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <h5>Detalles del Afiliado</h5>
-                            <div class="row">
-                                <div class="col-md-4 form-group mb-3">
-                                    <label for="tipo_afiliado">Tipo de prestacion:*</label>
-                                    <select class="form-control" id="tipo_afiliado" name="tipo_afiliado" required>
-                                        <option value="">Seleccionar...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 form-group mb-3">
-                                    <label for="tipo_doc">Tipo de Documento:*</label>
-                                    <select class="form-control" id="tipo_doc" name="tipo_doc" required>
-                                        <option value="">Seleccione un tipo de documento</option>
-                                        <option value="DNI">DNI</option>
-                                        <option value="LC">LC</option>
-                                        <option value="LE">LE</option>
-                                        <option value="CI">CI</option>
-                                        <option value="PAS">Pasaporte</option>
-                                        <option value="OTRO">Otro</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 form-group mb-3">
-                                    <label for="nro_doc">Número de Documento:*</label>
-                                    <input type="number" class="form-control" id="nro_doc" name="nro_doc" required>
-                                </div>
-                            </div>
-
-                            <h5>Información de Admisión</h5>
-                            <div class="row">
-                                <div class="col-md-3 form-group mb-3">
-                                    <label for="admision">Fecha de Admisión:*</label>
-                                    <input type="date" class="form-control" id="admision" name="admision" required>
-                                </div>
-                                <div class="col-md-2 form-group mb-3">
-                                    <label for="hora_admision">Hora*:</label>
-                                    <input type="time" class="form-control" id="hora_admision" name="hora_admision">
-                                </div>
-                                <div class="col-md-3 form-group mb-3">
-                                    <label for="id_prof">Profesional:*</label>
-                                    <select class="form-control" id="id_prof" name="id_prof" required>
-                                        <option value="">Seleccionar...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 form-group mb-3">
-                                    <label for="modalidad_act">Modalidad De Ingreso:*</label>
-                                    <select class="form-control" id="modalidad_act" name="modalidad_act" required>
-                                        <option value="">Seleccionar...</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <hr>
-
-                            <h5>Información de Contacto</h5>
-                            <div class="row">
-                                <div class="col-md-4 form-group mb-3">
-                                    <label for="ocupacion">Ocupación:</label>
-                                    <input type="text" class="form-control" id="ocupacion" name="ocupacion">
-                                </div>
-                                <div class="col-md-4 form-group mb-3">
-                                    <label for="telefono">Teléfono:</label>
-                                    <input type="text" class="form-control" id="telefono" name="telefono">
-                                </div>
-                                <div class="col-md-4 form-group mb-3">
-                                    <label for="hijos">Hijos:</label>
-                                    <input type="number" class="form-control" id="hijos" name="hijos">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-3 form-group mb-3">
-                                    <label for="partido">Partido:</label>
-                                    <input type="text" class="form-control" id="partido" name="partido">
-                                </div>
-                                <div class="col-md-3 form-group mb-3">
-                                    <label for="localidad">Localidad:</label>
-                                    <input type="text" class="form-control" id="localidad" name="localidad">
-                                </div>
-                                <div class="col-md-3 form-group mb-3">
-                                    <label for="domicilio">Domicilio:</label>
-                                    <input type="text" class="form-control" id="domicilio" name="domicilio">
-                                </div>
-                                <div class="col-md-3 form-group mb-3">
-                                    <label for="c_postal">Código Postal:</label>
-                                    <input type="number" class="form-control" id="c_postal" name="c_postal">
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-
-
-
-
-                        <div class="modal-footer">
-                            <div class="modal-header-center">
-                                <img src="../img/logo.png" alt="Logo" class="modal-logo">
-                            </div>
-                            <button type="button" class="btn btn-warning" id="btnCompletarManualmente">Completar
-                                manualmente</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-
-                            <button type="submit" class="btn btn-primary btn-custom-save">Guardar</button>
-                        </div>
-                    </form>
-                    <button class="btn btn-primary" id="btnGenerarPDF">
-                        <i class="fas fa-file-pdf"></i> FICHA DE PACIENTE
+                    <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close"
+                        style="color: #dc3545; font-size: 1.25rem; border: none; background: transparent;">
+                        <i class="fas fa-times"></i>
                     </button>
+
+                </div>
+                <div class="modal-body">
+                    <div id="bajaMensaje"></div>
+                    <form id="formPaciente" method="POST" data-mode="add">
+                        <input type="hidden" id="id" name="id">
+                        <div class="container" style="max-height: 65vh; overflow-y: auto; padding-right: 1rem;">
+                            <?php include './form-secciones/beneficiario.php'; ?>
+                            <?php include './form-secciones/personal.php'; ?>
+                            <?php include './form-secciones/afiliado.php'; ?>
+                            <?php include './form-secciones/admision.php'; ?>
+                            <?php include './form-secciones/contacto.php'; ?>
+                        </div>
+                        <?php include './form-secciones/footer.php'; ?>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+    <!-- FIN tools-modal -->
 
-
-    <!-- Modal de PRACTICAS -->
-    <div class="modal fade" id="pracModal" tabindex="-1" aria-labelledby="pracModalLabel">
-
-        <div class="modal-dialog modal-xl">
+    <!-- Modal para generar el reporte -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="pracModalLabel">Practicas</h5>
-                    <div class="modal-header-center">
-                        <img src="../img/logo.png" alt="Logo" class="modal-logo">
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="addPracModalBody">
-                    <!-- Aquí se cargará el contenido del formulario de agregar práctica -->
-                </div>
-                <!-- Contenedor para el título rojo -->
-                <h5 id="avisoPaciente" class="text-danger text-center d-none">Paciente sin afiliacion en pami</h5>
-
-                <!-- Aquí se cargará el contenido del formulario -->
-                <div class="modal-body" id="pracModalBody">
-                    <!-- Aquí se cargará el contenido del formulario -->
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <!-- Contenedor de la lista de prácticas -->
-                        <div id="listaPrac" class="scrollable-content">
-                            <!-- Aquí se cargará dinámicamente la lista de prácticas -->
-                        </div>
-                        <!-- Contenedor de la paginación -->
-                        <div id="pagination" class="mt-3">
-                            <!-- Aquí se cargarán los controles de paginación -->
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-volver">Volver</button>
-                    <button type="button" class="btn btn-primary btn-custom-save" id="nuevaPrac">Agregar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="agregarPracModal" tabindex="-1" aria-labelledby="agregarPracModalLabel">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="agregarPracModalLabel">Agregar Practica</h5>
-                    <div class="modal-header-center">
-                        <img src="../img/logo.png" alt="Logo" class="modal-logo">
-                    </div>
+                    <h5 class="modal-title" id="reportModalLabel">Generar Reporte De Turnos</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formAgregarPrac" class="row g-3">
-                        <input type="hidden" id="pracIdPaciente" name="id_paciente">
-                        <input type="hidden" name="id" id="pracId">
-                        <div class="col-md-4">
-                            <label for="pracNombreCarga" class="form-label">Nombre y Apellido</label>
-                            <input type="text" class="form-control" id="pracNombreCarga" name="nombre" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="pracFechas" class="form-label">Fechas</label>
-                            <input type="text" class="form-control" id="pracFechas" name="fechas" required>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="pracHora" class="form-label">Hora</label>
-                            <input type="time" class="form-control" id="pracHora" name="hora" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="pracProfesional" class="form-label">Profesional</label>
-                            <select class="form-control" id="pracProfesional" name="profesional" required>
-                                <option value="">Seleccionar...</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="pracActividad" class="form-label">Actividad</label>
-                            <select class="form-control" name="actividad" id="pracActividad">
-                                <option value="">Seleccionar...</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="pracCantidad" class="form-label">Cantidad</label>
-                            <input type="number" class="form-control" id="pracCantidad" name="cant" required>
-                        </div>
-                    </form>
+                    <div class="mb-3">
+                        <label for="fechaDesde_paci_turno" class="form-label">Fecha Desde</label>
+                        <input type="date" class="form-control" id="fechaDesde_paci_turno">
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaHasta_paci_turno" class="form-label">Fecha Hasta</label>
+                        <input type="date" class="form-control" id="fechaHasta_paci_turno">
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary btn-custom-save"
-                        id="btnGuardarPractica">Guardar</button>
-
+                    <button type="button" class="button-form-cancel" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="button-form" id="btnGenerarPDF">Generar PDF</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- FIN PRACTICAS-->
+    <!-- FIN Modal para generar el reporte -->
+
 
     <!-- Modal de MODALIDADES -->
     <div class="modal fade" id="modaModal" tabindex="-1" aria-labelledby="modaModalLabel">
@@ -1850,7 +1345,7 @@ $conn->close();
 
                         <div class="col-md-4">
                             <label for="respon_tel">tel:</label>
-                            <input type="number" class="form-control" id="respon_tel" name="respon_tel">
+                            <input type="text" class="form-control" id="respon_tel" name="respon_tel">
                         </div>
 
                         <div class="col-md-4 form-group">
@@ -2419,31 +1914,7 @@ $conn->close();
     </div>
     <!-- FIN ORDENES DE PRESTACION -->
 
-    <!-- Modal para generar el reporte -->
-    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="reportModalLabel">Generar Reporte De Turnos</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="fechaDesde_paci_turno" class="form-label">Fecha Desde</label>
-                        <input type="date" class="form-control" id="fechaDesde_paci_turno">
-                    </div>
-                    <div class="mb-3">
-                        <label for="fechaHasta_paci_turno" class="form-label">Fecha Hasta</label>
-                        <input type="date" class="form-control" id="fechaHasta_paci_turno">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="generatePdf()">Generar PDF</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- FIN TRASLADOS -->
 
@@ -3240,20 +2711,9 @@ $conn->close();
 
     <!--ANTECENDESTER PERSONALES -->
 
-
-
-
-    <footer class="bg-dark text-white text-center py-4 mt-auto">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-12 footer-logo-text">
-                    <img src="../img/logoWSS.png" alt="Logo" class="img-fluid" style="max-height: 50px;">
-                    <p class="mb-0">&copy; 2024 WorldsoftSystems. Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
+    <!-- Pie de página -->
+    <?php include "../componentes/footer.php"; ?>
+    <!-- Fin Pie de página -->
 
 </body>
 

@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "UPDATE responsable SET nombreYapellido = ?, tel = ?, tipo_familiar = ?, dni = ?, dom = ?, localidad = ? WHERE id = ?";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("siiissi", $nombre,$tel,$tipo_familiar,$dni,$dom,$localidad, $id);
+    $stmt->bind_param("ssiissi", $nombre,$tel,$tipo_familiar,$dni,$dom,$localidad, $id);
 
     if ($stmt->execute()) {
         echo "Responsable actualizada correctamente";

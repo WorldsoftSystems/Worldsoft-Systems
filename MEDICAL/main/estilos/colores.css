@@ -1,0 +1,18 @@
+:root {
+    --primary-color: #0d2f44;
+    /* Azul base profundo */
+    --primary-light: #1e4764;
+    /* Azul más claro */
+    --primary-lighter: #3d6f8f;
+    /* Azul claro */
+    --primary-hover: #14507a;
+    /* Hover */
+    --primary-soft: #d6eaf8;
+    /* Azul fondo claro */
+
+    --text-light: #f8f9fa;
+    --text-dark: #1a1a1a;
+    --bg-default: #bfe6f8;
+
+    --warning:#ffcc00;
+}

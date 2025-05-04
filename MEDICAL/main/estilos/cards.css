@@ -1,0 +1,16 @@
+.card {
+    width: 12rem;
+    height: 12rem;
+    background: var(--primary-color);
+    border-radius: 10px;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--bg-default);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(to bottom, var(--primary-color) 0%, rgba(56, 118, 233, 0.8) 100%);
+}

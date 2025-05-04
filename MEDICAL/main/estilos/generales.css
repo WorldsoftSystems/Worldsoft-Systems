@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  background-color: var(--bg-default);
+}
+
+h1 {
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+a {
+  text-decoration: none;
+}
+
+.navbar {
+  background-color: var(--primary-color);
+}
+
+.table-custom th {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* simibolo * en rojo */
+label sup, label .required-asterisk {
+  color: #dc3545; /* Rojo Bootstrap */
+  font-weight: bold;
+}
+

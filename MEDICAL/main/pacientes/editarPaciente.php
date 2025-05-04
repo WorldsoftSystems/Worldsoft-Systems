@@ -1,5 +1,7 @@
 <?php
 require_once "../conexion.php";
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 $response = array('success' => false, 'message' => '');
 
@@ -31,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $hora_admision = $_POST['hora_admision'];
     $ugl_id = $_POST['ugl_paciente']; // Este es el ID o la descripción seleccionada
     $nro_de_tramite = $_POST['nro_de_tramite'];
+    $token = $_POST['token'];
 
     // Verifica si el valor recibido es un número (ID) o una descripción (texto)
     if (is_numeric($ugl_id)) {
@@ -94,7 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     nro_hist_amb = ?,
                     nro_hist_int = ?,
                     hora_admision = ?,
-                    nro_de_tramite = ?
+                    nro_de_tramite = ?,
+                    token = ?
                 WHERE id = ?";
 
         $stmt = $conn->prepare($sql);
@@ -124,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nro_hist_int,
             $hora_admision,
             $nro_de_tramite,
+            $token,
             $id            // int
         );
 

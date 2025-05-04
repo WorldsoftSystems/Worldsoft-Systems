@@ -1,0 +1,3 @@
+PS C:\xampp\htdocs\Worldsoft-Systems\MEDICAL\main> php -S localhost:3000 sv
+
+PS C:\xampp\htdocs\Worldsoft-Systems\MEDICAL\main> browser-sync start --proxy "localhost:3000" --files "**/*.php, **/*.css, **/*.js" autorefresh

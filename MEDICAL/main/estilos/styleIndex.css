@@ -1,7 +1,86 @@
-@import url('https://fonts.googleapis.com/css2?family=Cabin+Condensed:wght@400;500;600;700&display=swap');
-
-body,
-html {
-  font-family: 'Cabin Condensed', sans-serif !important;
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../img/login_back.png");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  /* Evitar desplazamiento horizontal */
 }
 
+.container {
+  margin-top: -2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.blurred-box {
+  position: relative;
+  width: 300px;
+  /* Ancho reducido */
+  padding: 20px;
+  color: #ffffff;
+  /* Fondo blanco más transparente */
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.blurred-box:after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  position: absolute;
+  left: 0;
+  top: 0;
+  box-shadow: inset 0 0 0 150px rgba(255, 255, 255, 0.1);
+  filter: blur(10px);
+  z-index: -1;
+}
+
+.card-login {
+  background-color: transparent;
+  border: none;
+}
+
+.card-header {
+  background-color: transparent;
+  border-bottom: none;
+  color: #fff;
+  text-align: center;
+  font-size: 1.25rem;
+  /* Tamaño de fuente reducido */
+}
+
+.form-control {
+  border-radius: 2px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  width: 100%;
+  border-radius: 2px;
+}
+
+.cutom-user:hover {
+  text-decoration: none !important;
+  border-color: var(--primary-color) !important;
+}
+
+.btn-custom{
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(bg-default);
+  transition: all 0.3s ease;
+  border-color: var(--primary-color);
+}

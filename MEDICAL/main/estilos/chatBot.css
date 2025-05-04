@@ -1,0 +1,160 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .chat-container {
+    position: fixed;
+    bottom: 0.5rem;
+    right: 0;
+    width: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    display: none;
+    /* Inicialmente oculto */
+    z-index: 9999;
+  }
+
+  .chat-header {
+    background-color: var(--primary-color) !important;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .chat-header h5 {
+    margin: 0;
+  }
+
+  .chat-header button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .messages {
+    height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+  }
+
+  .question-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+  }
+
+  .message {
+    margin-bottom: 10px;
+  }
+
+  .message.user {
+    color: white;
+    background-color: var(--primary-color) !important;
+    border-radius: 0.2rem;
+    padding: 1px;
+  }
+
+  .message.bot {
+    color: #333;
+  }
+
+  .question-list button {
+    background-color: var(--primary-color) !important;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    text-align: left;
+  }
+
+  .question-list button:hover {
+    background-color: var(--primary-color) !important;
+  }
+
+  .chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-image: url('../img/bot.png');
+    background-size: cover;
+    background-position: center;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+  }
+
+  /* Estilo del tooltip */
+  .fixed-tooltip {
+    position: fixed;
+    bottom: 90px;
+    /* Ajustar según sea necesario */
+    right: 30px;
+    /* Ajustar según sea necesario */
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 800;
+    /* Asegúrate de que esté por encima del botón */
+  }
+
+  /* Fondo difuminado cuando aparece el contenedor */
+  .floating-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    /* Oscurece el fondo */
+    backdrop-filter: blur(8px);
+    /* Difumina el fondo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+  }
+
+  /* Contenedor principal centrado */
+  .floating-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+
+  /* Botón de cerrar */
+  .close-btn {
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  .close-btn:hover {
+    background: darkred;
+  }

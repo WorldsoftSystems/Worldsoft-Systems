@@ -1,0 +1,67 @@
+.modal-xl {
+    max-width: 89%;
+}
+
+.custom-icon,
+.icon-text {
+    color: var(--primary-color);
+}
+
+.scrollable-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.modal-header-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.modal-title {
+    margin: 0;
+    flex: 1;
+    text-align: start;
+}
+
+.modal-logo {
+    max-height: 4rem;
+    margin-top: 1rem;
+}
+
+.btn-custom-add {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.custom-modal-paciente {
+    margin-top: 1rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/*ESTILO FORMULARIO*/
+.section-title {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.section-box {
+    background-color: var(--bg-default);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* opcional, para levantarlo un poco */
+}
+

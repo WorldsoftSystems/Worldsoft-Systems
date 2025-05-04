@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     // Solo mostrar la alerta si el parámetro 'success' está presente al cargar la página
     const urlParams = new URLSearchParams(window.location.search);
@@ -492,39 +493,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#agregarPracModal').on('shown.bs.modal', function () {
-        var pacienteId = $('#id').val();
-
-        // Limpiar el select antes de agregar nuevas opciones
-        var $pracActividad = $('#pracActividad');
-        $pracActividad.empty(); // Elimina todas las opciones actuales
-
-        // Añadir la opción predeterminada
-        $pracActividad.append(new Option('Seleccionar...', ''));
-
-        // Hacer la llamada AJAX para llenar el select de actividades
-        $.ajax({
-            url: './dato/get_todas_las_practicas.php',
-            type: 'GET',
-            dataType: 'json',
-            data: { paciente_id: pacienteId },
-            success: function (data) {
-                data.forEach(function (item) {
-                    var optionText = item.codigo + ' - ' + item.descripcion;
-                    $pracActividad.append(new Option(optionText, item.id));
-                });
-
-                // Si se está editando una práctica, seleccionar la opción correcta
-                var pracActividadId = $pracActividad.data('selected-id');
-                if (pracActividadId) {
-                    $pracActividad.val(pracActividadId);
-                }
-            },
-            error: function (error) {
-                console.error("Error fetching data: ", error);
-            }
-        });
-    });
+    
 
 
 
@@ -602,7 +571,6 @@ $(document).ready(function () {
         dataType: 'json',
         success: function (data) {
             data.forEach(function (item) {
-                $('#id_prof').append(new Option(item.nombreYapellido, item.id_prof));
                 $('#pracProfesional').append(new Option(item.nombreYapellido, item.id_prof));
                 $('#hc_prof').append(new Option(item.nombreYapellido, item.id_prof));
                 $('#medico_tratante').append(new Option(item.nombreYapellido, item.id_prof));

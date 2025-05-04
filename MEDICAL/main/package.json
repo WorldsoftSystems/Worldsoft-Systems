@@ -1,0 +1,14 @@
+{
+  "name": "medical",
+  "version": "1.0.0",
+  "description": "Proyecto PHP + BrowserSync",
+  "scripts": {
+    "php": "php -S localhost:3000",
+    "sync": "browser-sync start --proxy localhost:3000 --files '**/*.php' '**/*.css' '**/*.js' --reload-delay 200 --reload-debounce 500 --no-open",
+    "dev": "concurrently \"npm run php\" \"npm run sync\""
+  },
+  "devDependencies": {
+    "browser-sync": "^2.29.3",
+    "concurrently": "^8.2.0"
+  }
+}

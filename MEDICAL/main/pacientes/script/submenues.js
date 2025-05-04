@@ -2294,47 +2294,7 @@ $(document).ready(function () {
     });
 
     // Mostrar el modal de editar práctica al hacer clic en el botón "Editar"
-    $(document).on('click', '#editPrac', function () {
-        var pracId = $(this).data('id');
-
-        $.ajax({
-            url: './dato/get_practica_con_id.php',
-            type: 'GET',
-            data: { id: pracId },
-            success: function (response) {
-                var practica = JSON.parse(response);
-
-                // Asumir que la fecha está en formato YYYY-MM-DD
-                var fechaStr = practica.fecha; // Ejemplo: '2024-09-06'
-
-                // Convertir la fecha en formato YYYY-MM-DD a un objeto Date
-                var fecha = new Date(fechaStr + 'T00:00:00'); // Añadir una hora para crear un objeto Date válido
-
-                // Establecer la fecha en el datepicker
-                $('#pracFechas').datepicker('setDates', [fecha]);
-
-                // Llenar los campos del modal de edición con los datos de la práctica
-                $('#pracId').val(practica.id);
-                $('#pracIdPaciente').val(practica.id_paciente);
-                $('#pracNombreCarga').val(practica.nombre_paciente);
-                $('#pracHora').val(practica.hora);
-                $('#pracProfesional').val(practica.profesional);
-
-                // Establecer el ID de la actividad seleccionada
-                $('#pracActividad').data('selected-id', practica.actividad);
-                $('#pracCantidad').val(practica.cant);
-
-                // Establecer data-action a "edit"
-                $('#btnGuardarPractica').attr('data-action', 'edit');
-
-                // Mostrar el modal de agregar práctica (se reutiliza para editar)
-                $('#agregarPracModal').modal('show');
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log('Error al obtener los datos de la práctica:', textStatus, errorThrown);
-            }
-        });
-    });
+    
 
 
 

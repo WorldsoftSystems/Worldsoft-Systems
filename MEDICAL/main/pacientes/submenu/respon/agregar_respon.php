@@ -21,7 +21,7 @@ $sql = "INSERT INTO responsable (id_paciente, nombreYapellido, tel, tipo_familia
         VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("isiiiss", $idPaciente, $nombre,$tel,$tipo_familiar,$dni,$dom,$localidad);
+$stmt->bind_param("issiiss", $idPaciente, $nombre,$tel,$tipo_familiar,$dni,$dom,$localidad);
 
 if ($stmt->execute()) {
     echo "Práctica agregada correctamente.";
